@@ -20,6 +20,7 @@
     "blockly": "git://github.com/google/blockly.git#2.20190722.0"
   },
   "devDependencies": {
-    "electron": "^5.0.8"
+    "electron": "^5.0.8",
+    "electron-reload": "^1.4.1"
   }
 }
