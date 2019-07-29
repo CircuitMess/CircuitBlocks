@@ -1,0 +1,25 @@
+{
+  "name": "circuitblocks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CircuitMess/CircuitBlocks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CircuitMess/CircuitBlocks/issues"
+  },
+  "homepage": "https://github.com/CircuitMess/CircuitBlocks#readme",
+  "dependencies": {
+    "blockly": "git://github.com/google/blockly.git#2.20190722.0"
+  },
+  "devDependencies": {
+    "electron": "^5.0.8"
+  }
+}
