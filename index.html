@@ -5,6 +5,7 @@
     <title>Blockly Demo: Fixed Blockly</title>
     <script src="./blockly/blockly_compressed.js"></script>
     <script src="./blockly/blocks_compressed.js"></script>
+    <script src="./blockly/javascript_compressed.js"></script>
     <script src="./blockly/msg/js/en.js"></script>
     <style>
       body {
@@ -34,6 +35,7 @@
     </p>
 
     <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
+    <div id="codeDiv" style="height: 480px; width: 600px;"></div>
 
     <xml
       xmlns="https://developers.google.com/blockly/xml"
@@ -55,6 +57,15 @@
       var demoWorkspace = Blockly.inject("blocklyDiv", {
         media: "./blockly/media",
         toolbox: document.getElementById("toolbox")
+      });
+
+      const setConsole = data => {
+        document.querySelector("#codeDiv").innerHTML = data;
+      };
+
+      demoWorkspace.addChangeListener(e => {
+        var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+        setConsole(code);
       });
     </script>
   </body>
