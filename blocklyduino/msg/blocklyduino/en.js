@@ -1,0 +1,22 @@
+var MSG = {
+  blocks: "Blocks",
+  trashTooltip: "Discard all blocks.",
+  catLogic: "Logic",
+  catLoops: "Loops",
+  catMath: "Math",
+  catText: "Text",
+  catLists: "Lists",
+  catColour: "Colour",
+  catVariables: "Variables",
+  catFunctions: "Functions",
+  listVariable: "list",
+  textVariable: "text",
+  xmlError: "Could not load your saved file. Perhaps it was created with a different version of Blockly?",
+  badXml: "Error parsing XML:\n%1\n\nSelect 'OK' to abandon your changes or 'Cancel' to further edit the XML.",
+  uploadButton_span: "Upload",
+  resetButton_span: "Reset",
+  trashButton_span: "Delete",
+  saveCodeButton_span: "Save Arduino Code",
+  saveXMLButton_span: "Save XML",
+  loadXMLfakeButton_span: "Load XML"
+};
