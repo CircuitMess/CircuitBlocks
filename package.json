@@ -1,26 +1,40 @@
 {
-  "name": "circuitblocks",
-  "version": "1.0.0",
-  "description": "",
+  "name": "circuit_blocks",
+  "version": "0.1.0",
   "main": "app.js",
-  "scripts": {
-    "dev": "electron ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/CircuitMess/CircuitBlocks.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/CircuitMess/CircuitBlocks/issues"
-  },
-  "homepage": "https://github.com/CircuitMess/CircuitBlocks#readme",
+  "private": true,
   "dependencies": {
-    "blockly": "git://github.com/google/blockly.git#2.20190722.0"
+    "node-blockly": "^1.1.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.1"
+  },
+  "scripts": {
+    "electron-dev": "electron .",
+    "start": "BROWSER=none react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && yarn electron-dev\""
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "electron": "^5.0.8",
-    "electron-reload": "^1.4.1"
+    "concurrently": "^4.1.1",
+    "electron": "^6.0.0",
+    "wait-on": "^3.3.0"
   }
 }

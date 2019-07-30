@@ -1,13 +1,10 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const url = require("url");
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+const react_url = "http://localhost:3000";
+
 let win;
-
-require("electron-reload")(__dirname, {
-  electron: path.join(__dirname, "node_modules", ".bin", "electron") // remove for only web content reload
-});
 
 function createWindow() {
   // Create the browser window.
@@ -20,8 +17,14 @@ function createWindow() {
   });
 
   // and load the index.html of the app.
-  // win.loadFile("index.html");
-  win.loadURL(`file://${__dirname}/index.html`);
+  const startUrl =
+    react_url ||
+    url.format({
+      pathname: path.join(__dirname, "./build/index.html"),
+      protocol: "file:",
+      slashes: true
+    });
+  win.loadURL(startUrl);
 
   // Open the DevTools.
   win.webContents.openDevTools();
