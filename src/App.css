@@ -7,10 +7,9 @@ h1 {
   font-size: 140%;
 }
 
-.container {
-  width: 90%;
-  margin: auto;
-  padding: 10px;
+.wrapper {
+  width: 100%;
+  height: 100%;
 }
 
 .left {
@@ -37,10 +36,8 @@ h1 {
 }
 
 #blocklyDiv {
-  width: 90%;
+  width: 100%;
   height: 500px;
-
-  border: 1px solid black;
 }
 
 #codeDiv {
@@ -54,4 +51,8 @@ h1 {
 
 #codeDiv p {
   padding: 10px;
+}
+
+code {
+  white-space: pre;
 }
