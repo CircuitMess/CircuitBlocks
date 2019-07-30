@@ -1,17 +1,30 @@
 import React, { Component } from "react";
 import Blockly from "node-blockly/browser";
-import { saveAs } from "file-saver";
 import "./App.css";
 
 import { toolbox } from "./assets/xmls.js";
 import CodeEditor from "./components/CodeEditor";
+import BlocklyEditor from "./components/BlocklyEditor";
 import Header from "./components/Header";
+import Modal from "./components/Modal";
 
 class App extends Component {
-  state = {
-    code: "",
-    isCodeOpen: false
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      code: "",
+      isCodeOpen: false,
+      isModalOpen: false,
+      modalType: "" //save / load / ...
+    };
+
+    this.openSaveModal = this.openSaveModal.bind(this);
+    this.openLoadModal = this.openLoadModal.bind(this);
+    this.toggleCode = this.toggleCode.bind(this);
+    this.setRef = this.setRef.bind(this);
+    this.load = this.load.bind(this);
+  }
 
   componentDidMount() {
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
@@ -21,54 +34,55 @@ class App extends Component {
     });
   }
 
-  save = () => {
-    var xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
-    var xmlText = Blockly.Xml.domToPrettyText(xmlDom);
-    var blob = new Blob([xmlText], { type: "application/xml;charset=utf-8" });
-    saveAs(blob, "file.xml");
-  };
+  openSaveModal() {
+    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
+    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+    if (xmlText.split("<").length > 2) {
+      this.setState({ isModalOpen: true, modalType: "save", xmlText });
+    } else {
+      alert("You cant save an empty file");
+    }
+  }
 
-  toggle = () => {
+  openLoadModal() {
+    this.setState({ isModalOpen: true, modalType: "load" });
+  }
+
+  toggleCode() {
     this.setState(state => ({ isCodeOpen: !state.isCodeOpen }));
-  };
+  }
 
-  loadOnChange = e => {
-    const file = e.target.files[0];
-    const fr = new FileReader();
-    fr.onloadend = e => {
-      if (e.returnValue) {
-        const xml = Blockly.Xml.textToDom(fr.result);
-        Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, this.workspace);
-      }
-    };
-    fr.readAsText(file);
+  setRef(ref) {
+    this.blocklyDiv = ref;
+  }
+
+  load(data) {
+    const xml = Blockly.Xml.textToDom(data);
+    Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, this.workspace);
+  }
+
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
   };
 
   render() {
-    const { code, isCodeOpen } = this.state;
+    const { code, isCodeOpen, isModalOpen, modalType, xmlText } = this.state;
 
     return (
       <div className="wrapper">
+        <Modal
+          {...{ isModalOpen, modalType, xmlText }}
+          load={this.load}
+          closeModal={this.closeModal}
+        />
         <Header
           isCodeOpen={isCodeOpen}
-          toggle={this.toggle}
-          save={this.save}
-          loadOnChange={this.loadOnChange}
+          toggle={this.toggleCode}
+          save={this.openSaveModal}
+          load={this.openLoadModal}
         />
-        <div className={`editor ${isCodeOpen ? "d-none" : ""}`}>
-          <div id="blocklyContainer">
-            <div
-              id="blocklyDiv"
-              ref={d => {
-                this.blocklyDiv = d;
-              }}
-            />
-          </div>
-        </div>
-
-        <div className={`code ${!isCodeOpen ? "d-none" : ""}`}>
-          <CodeEditor code={code} />
-        </div>
+        <BlocklyEditor setRef={this.setRef} isCodeOpen={isCodeOpen} />
+        <CodeEditor code={code} isCodeOpen={isCodeOpen} />
       </div>
     );
   }

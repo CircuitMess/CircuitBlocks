@@ -11,16 +11,6 @@
   height: 800px;
 }
 
-.code {
-  background-color: black;
-  color: #22ff22;
-  height: 100%;
-}
-
-code {
-  white-space: pre;
-}
-
 .d-none {
   display: none;
 }

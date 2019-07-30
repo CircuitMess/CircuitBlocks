@@ -35,7 +35,7 @@ const HeaderDiv = styled.div`
 `;
 
 const Header = props => {
-  const { isCodeOpen, toggle, save, loadOnChange } = props;
+  const { isCodeOpen, toggle, save, load } = props;
 
   return (
     <HeaderDiv>
@@ -47,15 +47,12 @@ const Header = props => {
       <div className="item" onClick={save}>
         <p>Save</p>
       </div>
-      <div className="item">
+      <div className="item" onClick={load}>
         <p>Load</p>
       </div>
       <div className="item">
         <p>Run</p>
       </div>
-      <form>
-        <input type="file" accept=".xml" onChange={loadOnChange} />
-      </form>
       <div className="item right" onClick={toggle}>
         <p>Switch to {isCodeOpen ? "blocks" : "code"}</p>
       </div>
