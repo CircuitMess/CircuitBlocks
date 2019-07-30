@@ -35,21 +35,28 @@ const HeaderDiv = styled.div`
 `;
 
 const Header = props => {
-  const { isCodeOpen, toggle } = props;
+  const { isCodeOpen, toggle, save, loadOnChange } = props;
 
   return (
     <HeaderDiv>
-      <img class="logo" src={require("../assets/images/logo.png")} alt="logo" />
-      <div class="item">
+      <img
+        className="logo"
+        src={require("../assets/images/logo.png")}
+        alt="logo"
+      />
+      <div className="item" onClick={save}>
         <p>Save</p>
       </div>
-      <div class="item">
+      <div className="item">
         <p>Load</p>
       </div>
-      <div class="item">
+      <div className="item">
         <p>Run</p>
       </div>
-      <div class="item right" onClick={toggle}>
+      <form>
+        <input type="file" accept=".xml" onChange={loadOnChange} />
+      </form>
+      <div className="item right" onClick={toggle}>
         <p>Switch to {isCodeOpen ? "blocks" : "code"}</p>
       </div>
     </HeaderDiv>

@@ -4,6 +4,7 @@
   "main": "app.js",
   "private": true,
   "dependencies": {
+    "file-saver": "^2.0.2",
     "node-blockly": "^1.1.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
