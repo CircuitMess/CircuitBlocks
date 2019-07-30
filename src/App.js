@@ -8,7 +8,8 @@ import Header from "./components/Header";
 
 class App extends Component {
   state = {
-    code: ""
+    code: "",
+    isCodeOpen: false
   };
 
   componentDidMount() {
@@ -20,13 +21,17 @@ class App extends Component {
     });
   }
 
+  toggle = () => {
+    this.setState(state => ({ isCodeOpen: !state.isCodeOpen }));
+  };
+
   render() {
-    const { code } = this.state;
+    const { code, isCodeOpen } = this.state;
 
     return (
       <div className="wrapper">
-        <Header />
-        <div className="editor">
+        <Header isCodeOpen={isCodeOpen} toggle={this.toggle} />
+        <div className={`editor ${isCodeOpen ? "d-none" : ""}`}>
           <div id="blocklyContainer">
             <div
               id="blocklyDiv"
@@ -37,7 +42,9 @@ class App extends Component {
           </div>
         </div>
 
-        <CodeEditor code={code} />
+        <div className={`code ${!isCodeOpen ? "d-none" : ""}`}>
+          <CodeEditor code={code} />
+        </div>
       </div>
     );
   }
