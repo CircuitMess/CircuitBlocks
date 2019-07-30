@@ -26,7 +26,6 @@ const SaveModal = props => {
 
   return (
     <Modal>
-      <h1>Save Modal</h1>
       <form onSubmit={onSubmit}>
         <input
           type="text"

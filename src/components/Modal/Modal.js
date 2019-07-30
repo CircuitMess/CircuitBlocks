@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+
+import ModalHeader from "./ModalHeader";
 import { useAppStateValue } from "../../contexts/AppContext";
 
 const ModalDiv = styled.div`
@@ -11,16 +13,7 @@ const ModalDiv = styled.div`
   width: 600px;
   transform: translate(-50%, -50%);
   background: white;
-  border-radius: 4px;
-
-  .close {
-    float: right;
-    margin-top: 10px;
-    margin-right: 10px;
-    padding: 2px 5px;
-    background-color: #aaa;
-    cursor: pointer;
-  }
+  border-radius: 8px;
 `;
 
 const ModalBackDrop = styled.div`
@@ -33,22 +26,26 @@ const ModalBackDrop = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
+const ModalBody = styled.div`
+  width: 90%;
+  margin: 0 auto;
+`;
+
 const Modal = props => {
   const { children } = props;
-
   const [appState, appDispatch] = useAppStateValue();
+
+  const { modalType } = appState;
+  const title = modalType === "save" ? "Save" : "Load";
+
+  const close = () => appDispatch({ type: "closeModal" });
 
   return (
     <>
-      <ModalBackDrop onClick={() => appDispatch({ type: "closeModal" })} />
+      <ModalBackDrop onClick={close} />
       <ModalDiv>
-        <div
-          className="close"
-          onClick={() => appDispatch({ type: "closeModal" })}
-        >
-          X
-        </div>
-        {children}
+        <ModalHeader close={close} title={title} />
+        <ModalBody>{children}</ModalBody>
       </ModalDiv>
     </>
   );

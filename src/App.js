@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Blockly from "./BlocklyDuino"
+import Blockly from "./BlocklyDuino";
 import "./App.css";
 
 import AppContext, { AppProvider } from "./contexts/AppContext";
@@ -12,9 +12,9 @@ import Popups from "./components/Popups";
 
 const appInitState = {
   isModalOpen: false,
-  modalType: "",
+  modalType: "save",
   isAlertOpen: false,
-  alertText: "",
+  alertText: "You cant save an empty file",
   isCodeOpen: false
 };
 
@@ -41,7 +41,9 @@ class Main extends Component {
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
     this.workspace.addChangeListener(e => {
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
-      this.setState({ code });
+      if (this.state.code !== code) {
+        this.setState({ code });
+      }
     });
   }
 

@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+
+import Button from "./Button";
 import { useAppStateValue } from "../contexts/AppContext";
 
 const AlertBackdrop = styled.div`
@@ -17,12 +19,22 @@ const AlertDiv = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  min-height: 100;
-  min-width: 100px;
+  min-height: 120px;
+  min-width: 300px;
   transform: translate(-50%, -50%);
   background: white;
-  border-radius: 4px;
+  border-radius: 8px;
+  padding: 10px 50px;
   text-align: center;
+`;
+
+const Footer = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-around;
 `;
 
 const Alert = () => {
@@ -37,8 +49,12 @@ const Alert = () => {
     <>
       <AlertBackdrop onClick={closeAlert} />
       <AlertDiv>
-        <h1>{alertText}</h1>
-        <button onClick={closeAlert}>Close</button>
+        <h2>{alertText}</h2>
+        <Footer>
+          <Button onClick={closeAlert} color="primary">
+            Close
+          </Button>
+        </Footer>
       </AlertDiv>
     </>
   );

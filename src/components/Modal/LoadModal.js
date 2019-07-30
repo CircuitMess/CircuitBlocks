@@ -20,7 +20,6 @@ const LoadModal = props => {
 
   return (
     <Modal>
-      <h1>Load Modal</h1>
       <form>
         <input type="file" accept=".xml" onChange={loadOnChange} />
       </form>
