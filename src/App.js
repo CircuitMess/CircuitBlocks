@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Blockly from "node-blockly/browser";
+import Blockly from "./BlocklyDuino"
 import "./App.css";
 
 import AppContext, { AppProvider } from "./contexts/AppContext";
@@ -40,7 +40,7 @@ class Main extends Component {
     this.appDispatch = appDispatch;
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
     this.workspace.addChangeListener(e => {
-      const code = Blockly.JavaScript.workspaceToCode(this.workspace);
+      const code = Blockly.Arduino.workspaceToCode(this.workspace);
       this.setState({ code });
     });
   }
