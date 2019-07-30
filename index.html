@@ -6,36 +6,33 @@
     <script src="./blockly/blockly_compressed.js"></script>
     <script src="./blockly/blocks_compressed.js"></script>
     <script src="./blockly/javascript_compressed.js"></script>
+    <script src="./blockly/php_compressed.js"></script>
     <script src="./blockly/msg/js/en.js"></script>
-    <style>
-      body {
-        background-color: #fff;
-        font-family: sans-serif;
-      }
-      h1 {
-        font-weight: normal;
-        font-size: 140%;
-      }
-    </style>
+
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1><a href="https://developers.google.com/blockly/">Blockly</a> &gt;</h1>
+    <div class="container">
+      <div class="left">
+        <div class="header">
+          <h3>Blockly</h3>
+        </div>
+        <div id="blocklyDiv"></div>
+      </div>
+      <div class="right">
+        <div class="header">
+          <h3>Javascript</h3>
+          <select>
+            <option value="javascript">Javascript</option>
+            <option value="php">PHP</option>
+          </select>
+        </div>
 
-    <p>
-      This is a simple demo of injecting Blockly into a fixed-sized 'div'
-      element.
-    </p>
-
-    <p>
-      &rarr; More info on asdadasdasd
-      <a
-        href="https://developers.google.com/blockly/guides/configure-blockly/web/fixed-size"
-        >injecting fixed-sized Blockly</a
-      >&hellip;
-    </p>
-
-    <div id="blocklyDiv" style="height: 480px; width: 600px;"></div>
-    <div id="codeDiv" style="height: 480px; width: 600px;"></div>
+        <div id="codeDiv">
+          <p></p>
+        </div>
+      </div>
+    </div>
 
     <xml
       xmlns="https://developers.google.com/blockly/xml"
@@ -53,20 +50,6 @@
       <block type="text_print"></block>
     </xml>
 
-    <script>
-      var demoWorkspace = Blockly.inject("blocklyDiv", {
-        media: "./blockly/media",
-        toolbox: document.getElementById("toolbox")
-      });
-
-      const setConsole = data => {
-        document.querySelector("#codeDiv").innerHTML = data;
-      };
-
-      demoWorkspace.addChangeListener(e => {
-        var code = Blockly.JavaScript.workspaceToCode(demoWorkspace);
-        setConsole(code);
-      });
-    </script>
+    <script src="./script.js"></script>
   </body>
 </html>

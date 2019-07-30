@@ -1,0 +1,57 @@
+body {
+  background-color: #fff;
+  font-family: sans-serif;
+}
+h1 {
+  font-weight: normal;
+  font-size: 140%;
+}
+
+.container {
+  width: 90%;
+  margin: auto;
+  padding: 10px;
+}
+
+.left {
+  width: 70%;
+  float: left;
+}
+
+.right {
+  width: 30%;
+  float: right;
+}
+
+.right > .header {
+  align-items: center;
+  height: 50px;
+}
+
+.right h3 {
+  float: right;
+}
+
+.right select {
+  margin-left: calc(10%);
+}
+
+#blocklyDiv {
+  width: 90%;
+  height: 500px;
+
+  border: 1px solid black;
+}
+
+#codeDiv {
+  width: 90%;
+  height: 500px;
+
+  float: right;
+
+  border: 1px solid black;
+}
+
+#codeDiv p {
+  padding: 10px;
+}
