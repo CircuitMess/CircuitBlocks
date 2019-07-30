@@ -2,28 +2,30 @@ import React, { useState } from "react";
 import { saveAs } from "file-saver";
 
 import Modal from "./Modal";
+import { useAppStateValue } from "../../contexts/AppContext";
 
 const sanitizeName = name => name.replace(/ /g, "_").replace(/\./g, "");
 
 const SaveModal = props => {
-  const { close, xmlText } = props;
   const [name, setName] = useState("");
+  const [appState, appDispatch] = useAppStateValue();
+  const { saveXml } = appState;
 
   const onSubmit = e => {
     e.preventDefault();
     const sanitizedName = sanitizeName(name);
 
     if (sanitizedName.length > 0) {
-      const blob = new Blob([xmlText], {
+      const blob = new Blob([saveXml], {
         type: "application/xml;charset=utf-8"
       });
       saveAs(blob, `${sanitizedName}.xml`);
-      close();
+      appDispatch({ type: "closeModal" });
     }
   };
 
   return (
-    <Modal close={close}>
+    <Modal>
       <h1>Save Modal</h1>
       <form onSubmit={onSubmit}>
         <input

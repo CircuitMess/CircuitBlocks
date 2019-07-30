@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppStateValue } from "../../contexts/AppContext";
 
 const ModalDiv = styled.div`
-  z-index: 1000;
+  z-index: 200;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,13 +34,18 @@ const ModalBackDrop = styled.div`
 `;
 
 const Modal = props => {
-  const { close, children } = props;
+  const { children } = props;
+
+  const [appState, appDispatch] = useAppStateValue();
 
   return (
     <>
-      <ModalBackDrop onClick={close} />
+      <ModalBackDrop onClick={() => appDispatch({ type: "closeModal" })} />
       <ModalDiv>
-        <div className="close" onClick={close}>
+        <div
+          className="close"
+          onClick={() => appDispatch({ type: "closeModal" })}
+        >
           X
         </div>
         {children}

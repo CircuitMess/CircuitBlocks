@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useAppStateValue } from "../contexts/AppContext";
 
 const HeaderDiv = styled.div`
   height: 64px;
@@ -35,7 +36,10 @@ const HeaderDiv = styled.div`
 `;
 
 const Header = props => {
-  const { isCodeOpen, toggle, save, load } = props;
+  const { save, load } = props;
+  const [appState, appDispatch] = useAppStateValue();
+
+  const { isCodeOpen } = appState;
 
   return (
     <HeaderDiv>
@@ -53,7 +57,10 @@ const Header = props => {
       <div className="item">
         <p>Run</p>
       </div>
-      <div className="item right" onClick={toggle}>
+      <div
+        className="item right"
+        onClick={() => appDispatch({ type: "toggleCode" })}
+      >
         <p>Switch to {isCodeOpen ? "blocks" : "code"}</p>
       </div>
     </HeaderDiv>
