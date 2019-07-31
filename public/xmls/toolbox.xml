@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<xml id="blocklyduino" style="display: none">
-  <category name="Logic" categorystyle="logic_category">
+<xml>
+  <category id="catLogic" name="Logic">
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
     <block type="logic_operation"></block>
@@ -9,331 +9,181 @@
     <block type="logic_null"></block>
     <block type="logic_ternary"></block>
   </category>
-  <category name="Loops" categorystyle="loop_category">
+  <sep></sep>
+  <category id="catLoops" name="Loops">
     <block type="controls_repeat_ext">
       <value name="TIMES">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">10</field>
-        </shadow>
+        </block>
       </value>
     </block>
     <block type="controls_whileUntil"></block>
     <block type="controls_for">
       <value name="FROM">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">1</field>
-        </shadow>
+        </block>
       </value>
       <value name="TO">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">10</field>
-        </shadow>
+        </block>
       </value>
       <value name="BY">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">1</field>
-        </shadow>
+        </block>
       </value>
     </block>
-    <block type="controls_forEach"></block>
     <block type="controls_flow_statements"></block>
   </category>
-  <category name="Math" categorystyle="math_category">
-    <block type="math_number">
-      <field name="NUM">123</field>
-    </block>
-    <block type="math_arithmetic">
-      <value name="A">
-        <shadow type="math_number">
-          <field name="NUM">1</field>
-        </shadow>
-      </value>
-      <value name="B">
-        <shadow type="math_number">
-          <field name="NUM">1</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_single">
-      <value name="NUM">
-        <shadow type="math_number">
-          <field name="NUM">9</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_trig">
-      <value name="NUM">
-        <shadow type="math_number">
-          <field name="NUM">45</field>
-        </shadow>
-      </value>
-    </block>
+  <sep></sep>
+  <category id="catMath" name="Math">
+    <block type="math_number"></block>
+    <block type="math_arithmetic"></block>
+    <block type="math_single"></block>
+    <block type="math_trig"></block>
     <block type="math_constant"></block>
-    <block type="math_number_property">
-      <value name="NUMBER_TO_CHECK">
-        <shadow type="math_number">
-          <field name="NUM">0</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_round">
-      <value name="NUM">
-        <shadow type="math_number">
-          <field name="NUM">3.1</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_on_list"></block>
-    <block type="math_modulo">
-      <value name="DIVIDEND">
-        <shadow type="math_number">
-          <field name="NUM">64</field>
-        </shadow>
-      </value>
-      <value name="DIVISOR">
-        <shadow type="math_number">
-          <field name="NUM">10</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_constrain">
-      <value name="VALUE">
-        <shadow type="math_number">
-          <field name="NUM">50</field>
-        </shadow>
-      </value>
-      <value name="LOW">
-        <shadow type="math_number">
+    <block type="math_number_property"></block>
+    <block type="math_change">
+      <value name="DELTA">
+        <block type="math_number">
           <field name="NUM">1</field>
-        </shadow>
+        </block>
+      </value>
+    </block>
+    <block type="math_round"></block>
+    <block type="math_modulo"></block>
+    <block type="math_constrain">
+      <value name="LOW">
+        <block type="math_number">
+          <field name="NUM">1</field>
+        </block>
       </value>
       <value name="HIGH">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">100</field>
-        </shadow>
+        </block>
       </value>
     </block>
     <block type="math_random_int">
       <value name="FROM">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">1</field>
-        </shadow>
+        </block>
       </value>
       <value name="TO">
-        <shadow type="math_number">
+        <block type="math_number">
           <field name="NUM">100</field>
-        </shadow>
+        </block>
       </value>
     </block>
     <block type="math_random_float"></block>
+    <block type="base_map"></block>
   </category>
-  <category name="Text" categorystyle="text_category">
+  <sep></sep>
+  <category id="catText" name="Text">
     <block type="text"></block>
     <block type="text_join"></block>
     <block type="text_append">
       <value name="TEXT">
-        <shadow type="text"></shadow>
+        <block type="text"></block>
       </value>
     </block>
-    <block type="text_length">
-      <value name="VALUE">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_isEmpty">
-      <value name="VALUE">
-        <shadow type="text">
-          <field name="TEXT"></field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_indexOf">
-      <value name="VALUE">
-        <block type="variables_get">
-          <field name="VAR">{textVariable}</field>
-        </block>
-      </value>
-      <value name="FIND">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_charAt">
-      <value name="VALUE">
-        <block type="variables_get">
-          <field name="VAR">{textVariable}</field>
-        </block>
-      </value>
-    </block>
-    <block type="text_getSubstring">
-      <value name="STRING">
-        <block type="variables_get">
-          <field name="VAR">{textVariable}</field>
-        </block>
-      </value>
-    </block>
-    <block type="text_changeCase">
-      <value name="TEXT">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_trim">
-      <value name="TEXT">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_print">
-      <value name="TEXT">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="text_prompt_ext">
-      <value name="TEXT">
-        <shadow type="text">
-          <field name="TEXT">abc</field>
-        </shadow>
-      </value>
-    </block>
+    <block type="text_length"></block>
+    <block type="text_isEmpty"></block>
+    <!--block type="text_trim"></block Need to update block -->
+    <!--block type="text_print"></block Part of the serial comms -->
   </category>
-  <category name="Lists" categorystyle="list_category">
-    <block type="lists_create_with">
-      <mutation items="0"></mutation>
-    </block>
-    <block type="lists_create_with"></block>
-    <block type="lists_repeat">
-      <value name="NUM">
-        <shadow type="math_number">
-          <field name="NUM">5</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="lists_length"></block>
-    <block type="lists_isEmpty"></block>
-    <block type="lists_indexOf">
+  <sep></sep>
+  <category id="catVariables" name="Variables">
+    <block type="variables_get"></block>
+    <block type="variables_set"></block>
+    <block type="variables_set">
       <value name="VALUE">
-        <block type="variables_get">
-          <field name="VAR">{listVariable}</field>
-        </block>
+        <block type="variables_set_type"></block>
       </value>
     </block>
-    <block type="lists_getIndex">
-      <value name="VALUE">
-        <block type="variables_get">
-          <field name="VAR">{listVariable}</field>
-        </block>
-      </value>
-    </block>
-    <block type="lists_setIndex">
-      <value name="LIST">
-        <block type="variables_get">
-          <field name="VAR">{listVariable}</field>
-        </block>
-      </value>
-    </block>
-    <block type="lists_getSublist">
-      <value name="LIST">
-        <block type="variables_get">
-          <field name="VAR">{listVariable}</field>
-        </block>
-      </value>
-    </block>
-    <block type="lists_split">
-      <value name="DELIM">
-        <shadow type="text">
-          <field name="TEXT">,</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="lists_sort"></block>
+    <block type="variables_set_type"></block>
   </category>
-  <category name="Colour" categorystyle="colour_category">
-    <block type="colour_picker"></block>
-    <block type="colour_random"></block>
-    <block type="colour_rgb">
-      <value name="RED">
+  <sep></sep>
+  <category id="catFunctions" name="Functions" custom="PROCEDURE"></category>
+  <sep></sep>
+  <category id="catInputOutput" name="Input/Output">
+    <block type="io_digitalwrite">
+      <value name="STATE">
+        <block type="io_highlow"></block>
+      </value>
+    </block>
+    <block type="io_digitalread"></block>
+    <block type="io_builtin_led">
+      <value name="STATE">
+        <block type="io_highlow"></block>
+      </value>
+    </block>
+    <block type="io_analogwrite"></block>
+    <block type="io_analogread"></block>
+    <block type="io_highlow"></block>
+    <block type="io_pulsein">
+      <value name="PULSETYPE">
+        <shadow type="io_highlow"></shadow>
+      </value>
+    </block>
+    <block type="io_pulsetimeout">
+      <value name="PULSETYPE">
+        <shadow type="io_highlow"></shadow>
+      </value>
+      <value name="TIMEOUT">
         <shadow type="math_number">
           <field name="NUM">100</field>
         </shadow>
-      </value>
-      <value name="GREEN">
-        <shadow type="math_number">
-          <field name="NUM">50</field>
-        </shadow>
-      </value>
-      <value name="BLUE">
-        <shadow type="math_number">
-          <field name="NUM">0</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="colour_blend">
-      <value name="COLOUR1">
-        <shadow type="colour_picker">
-          <field name="COLOUR">#ff0000</field>
-        </shadow>
-      </value>
-      <value name="COLOUR2">
-        <shadow type="colour_picker">
-          <field name="COLOUR">#3333ff</field>
-        </shadow>
-      </value>
-      <value name="RATIO">
-        <shadow type="math_number">
-          <field name="NUM">0.5</field>
-        </shadow>
-      </value>
+      </value>'+
     </block>
   </category>
   <sep></sep>
-  <category name="Variables" categorystyle="variable_category" custom="VARIABLE_DYNAMIC"></category>
-  <category name="Functions" categorystyle="procedure_category" custom="PROCEDURE"></category>
-  <sep></sep>
-  <category name="Arduino" categorystyle="arduino_category">
-    <block type="arduino_base_inout_buildin_led"></block>
-    <block type="arduino_base_inout_digital_write"></block>
-    <block type="arduino_base_inout_digital_read"></block>
-    <block type="arduino_base_inout_highlow"></block>
-    <block type="arduino_base_inout_analog_write">
-      <value name="PWM">
-        <shadow type="math_number">
-          <field name="NUM">0</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="arduino_base_inout_analog_read"></block>
-    <block type="arduino_base_delay">
-      <value name="DELAY_TIME">
-        <shadow type="math_number">
+  <category id="catTime" name="Time">
+    <block type="time_delay">
+      <value name="DELAY_TIME_MILI">
+        <block type="math_number">
           <field name="NUM">1000</field>
-        </shadow>
+        </block>
       </value>
     </block>
-    <block type="arduino_base_angle"></block>
-    <block type="arduino_base_date"></block>
-    <block type="arduino_base_map"></block>
-    <block type="arduino_base_inout_tone">
-      <value name="NUM">
+    <block type="time_delaymicros">
+      <value name="DELAY_TIME_MICRO">
+        <block type="math_number">
+          <field name="NUM">100</field>
+        </block>
+      </value>
+    </block>
+    <block type="time_millis"></block>
+    <block type="time_micros"></block>
+    <block type="infinite_loop"></block>
+  </category>
+  <sep></sep>
+  <category id="catAudio" name="Audio">
+    <block type="io_tone">
+      <field name="TONEPIN">0</field>
+      <value name="FREQUENCY">
         <shadow type="math_number">
-          <field name="NUM">440</field>
+          <field name="NUM">220</field>
         </shadow>
       </value>
     </block>
-    <block type="arduino_base_inout_notone"></block>
-    <block type="arduino_base_serial_print">
-      <value name="CONTENT">
-        <shadow type="text">
-          <field name="TEXT"></field>
-        </shadow>
+    <block type="io_notone"></block>
+  </category>
+  <sep></sep>
+  <category id="catComms" name="Comms">
+    <block type="serial_setup"></block>
+    <block type="serial_print"></block>
+    <block type="text_prompt_ext">
+      <value name="TEXT">
+        <block type="text"></block>
       </value>
     </block>
+    <block type="spi_setup"></block>
+    <block type="spi_transfer"></block>
+    <block type="spi_transfer_return"></block>
   </category>
 </xml>
