@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <xml id="blocklyduino" style="display: none">
-  <category name="Logic" categorystyle="logic_category">
+  <category name="%{BKY_CATLOGIC}" categorystyle="logic_category">
     <block type="controls_if"></block>
     <block type="logic_compare"></block>
     <block type="logic_operation"></block>
@@ -9,7 +9,7 @@
     <block type="logic_null"></block>
     <block type="logic_ternary"></block>
   </category>
-  <category name="Loops" categorystyle="loop_category">
+  <category name="%{BKY_CATLOOPS}" categorystyle="loop_category">
     <block type="controls_repeat_ext">
       <value name="TIMES">
         <shadow type="math_number">
@@ -38,7 +38,7 @@
     <block type="controls_forEach"></block>
     <block type="controls_flow_statements"></block>
   </category>
-  <category name="Math" categorystyle="math_category">
+  <category name="%{BKY_CATMATH}" categorystyle="math_category">
     <block type="math_number">
       <field name="NUM">123</field>
     </block>
@@ -127,7 +127,7 @@
     </block>
     <block type="math_random_float"></block>
   </category>
-  <category name="Text" categorystyle="text_category">
+  <category name="%{BKY_CATTEXT}" categorystyle="text_category">
     <block type="text"></block>
     <block type="text_join"></block>
     <block type="text_append">
@@ -204,7 +204,7 @@
       </value>
     </block>
   </category>
-  <category name="Lists" categorystyle="list_category">
+  <category name="%{BKY_CATLISTS}" categorystyle="list_category">
     <block type="lists_create_with">
       <mutation items="0"></mutation>
     </block>
@@ -255,7 +255,7 @@
     </block>
     <block type="lists_sort"></block>
   </category>
-  <category name="Colour" categorystyle="colour_category">
+  <category name="%{BKY_CATCOLOUR}" categorystyle="colour_category">
     <block type="colour_picker"></block>
     <block type="colour_random"></block>
     <block type="colour_rgb">
@@ -294,10 +294,10 @@
     </block>
   </category>
   <sep></sep>
-  <category name="Variables" categorystyle="variable_category" custom="VARIABLE_DYNAMIC"></category>
-  <category name="Functions" categorystyle="procedure_category" custom="PROCEDURE"></category>
+  <category name="%{BKY_CATVARIABLES}" categorystyle="variable_category" custom="VARIABLE_DYNAMIC"></category>
+  <category name="%{BKY_CATFUNCTIONS}" categorystyle="procedure_category" custom="PROCEDURE"></category>
   <sep></sep>
-  <category name="Arduino" categorystyle="arduino_category">
+  <category name="%{BKY_CAT_ARDUINO_BASE}" categorystyle="arduino_category">
     <block type="arduino_base_inout_buildin_led"></block>
     <block type="arduino_base_inout_digital_write"></block>
     <block type="arduino_base_inout_digital_read"></block>
@@ -335,5 +335,56 @@
         </shadow>
       </value>
     </block>
+  </category>
+  <category name="%{BKY_CAT_GROVE}" categorystyle="grove_category">
+    <block type="grove_led"></block>
+    <block type="grove_button"></block>
+    <block type="grove_relay"></block>
+    <block type="grove_tilt_switch"></block>
+    <block type="grove_piezo_buzzer"></block>
+    <block type="grove_pir_motion_sensor"></block>
+    <block type="grove_line_finder"></block>
+    <block type="grove_rgb_led"></block>
+    <block type="grove_ultrasonic_ranger"></block>
+  </category>
+  <category name="%{BKY_CAT_GROVE_ANALOG}" categorystyle="grove_category">
+    <block type="grove_rotary_angle"></block>
+    <block type="grove_temperature_sensor"></block>
+    <block type="grove_sound_sensor"></block>
+    <block type="grove_thumb_joystick"></block>
+  </category>
+  <category name="%{BKY_CAT_GROVE_LCD}" categorystyle="grove_category">
+    <block type="grove_serial_lcd_print">
+      <value name="TEXT1">
+        <shadow type="text">
+          <field name="TEXT"></field>
+        </shadow>
+      </value>
+      <value name="TEXT2">
+        <shadow type="text">
+          <field name="TEXT"></field>
+        </shadow>
+      </value>
+      <value name="DELAY_TIME">
+        <shadow type="math_number">
+          <field name="NUM">1000</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="grove_serial_lcd_power"></block>
+    <block type="grove_serial_lcd_effect"></block>
+  </category>
+  <category name="%{BKY_CAT_GROVE_MOTOR}" categorystyle="grove_category">
+    <block type="grove_motor_shield"></block>
+  </category>
+  <category name="%{BKY_CAT_SERVO}" categorystyle="servo_category">
+    <block type="servo_move">
+      <value name="DEGREE">
+        <shadow type="math_number">
+          <field name="NUM">90</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="servo_read_degrees"></block>
   </category>
 </xml>

@@ -9,8 +9,8 @@ files = [
 
         "blocks/colors.js",
         "blocks/arduino_base/arduino_base.js",
-        "blocks/grove/grove.js",
-        "blocks/servo/servo.js",
+        #"blocks/grove/grove.js",
+        #"blocks/servo/servo.js",
 
         "generators/arduino.js",
         "generators/arduino/blockly/colour.js",
@@ -24,8 +24,8 @@ files = [
         "generators/arduino/blockly/variables_dynamic.js",
 
         "generators/arduino/arduino_base.js",
-        "generators/arduino/addon/grove.js",
-        "generators/arduino/addon/servo.js",
+        #"generators/arduino/addon/grove.js",
+        #"generators/arduino/addon/servo.js",
 
         "themes/bw.js",
         "themes/classic.js",
