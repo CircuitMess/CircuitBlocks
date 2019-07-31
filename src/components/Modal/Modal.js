@@ -17,7 +17,7 @@ const ModalDiv = styled.div`
 `;
 
 const ModalBackDrop = styled.div`
-  z-index: 100;
+  z-index: 150;
   position: absolute;
   top: 0;
   bottom: 0;
