@@ -55,8 +55,10 @@ class Main extends Component {
     this.appState = appState;
     this.appDispatch = appDispatch;
 
-    Blockly.prompt = () => {
-      console.log("asdlkjasdkl");
+    Blockly.prompt = (a, b, c) => {
+      console.log(a);
+      console.log(b);
+      c("Foobar");
     };
 
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });

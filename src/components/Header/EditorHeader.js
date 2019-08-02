@@ -17,7 +17,7 @@ const EditorHeader = props => {
       <HeaderItem>
         <p>Run</p>
       </HeaderItem>
-      <HeaderItem className="right" onClick={toggleCode}>
+      <HeaderItem right onClick={toggleCode}>
         <p>Switch to {isCodeOpen ? "blocks" : "code"}</p>
       </HeaderItem>
     </HeaderBase>

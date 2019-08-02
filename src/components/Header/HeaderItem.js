@@ -12,10 +12,13 @@ const Item = styled.div`
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  .right {
-    position: absolute;
-    right: 0;
-  }
+  ${props =>
+    props.right
+      ? {
+          position: "absolute",
+          right: 0
+        }
+      : null}
 `;
 
 export default Item;
