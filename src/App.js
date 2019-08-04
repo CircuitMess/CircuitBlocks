@@ -8,7 +8,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      homeOpen: true
+      homeOpen: false
     };
 
     this.toggleHome = this.toggleHome.bind(this);

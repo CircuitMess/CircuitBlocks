@@ -8,6 +8,7 @@ import CodeEditor from "../components/CodeEditor";
 import BlocklyEditor from "../components/BlocklyEditor";
 import { EditorHeader } from "../components/Header";
 import Popups from "../components/Popups";
+import Prompt from "../components/Prompt";
 
 const appInitState = {
   isModalOpen: false,
@@ -19,6 +20,19 @@ const appInitState = {
 
 const NAV_BAR_HEIGHT = 64;
 
+const xml = `<xml xmlns="https://developers.google.com/blockly/xml">
+<variables>
+  <variable id="7mJ{C@uaA68446C*.l.+">Foobar</variable>
+</variables>
+<block type="controls_if" id="3bFu]EuGml4DKM,qqVo/" x="110" y="75">
+  <value name="IF0">
+    <block type="variables_get" id="6VO[p;*;m.VHSfFqD9=">
+      <field name="VAR" id="7mJ{C@uaA68446C*.l.+">Foobar</field>
+    </block>
+  </value>
+</block>
+</xml>`;
+
 class Main extends Component {
   static contextType = AppContext;
 
@@ -29,12 +43,16 @@ class Main extends Component {
       code: "",
       width: window.innerWidth,
       height: window.innerHeight - NAV_BAR_HEIGHT,
-      isCodeOpen: false
+      isCodeOpen: false,
+      initState: "",
+      promptOpen: false,
+      promptText: ""
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
     this.openSaveModal = this.openSaveModal.bind(this);
     this.openLoadModal = this.openLoadModal.bind(this);
+    this.closePrompt = this.closePrompt.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
     this.setRef = this.setRef.bind(this);
     this.load = this.load.bind(this);
@@ -56,9 +74,9 @@ class Main extends Component {
     this.appDispatch = appDispatch;
 
     Blockly.prompt = (a, b, c) => {
-      console.log(a);
-      console.log(b);
-      c("Foobar");
+      const initState = a.split("'")[1];
+      this.callback = c;
+      this.setState({ initState: initState, promptOpen: true, promptText: a });
     };
 
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
@@ -68,7 +86,7 @@ class Main extends Component {
         this.setState({ code });
       }
     });
-
+    this.load(xml);
     this.updateDimensions();
     window.addEventListener("resize", this.updateDimensions);
   }
@@ -118,12 +136,32 @@ class Main extends Component {
     });
   }
 
+  closePrompt() {
+    this.setState({ promptOpen: false });
+  }
+
   render() {
-    const { code, width, height, isCodeOpen } = this.state;
+    const {
+      code,
+      width,
+      height,
+      isCodeOpen,
+      initState,
+      promptOpen,
+      promptText
+    } = this.state;
 
     return (
       <div className="wrapper">
         <Popups load={this.load} />
+        {promptOpen && (
+          <Prompt
+            initValue={initState}
+            callback={this.callback}
+            promptText={promptText}
+            closePrompt={this.closePrompt}
+          />
+        )}
         <EditorHeader
           save={this.openSaveModal}
           load={this.openLoadModal}
