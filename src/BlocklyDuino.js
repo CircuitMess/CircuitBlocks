@@ -1,5 +1,5 @@
 // header.js
-import Blockly from "node-blockly/browser";
+import Blockly from "node-blockly/browser-raw";
 
 let goog = {
   isArray: Array.isArray,
@@ -587,6 +587,199 @@ Blockly.StaticTyping.prototype.setProcedureArgs = function(workspace) {
       setArgsType.call(blocks[i], this.varTypeDict);
     }
   }
+};
+
+// extensions/block_types.js
+
+Blockly.Blocks = Blockly.Blocks || {};Blockly.Types = Blockly.Types || {};
+// Math
+
+Blockly.Blocks['math_number'].getBlockType = function(){
+  // TODO: Check
+
+  var numString = this.getFieldValue('NUM');
+  return Blockly.Types.identifyNumber(numString);
+};
+
+Blockly.Blocks['math_single'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+Blockly.Blocks['math_trig'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+Blockly.Blocks['math_number_property'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['math_round'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+Blockly.Blocks['math_modulo'].getBlockType = function(){
+  return Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks['math_random_int'].getBlockType = function(){
+  return Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks['math_random_float'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+// Logic
+
+Blockly.Blocks['logic_compare'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['logic_operation'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['logic_negate'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['logic_boolean'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['logic_null'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+// Text
+
+Blockly.Blocks['text'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
+Blockly.Blocks['text_join'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
+Blockly.Blocks['text_length'].getBlockType = function(){
+  return Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks['text_isEmpty'].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks['text_trim'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
+Blockly.Blocks['text_prompt_ext'].getBlockType = function(){
+  // TODO: check
+  return (this.getFieldValue('TYPE') == Blockly.Types.TEXT.output) ?
+    Blockly.Types.TEXT : Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks['text_prompt'].getBlockType = function(){
+  // TODO: check
+  return (this.getFieldValue('TYPE') == Blockly.Types.NUMBER.output) ?
+    Blockly.Types.NUMBER : Blockly.Types.TEXT;
+};
+
+// Variables
+
+Blockly.Blocks['variables_get'].getBlockType = function(){
+  return [Blockly.Types.UNDEF, this.getFieldValue('VAR')];
+};
+
+// Procedures
+
+Blockly.Blocks['procedures_callreturn'].getBlockType = function(){
+  var defBlock = Blockly.Procedures.getDefinition(this.getProcedureCall(),
+    this.workspace);
+
+  return defBlock.getReturnType();
+};
+
+Blockly.Blocks['procedures_defreturn'].getReturnType = function(){
+  var returnType = Blockly.Types.NULL;
+  var returnBlock = this.getInputTargetBlock('RETURN');
+  if (returnBlock) {
+    // First check if the block itself has a type already
+    if (returnBlock.getBlockType) {
+      returnType = returnBlock.getBlockType();
+    } else {
+      returnType = Blockly.Types.getChildBlockType(returnBlock);
+    }
+  }
+  return returnType;
+};
+
+Blockly.Blocks['procedures_defnoreturn'].setArgsType = function(existingVars) {
+  var varNames = this.arguments_;
+
+  // Check if variable has been defined already and save type
+  for (var name in existingVars) {
+    for (var i = 0, length_ = varNames.length; i < length_; i++) {
+      if (name === varNames[i]) {
+        this.argsTypes[name] = existingVars[name];
+      }
+    }
+  }
+};
+
+Blockly.Blocks['procedures_defnoreturn'].getArgType = function(varName) {
+  for (var name in this.argsTypes) {
+    if (name == varName) {
+      return this.argsTypes[varName];
+    }
+  }
+  return null;
+};
+
+Blockly.Blocks['procedures_defreturn'].setArgsType = Blockly.Blocks['procedures_defnoreturn'].setArgsType;
+Blockly.Blocks['procedures_defreturn'].getArgType = Blockly.Blocks['procedures_defnoreturn'].getArgType;
+// extensions/block_var_types.js
+
+Blockly.Blocks = Blockly.Blocks || {};Blockly.Types = Blockly.Types || {};
+
+// Variables
+
+Blockly.Blocks["variables_get"].getVarType = function(varName) {
+  return [Blockly.Types.UNDEF, this.getFieldValue('VAR')];
+};
+
+Blockly.Blocks["variables_set"].getVarType = function(varName) {
+  return Blockly.Types.getChildBlockType(this);
+};
+
+// Loops
+
+Blockly.Blocks['controls_for'].getVarType = function(varName){
+  return Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks['controls_forEach'].getVarType = function(varName){
+  return Blockly.Types.NUMBER;
+};
+
+// Procedures
+
+Blockly.Blocks['procedures_defnoreturn'].getVarType = function(varName){
+  return Blockly.Types.UNDEF;
+};
+
+Blockly.Blocks['procedures_defreturn'].getVarType = Blockly.Blocks['procedures_defnoreturn'].getVarType;
+
+// Math
+
+Blockly.Blocks['math_change'].getVarType = function(varName){
+  return Blockly.Types.NUMBER;
+};
+
+// Text
+
+Blockly.Blocks['text_append'].getVarType = function(varName){
+  return Blockly.Types.TEXT;
 };
 
 // blocks/io.js
@@ -2021,9 +2214,13 @@ Blockly.Arduino.init = function(workspace) {
   if (!Blockly.Arduino.variableDB_) {
     Blockly.Arduino.variableDB_ =
       new Blockly.Names(Blockly.Arduino.RESERVED_WORDS_);
+
   } else {
     Blockly.Arduino.variableDB_.reset();
   }
+
+  // Define a variable map
+  Blockly.Arduino.variableDB_.setVariableMap(workspace.getVariableMap());
 
   // Iterate through to capture all blocks types and set the function arguments
   var varsWithTypes = Blockly.Arduino.StaticTyping.collectVarsWithTypes(workspace);

@@ -10,6 +10,8 @@ files = [
         "extensions/type.js",
         "extensions/types.js",
         "extensions/static_typing.js",
+        "extensions/block_types.js",
+        "extensions/block_var_types.js",
 
         "blocks/io.js",
         "blocks/logo.js",
