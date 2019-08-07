@@ -1,7 +1,13 @@
+// header.js
 import Blockly from "node-blockly/browser";
 
-let goog = { isArray: Array.isArray, isString: function(val) { return typeof val == 'string'; } };
+let goog = {
+  isArray: Array.isArray,
 
+  isString: function(val) {
+    return typeof val == 'string';
+  }
+};
 // extensions/type.js
 /**
  * @license Licensed under the Apache License, Version 2.0 (the "License"):
@@ -4711,5 +4717,5 @@ Blockly.Msg.RENAME_INSTANCE = 'Rename instance...';
 Blockly.Msg.NEW_INSTANCE_TITLE = 'New instance name:';
 /// Instances - Confirmation message that a number of instances will be renamed to a new name
 Blockly.Msg.RENAME_INSTANCE_TITLE = 'Rename all "%1" instances to:';
-
+// footer.js
 export default Blockly;

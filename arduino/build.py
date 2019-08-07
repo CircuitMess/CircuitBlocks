@@ -5,6 +5,8 @@ import re
 '''
 
 files = [
+        "header.js",
+
         "extensions/type.js",
         "extensions/types.js",
         "extensions/static_typing.js",
@@ -40,13 +42,12 @@ files = [
         "generators/arduino/tone.js",
         "generators/arduino/variables.js",
 
-        "msg/arduino.js"
+        "msg/arduino.js",
+
+        "footer.js"
     ]
 
 OUTPUT = "../src/BlocklyDuino.js"
-
-HEADER = "import Blockly from \"node-blockly/browser\";\n\nlet goog = { isArray: Array.isArray, isString: function(val) { return typeof val == 'string'; } };\n\n"
-FOOTER = "\nexport default Blockly;"
 
 googRegex = re.compile("goog\.(require|provide)\(\s*[\"'](.*)[\"']\s*\)")
 
@@ -64,9 +65,13 @@ def goog(line):
         return "\n"
 
 if __name__ == "__main__":
+    print("Combining JS files:")
+
     code = ""
 
     for file in files:
+        print(file)
+
         code += "// " + file + "\n"
 
         f = open(file, "r")
@@ -84,6 +89,11 @@ if __name__ == "__main__":
         code += "\n"
         f.close()
 
+    print("")
+    print("Writing to " + OUTPUT)
+
     f = open(OUTPUT, "w")
-    f.write(HEADER + code + FOOTER)
+    f.write(code)
     f.close()
+
+    print("Done")
