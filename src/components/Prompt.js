@@ -34,6 +34,11 @@ const Footer = styled.div`
   right: 10px;
   display: flex;
   justify-content: space-around;
+
+  button,
+  div {
+    color: white;
+  }
 `;
 
 const Prompt = (props) => {
