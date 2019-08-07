@@ -1,0 +1,12 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <variables>
+    <variable id="7mJ{C@uaA68446C*.l.+">Foobar</variable>
+  </variables>
+  <block type="controls_if" id="3bFu]EuGml4DKM,qqVo/" x="110" y="75">
+    <value name="IF0">
+      <block type="variables_get" id="6VO[p;*;m`.VHSfFqD9=">
+        <field name="VAR" id="7mJ{C@uaA68446C*.l.+">Foobar</field>
+      </block>
+    </value>
+  </block>
+</xml>

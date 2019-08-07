@@ -1,0 +1,58 @@
+<xml xmlns="https://developers.google.com/blockly/xml">
+  <block type="controls_repeat_ext" id="YMK.Lwl4z0AC~|;{Dl]L" x="73" y="51">
+    <value name="TIMES">
+      <block type="math_number" id="W_EjG{cC/vB{M,65!NxI">
+        <field name="NUM">10</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="controls_if" id="kvb6}Fm@aDO(yK]Mx$7+">
+        <value name="IF0">
+          <block type="math_number_property" id="|0S@R5Z$mUE;=(UF(sZE">
+            <mutation divisor_input="false"/>
+            <field name="PROPERTY">EVEN</field>
+            <value name="NUMBER_TO_CHECK">
+              <block type="math_number" id="1{jetH:_[mgPA5,ivg6A">
+                <field name="NUM">10</field>
+              </block>
+            </value>
+          </block>
+        </value>
+        <statement name="DO0">
+          <block type="controls_if" id="bJD.8GK}]K{bUM)t[.Z@">
+            <value name="IF0">
+              <block type="math_number_property" id="+^o:.XL$H0UoBQ:Y4](k">
+                <mutation divisor_input="false"/>
+                <field name="PROPERTY">EVEN</field>
+                <value name="NUMBER_TO_CHECK">
+                  <block type="math_number" id="^wC*C]_p|w/v~u`C%ZoM">
+                    <field name="NUM">10</field>
+                  </block>
+                </value>
+              </block>
+            </value>
+            <statement name="DO0">
+              <block type="io_digitalwrite" id="]Xq9-qgh6}PO-^:Ir}Sc">
+                <field name="PIN">0</field>
+                <value name="STATE">
+                  <block type="io_highlow" id=":?%0q;(gh#_T:7S|^_K!">
+                    <field name="STATE">HIGH</field>
+                  </block>
+                </value>
+                <next>
+                  <block type="time_delay" id=",jk]:VwC|ZthbSW$49Df">
+                    <value name="DELAY_TIME_MILI">
+                      <block type="math_number" id="GO{X/BK#3FB8vHE6u.JL">
+                        <field name="NUM">1000</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </statement>
+          </block>
+        </statement>
+      </block>
+    </statement>
+  </block>
+</xml>

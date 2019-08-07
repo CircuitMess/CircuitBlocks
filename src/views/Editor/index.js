@@ -1,22 +1,13 @@
 import React, { Component } from "react";
-import Blockly from "../BlocklyDuino";
+import Blockly from "../../BlocklyDuino";
 
-import AppContext, { AppProvider } from "../contexts/AppContext";
-import AppReducer from "../reducers/AppReducer";
-import { toolbox } from "../assets/xmls.js";
-import CodeEditor from "../components/CodeEditor";
-import BlocklyEditor from "../components/BlocklyEditor";
-import { EditorHeader } from "../components/Header";
-import Popups from "../components/Popups";
-import Prompt from "../components/Prompt";
-
-const appInitState = {
-  isModalOpen: false,
-  modalType: "save",
-  isAlertOpen: false,
-  alertText: "You cant save an empty file",
-  isCodeOpen: false
-};
+import AppContext from "../../contexts/AppContext";
+import { toolbox } from "../../assets/xmls.js";
+import CodeEditor from "../../components/CodeEditor";
+import BlocklyEditor from "../../components/BlocklyEditor";
+import { EditorHeader } from "../../components/Header";
+import Popups from "../../components/Popups";
+import Prompt from "../../components/Prompt";
 
 const NAV_BAR_HEIGHT = 64;
 
@@ -33,7 +24,7 @@ const xml = `<xml xmlns="https://developers.google.com/blockly/xml">
 </block>
 </xml>`;
 
-class Main extends Component {
+class Editor extends Component {
   static contextType = AppContext;
 
   constructor(props) {
@@ -54,7 +45,9 @@ class Main extends Component {
     this.openLoadModal = this.openLoadModal.bind(this);
     this.closePrompt = this.closePrompt.bind(this);
     this.toggleCode = this.toggleCode.bind(this);
+    this.openHome = this.openHome.bind(this);
     this.setRef = this.setRef.bind(this);
+    this.clear = this.clear.bind(this);
     this.load = this.load.bind(this);
   }
 
@@ -119,6 +112,10 @@ class Main extends Component {
     });
   }
 
+  clear() {
+    this.workspace.clear();
+  }
+
   setRef(ref) {
     this.blocklyDiv = ref;
   }
@@ -138,6 +135,22 @@ class Main extends Component {
 
   closePrompt() {
     this.setState({ promptOpen: false });
+  }
+
+  openHome() {
+    this.callback = (data) => {
+      if (data === undefined) {
+        // alert(`dont save`);
+      } else {
+        // alert(`Save as ${data}`);
+      }
+      this.props.openHome();
+    };
+    this.setState({
+      promptOpen: true,
+      promptText: "Do you want to save",
+      initState: undefined
+    });
   }
 
   render() {
@@ -165,7 +178,7 @@ class Main extends Component {
         <EditorHeader
           save={this.openSaveModal}
           load={this.openLoadModal}
-          openHome={this.props.openHome}
+          openHome={this.openHome}
           toggleCode={this.toggleCode}
           isCodeOpen={isCodeOpen}
         />
@@ -180,13 +193,5 @@ class Main extends Component {
     );
   }
 }
-
-const Editor = (props) => {
-  return (
-    <AppProvider initialState={appInitState} reducer={AppReducer}>
-      <Main openHome={props.openHome} />
-    </AppProvider>
-  );
-};
 
 export default Editor;

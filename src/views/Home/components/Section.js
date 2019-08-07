@@ -1,0 +1,64 @@
+import React from "react";
+import styled from "styled-components";
+
+import SectionItem from "./SectionItem";
+import NewProject from "./NewProject";
+
+const Title = styled.h2`
+  padding: 0;
+  margin: 0;
+`;
+
+const SectionWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+`;
+
+const SectionHeader = styled.div`
+  margin: 40px 80px 20px 80px;
+`;
+
+const SectionContainer = styled.div`
+  width: 100%;
+  height: 155px;
+  display: flex;
+  flex-direction: row;
+  overflow-x: hidden; /* scroll */
+  overflow-y: hidden;
+`;
+
+const Section = (props) => {
+  const { title, items, open, closeHome, projects } = props;
+
+  const openNew = () => {
+    open();
+    closeHome();
+  };
+
+  const openFile = (filename) => {
+    open(filename);
+    closeHome();
+  };
+
+  return (
+    <SectionWrapper>
+      <SectionHeader>
+        <Title>{title}</Title>
+      </SectionHeader>
+      <SectionContainer>
+        {projects && <NewProject onClick={openNew} />}
+        {items &&
+          items.map((item, index) => (
+            <SectionItem
+              key={`SectionItem${index}`}
+              item={item}
+              onClick={() => openFile(item.filename)}
+              first={!projects && index === 0}
+            />
+          ))}
+      </SectionContainer>
+    </SectionWrapper>
+  );
+};
+
+export default Section;

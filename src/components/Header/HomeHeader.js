@@ -1,20 +1,20 @@
 import React from "react";
 
-import HeaderaBase from "./HeaderBase";
+import HeaderBase from "./HeaderBase";
 import HeaderItem from "./HeaderItem";
 
 const HomeHeader = (props) => {
   const { closeHome } = props;
 
   return (
-    <HeaderaBase onPressLogo={closeHome}>
-      <HeaderItem>
-        <p>Run</p>
+    <HeaderBase onPressLogo={closeHome}>
+      <HeaderItem center disabled>
+        <p>Home</p>
       </HeaderItem>
-      <HeaderItem className="right">
+      <HeaderItem right>
         <p>Login</p>
       </HeaderItem>
-    </HeaderaBase>
+    </HeaderBase>
   );
 };
 
