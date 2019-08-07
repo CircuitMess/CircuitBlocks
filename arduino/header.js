@@ -1,4 +1,4 @@
-import Blockly from "node-blockly/browser";
+import Blockly from "node-blockly/browser-raw";
 
 let goog = {
   isArray: Array.isArray,
