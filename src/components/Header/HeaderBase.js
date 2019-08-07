@@ -16,7 +16,7 @@ const HeaderDiv = styled.div`
   }
 `;
 
-const HeaderaBase = props => {
+const HeaderaBase = (props) => {
   const { onPressLogo, children } = props;
 
   return (

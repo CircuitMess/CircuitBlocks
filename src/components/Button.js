@@ -30,11 +30,11 @@ const Button = styled.div`
   font-size: 12px;
 
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  background-color: ${props =>
+  background-color: ${(props) =>
     (colors[props.color] && colors[props.color].main) || colors.primary.main};
 
   :hover {
-    background-color: ${props =>
+    background-color: ${(props) =>
       (colors[props.color] && colors[props.color].pressed) ||
       colors.primary.pressed};
   }
@@ -53,11 +53,11 @@ const SubmitButton = styled.button`
   border: none;
 
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  background-color: ${props =>
+  background-color: ${(props) =>
     (colors[props.color] && colors[props.color].main) || colors.primary.main};
 
   :hover {
-    background-color: ${props =>
+    background-color: ${(props) =>
       (colors[props.color] && colors[props.color].pressed) ||
       colors.primary.pressed};
   }

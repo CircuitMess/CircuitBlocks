@@ -80,7 +80,7 @@ class Main extends Component {
     };
 
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
-    this.workspace.addChangeListener(e => {
+    this.workspace.addChangeListener((e) => {
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
       if (this.state.code !== code) {
         this.setState({ code });
@@ -129,7 +129,7 @@ class Main extends Component {
   }
 
   toggleCode() {
-    this.setState(state => {
+    this.setState((state) => {
       const isCodeOpen = !state.isCodeOpen;
       // this.workspace.setVisible(!isCodeOpen);
       return { isCodeOpen: isCodeOpen };
@@ -181,7 +181,7 @@ class Main extends Component {
   }
 }
 
-const Editor = props => {
+const Editor = (props) => {
   return (
     <AppProvider initialState={appInitState} reducer={AppReducer}>
       <Main openHome={props.openHome} />

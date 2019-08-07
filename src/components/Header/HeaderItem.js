@@ -12,7 +12,7 @@ const Item = styled.div`
     background-color: rgba(0, 0, 0, 0.1);
   }
 
-  ${props =>
+  ${(props) =>
     props.right
       ? {
           position: "absolute",

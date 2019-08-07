@@ -3,7 +3,7 @@ import React from "react";
 import HeaderBase from "./HeaderBase";
 import HeaderItem from "./HeaderItem";
 
-const EditorHeader = props => {
+const EditorHeader = (props) => {
   const { save, load, toggleCode, isCodeOpen, openHome } = props;
 
   return (

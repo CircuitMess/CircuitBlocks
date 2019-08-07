@@ -34,7 +34,7 @@ const CloseButton = styled.div`
   }
 `;
 
-const ModalHeader = props => {
+const ModalHeader = (props) => {
   const { title } = props;
   const [appState, appDispatch] = useAppStateValue();
 

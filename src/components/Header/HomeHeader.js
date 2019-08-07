@@ -3,7 +3,7 @@ import React from "react";
 import HeaderaBase from "./HeaderBase";
 import HeaderItem from "./HeaderItem";
 
-const HomeHeader = props => {
+const HomeHeader = (props) => {
   const { closeHome } = props;
 
   return (

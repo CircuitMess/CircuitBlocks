@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   background-color: white;
 `;
 
-const Home = props => {
+const Home = (props) => {
   const { closeHome } = props;
 
   return (

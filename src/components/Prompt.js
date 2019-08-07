@@ -36,11 +36,11 @@ const Footer = styled.div`
   justify-content: space-around;
 `;
 
-const Prompt = props => {
+const Prompt = (props) => {
   const { initValue, callback, closePrompt, promptText } = props;
   const [value, setValue] = useState(initValue);
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     callback(value);
     closePrompt();
@@ -51,7 +51,7 @@ const Prompt = props => {
     closePrompt();
   };
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setValue(e.target.value);
   };
 

@@ -12,7 +12,7 @@ const Code = styled.p`
   white-space: pre;
 `;
 
-const CodeEditor = props => {
+const CodeEditor = (props) => {
   const { code, isCodeOpen } = props;
   // const [appState, appDispatch] = useAppStateValue();
   // const { isCodeOpen } = appState;

@@ -31,7 +31,7 @@ const ModalBody = styled.div`
   margin: 0 auto;
 `;
 
-const Modal = props => {
+const Modal = (props) => {
   const { children } = props;
   const [appState, appDispatch] = useAppStateValue();
 

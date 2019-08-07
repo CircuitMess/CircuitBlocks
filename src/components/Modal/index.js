@@ -4,7 +4,7 @@ import SaveModal from "./SaveModal";
 import LoadModal from "./LoadModal";
 import { useAppStateValue } from "../../contexts/AppContext";
 
-const Modal = props => {
+const Modal = (props) => {
   const { load } = props;
   const [appState, appDispatch] = useAppStateValue();
   const { isModalOpen, modalType } = appState;

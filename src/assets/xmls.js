@@ -1,4 +1,4 @@
-const loadFile = file => {
+const loadFile = (file) => {
   const request = new XMLHttpRequest();
   request.open("GET", `xmls/${file}`, false);
   request.send();

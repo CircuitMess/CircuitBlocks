@@ -4,14 +4,14 @@ import { saveAs } from "file-saver";
 import Modal from "./Modal";
 import { useAppStateValue } from "../../contexts/AppContext";
 
-const sanitizeName = name => name.replace(/ /g, "_").replace(/\./g, "");
+const sanitizeName = (name) => name.replace(/ /g, "_").replace(/\./g, "");
 
-const SaveModal = props => {
+const SaveModal = (props) => {
   const [name, setName] = useState("");
   const [appState, appDispatch] = useAppStateValue();
   const { saveXml } = appState;
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     const sanitizedName = sanitizeName(name);
 
@@ -30,7 +30,7 @@ const SaveModal = props => {
         <input
           type="text"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
         />
         <button type="submit">Save</button>
       </form>
