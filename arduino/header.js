@@ -5,5 +5,11 @@ let goog = {
 
   isString: function(val) {
     return typeof val == 'string';
+  },
+
+  dom: {
+    createDom: function(name){
+      return document.createElement(name);
+    }
   }
 };

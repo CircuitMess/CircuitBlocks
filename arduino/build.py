@@ -7,11 +7,16 @@ import re
 files = [
         "header.js",
 
+        "extensions/core/procedures.js",
+        "extensions/core/block.js",
+
         "extensions/type.js",
         "extensions/types.js",
         "extensions/static_typing.js",
         "extensions/block_types.js",
         "extensions/block_var_types.js",
+        "extensions/field_instance.js",
+        "extensions/instances.js",
 
         "blocks/io.js",
         "blocks/logo.js",
