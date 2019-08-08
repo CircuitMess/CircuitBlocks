@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import Button from "./Button";
-import { useAppStateValue } from "../contexts/AppContext";
+import Button from './Button';
+import { useAppStateValue } from '../contexts/AppContext';
 
 const AlertBackdrop = styled.div`
   position: absolute;
@@ -42,7 +42,7 @@ const Alert = () => {
 
   const { alertText } = appState;
   const closeAlert = () => {
-    appDispatch({ type: "closeAlert" });
+    appDispatch({ type: 'closeAlert' });
   };
 
   return (

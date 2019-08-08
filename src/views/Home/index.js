@@ -1,10 +1,10 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import { HomeHeader } from "../../components/Header";
-import Section from "./components/Section";
+import { HomeHeader } from '../../components/Header';
+import Section from './components/Section';
 
-import home from "../../assets/images/home.png";
+import home from '../../assets/images/home.png';
 
 const Wrapper = styled.div`
   position: absolute;
@@ -25,50 +25,110 @@ const BackgroundImage = styled.div`
 const Home = (props) => {
   const { closeHome, open } = props;
 
-  const items = [
+  const examples = [
     {
-      title: "Tutorial 1",
-      lastEdited: "10 min ago",
-      image: "foobar",
-      filename: "Tutorial_1/asd.xml"
+      title: 'Tutorial 1',
+      lastEdited: '10 min ago',
+      image: 'foobar',
+      filename: 'Tutorial_1/asd.xml'
     },
     {
-      title: "Tutorial 2",
-      lastEdited: "10 min ago",
-      image: "foobar",
-      filename: "Tutorial_1/foo.xml"
+      title: 'Tutorial 2',
+      lastEdited: '10 min ago',
+      image: 'foobar',
+      filename: 'Tutorial_1/foo.xml'
     },
     {
-      title: "Tutorial 2",
-      lastEdited: "10 min ago",
-      image: "foobar",
-      filename: "Tutorial_1/foobar.xml"
+      title: 'Tutorial 3',
+      lastEdited: '10 min ago',
+      image: 'foobar',
+      filename: 'Tutorial_1/foobar.xml'
     },
     {
-      title: "Tutorial 2",
-      lastEdited: "10 min ago",
-      image: "foobar",
-      filename: "Tutorial_2/gfhj.xml"
+      title: 'Tutorial 4',
+      lastEdited: '10 min ago',
+      image: 'foobar',
+      filename: 'Tutorial_2/gfhj.xml'
     },
     {
-      title: "Tutorial 2",
-      lastEdited: "10 min ago",
-      image: "foobar",
-      filename: "Tutorial_2/nesto.xml"
+      title: 'Tutorial 5',
+      lastEdited: '10 min ago',
+      image: 'foobar',
+      filename: 'Tutorial_2/nesto.xml'
     }
   ];
+
+  const electron = window.require('electron');
+  const ipcRenderer = electron.ipcRenderer;
+
+  ipcRenderer.once('save', (event, arg) => {
+    // setText(arg);
+    if (arg.error) {
+      console.error(arg.error);
+    } else {
+      console.log('Saved');
+    }
+  });
+  const save = () => {
+    ipcRenderer.send('save', { filename: 'albert1.xml', data: 'nestooooooooo' });
+  };
+
+  ipcRenderer.on('load', (event, arg) => {
+    // setText(arg);
+    if (arg.error) {
+      console.error(arg.error);
+    } else {
+      console.log(arg.data);
+    }
+  });
+  const load = () => {
+    ipcRenderer.send('load', { filename: 'albert1.xml' });
+  };
+
+  const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState([]);
+
+  console.log('foobar');
+
+  ipcRenderer.on('listFiles', (event, arg) => {
+    // setText(arg);
+    if (arg.error) {
+      console.error(arg.error);
+    } else {
+      console.log(arg.data);
+      setProjects(arg.data);
+      setLoading(false);
+    }
+  });
+  const listFiles = () => {
+    ipcRenderer.send('listFiles');
+  };
+
+  React.useEffect(() => {
+    ipcRenderer.send('listFiles');
+  }, []);
 
   return (
     <Wrapper>
       <HomeHeader onPressLogo={closeHome} />
+      <button type="button" onClick={load}>
+        Load file
+      </button>
+      <button type="button" onClick={save}>
+        Save file
+      </button>
+      <button type="button" onClick={listFiles}>
+        List files
+      </button>
       <BackgroundImage />
-      <Section title="My Projects" projects open={open} closeHome={closeHome} />
-      <Section
-        title="Examples"
-        items={items}
-        open={open}
-        closeHome={closeHome}
-      />
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <Section title="My Projects" items={projects} open={open} closeHome={closeHome} project />
+          <Section title="Examples" items={examples} open={open} closeHome={closeHome} />
+        </>
+      )}
     </Wrapper>
   );
 };

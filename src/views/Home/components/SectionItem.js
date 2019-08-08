@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const SectionItemWrapper = styled.div`
   display: inline-block;
@@ -10,13 +10,12 @@ const SectionItemWrapper = styled.div`
 
   cursor: pointer;
 
-  margin-left: ${(props) => (props.first ? "80px" : "6px")};
+  margin-left: ${(props) => (props.first ? '80px' : '6px')};
   background-color: #fff;
 `;
 
 const SectionItem = (props) => {
-  const { item, first, onClick } = props;
-  const { title, lastEdited, image } = item;
+  const { first, onClick, title, lastEdited, image } = props;
 
   return (
     <SectionItemWrapper first={first} onClick={onClick}>

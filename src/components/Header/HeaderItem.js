@@ -1,16 +1,16 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const position = (props) => {
   if (props.right) {
     return {
-      position: "absolute",
+      position: 'absolute',
       right: 0
     };
   }
   if (props.center) {
     return {
-      position: "relative",
-      margin: "0 auto"
+      position: 'relative',
+      margin: '0 auto'
     };
   }
 };
@@ -21,11 +21,10 @@ const Item = styled.div`
   text-align: center;
   align-items: center;
   color: white;
-  ${(props) => !props.disabled && { cursor: "pointer" }}
+  ${(props) => !props.disabled && { cursor: 'pointer' }}
 
   :hover {
-    ${(props) =>
-      props.disabled ? null : { backgroundColor: "rgba(0, 0, 0, 0.1)" }}
+    ${(props) => (props.disabled ? null : { backgroundColor: 'rgba(0, 0, 0, 0.1)' })}
   }
 
   ${position}

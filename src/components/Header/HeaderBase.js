@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const HeaderDiv = styled.div`
   height: 64px;
@@ -23,7 +23,7 @@ const HeaderaBase = (props) => {
     <HeaderDiv>
       <img
         className="logo"
-        src={require("../../assets/images/logo.png")}
+        src={require('../../assets/images/logo.png')}
         alt="logo"
         onClick={onPressLogo}
       />

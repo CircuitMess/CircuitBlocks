@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import SaveModal from "./SaveModal";
-import LoadModal from "./LoadModal";
-import { useAppStateValue } from "../../contexts/AppContext";
+import SaveModal from './SaveModal';
+import LoadModal from './LoadModal';
+import { useAppStateValue } from '../../contexts/AppContext';
 
 const Modal = (props) => {
   const { load } = props;
@@ -14,9 +14,9 @@ const Modal = (props) => {
   }
 
   switch (modalType) {
-    case "save":
+    case 'save':
       return <SaveModal />;
-    case "load":
+    case 'load':
       return <LoadModal load={load} />;
     default:
       return null;

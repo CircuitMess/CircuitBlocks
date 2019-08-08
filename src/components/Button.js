@@ -1,21 +1,21 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const colors = {
   primary: {
-    main: "#ddd",
-    pressed: "#ccc"
+    main: '#ddd',
+    pressed: '#ccc'
   },
   secondary: {
-    main: "#aaa",
-    pressed: "#999"
+    main: '#aaa',
+    pressed: '#999'
   },
   success: {
-    main: "#6d6",
-    pressed: "#2c2"
+    main: '#6d6',
+    pressed: '#2c2'
   },
   danger: {
-    main: "#d66",
-    pressed: "#c22"
+    main: '#d66',
+    pressed: '#c22'
   }
 };
 
@@ -35,8 +35,7 @@ const Button = styled.div`
 
   :hover {
     background-color: ${(props) =>
-      (colors[props.color] && colors[props.color].pressed) ||
-      colors.primary.pressed};
+      (colors[props.color] && colors[props.color].pressed) || colors.primary.pressed};
   }
 `;
 
@@ -58,8 +57,7 @@ const SubmitButton = styled.button`
 
   :hover {
     background-color: ${(props) =>
-      (colors[props.color] && colors[props.color].pressed) ||
-      colors.primary.pressed};
+      (colors[props.color] && colors[props.color].pressed) || colors.primary.pressed};
   }
 `;
 

@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import SectionItem from "./SectionItem";
-import NewProject from "./NewProject";
+import SectionItem from './SectionItem';
+import NewProject from './NewProject';
 
 const Title = styled.h2`
   padding: 0;
@@ -28,7 +28,7 @@ const SectionContainer = styled.div`
 `;
 
 const Section = (props) => {
-  const { title, items, open, closeHome, projects } = props;
+  const { title, items, open, closeHome, project } = props;
 
   const openNew = () => {
     open();
@@ -46,14 +46,14 @@ const Section = (props) => {
         <Title>{title}</Title>
       </SectionHeader>
       <SectionContainer>
-        {projects && <NewProject onClick={openNew} />}
+        {project && <NewProject onClick={openNew} />}
         {items &&
           items.map((item, index) => (
             <SectionItem
-              key={`SectionItem${index}`}
-              item={item}
+              key={`SectionItem${item.title || item}|${title}`}
+              {...(project ? { title: item } : { ...item })}
               onClick={() => openFile(item.filename)}
-              first={!projects && index === 0}
+              first={!project && index === 0}
             />
           ))}
       </SectionContainer>

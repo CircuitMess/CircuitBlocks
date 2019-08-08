@@ -1,13 +1,13 @@
-import React, { Component } from "react";
-import Blockly from "../../BlocklyDuino";
+import React, { Component } from 'react';
+import Blockly from '../../BlocklyDuino';
 
-import AppContext from "../../contexts/AppContext";
-import { toolbox } from "../../assets/xmls.js";
-import CodeEditor from "../../components/CodeEditor";
-import BlocklyEditor from "../../components/BlocklyEditor";
-import { EditorHeader } from "../../components/Header";
-import Popups from "../../components/Popups";
-import Prompt from "../../components/Prompt";
+import AppContext from '../../contexts/AppContext';
+import { toolbox } from '../../assets/xmls.js';
+import CodeEditor from '../../components/CodeEditor';
+import BlocklyEditor from '../../components/BlocklyEditor';
+import { EditorHeader } from '../../components/Header';
+import Popups from '../../components/Popups';
+import Prompt from '../../components/Prompt';
 
 const NAV_BAR_HEIGHT = 64;
 
@@ -31,13 +31,13 @@ class Editor extends Component {
     super(props);
 
     this.state = {
-      code: "",
+      code: '',
       width: window.innerWidth,
       height: window.innerHeight - NAV_BAR_HEIGHT,
       isCodeOpen: false,
-      initState: "",
+      initState: '',
       promptOpen: false,
-      promptText: ""
+      promptText: ''
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -81,34 +81,34 @@ class Editor extends Component {
     });
     this.load(xml);
     this.updateDimensions();
-    window.addEventListener("resize", this.updateDimensions);
+    window.addEventListener('resize', this.updateDimensions);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
+    window.removeEventListener('resize', this.updateDimensions);
   }
 
   openSaveModal() {
     const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
     const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
 
-    if (xmlText.split("<").length > 2) {
+    if (xmlText.split('<').length > 2) {
       this.appDispatch({
-        type: "openModal",
-        payload: { type: "save", xml: xmlText }
+        type: 'openModal',
+        payload: { type: 'save', xml: xmlText }
       });
     } else {
       this.appDispatch({
-        type: "openAlert",
-        payload: { text: "You cant save an empty file" }
+        type: 'openAlert',
+        payload: { text: 'You cant save an empty file' }
       });
     }
   }
 
   openLoadModal() {
     this.appDispatch({
-      type: "openModal",
-      payload: { type: "load" }
+      type: 'openModal',
+      payload: { type: 'load' }
     });
   }
 
@@ -148,21 +148,13 @@ class Editor extends Component {
     };
     this.setState({
       promptOpen: true,
-      promptText: "Do you want to save",
+      promptText: 'Do you want to save',
       initState: undefined
     });
   }
 
   render() {
-    const {
-      code,
-      width,
-      height,
-      isCodeOpen,
-      initState,
-      promptOpen,
-      promptText
-    } = this.state;
+    const { code, width, height, isCodeOpen, initState, promptOpen, promptText } = this.state;
 
     return (
       <div className="wrapper">
@@ -182,12 +174,7 @@ class Editor extends Component {
           toggleCode={this.toggleCode}
           isCodeOpen={isCodeOpen}
         />
-        <BlocklyEditor
-          setRef={this.setRef}
-          width={width}
-          height={height}
-          isCodeOpen={isCodeOpen}
-        />
+        <BlocklyEditor setRef={this.setRef} width={width} height={height} isCodeOpen={isCodeOpen} />
         <CodeEditor code={code} isCodeOpen={isCodeOpen} />
       </div>
     );

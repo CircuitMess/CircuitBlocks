@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import HeaderBase from "./HeaderBase";
-import HeaderItem from "./HeaderItem";
+import HeaderBase from './HeaderBase';
+import HeaderItem from './HeaderItem';
 
 const EditorHeader = (props) => {
   const { save, load, toggleCode, isCodeOpen, openHome } = props;
@@ -18,7 +18,7 @@ const EditorHeader = (props) => {
         <p>Run</p>
       </HeaderItem>
       <HeaderItem right onClick={toggleCode}>
-        <p>Switch to {isCodeOpen ? "blocks" : "code"}</p>
+        <p>Switch to {isCodeOpen ? 'blocks' : 'code'}</p>
       </HeaderItem>
     </HeaderBase>
   );

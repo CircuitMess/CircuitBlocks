@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { useAppStateValue } from "../../contexts/AppContext";
+import React from 'react';
+import styled from 'styled-components';
+import { useAppStateValue } from '../../contexts/AppContext';
 
 const HeaderDiv = styled.div`
   width: 100%;
@@ -41,7 +41,7 @@ const ModalHeader = (props) => {
   return (
     <HeaderDiv>
       <Title>{title}</Title>
-      <CloseButton onClick={() => appDispatch({ type: "closeModal" })}>
+      <CloseButton onClick={() => appDispatch({ type: 'closeModal' })}>
         <i className="material-icons">close</i>
       </CloseButton>
     </HeaderDiv>

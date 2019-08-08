@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
-import ModalHeader from "./ModalHeader";
-import { useAppStateValue } from "../../contexts/AppContext";
+import ModalHeader from './ModalHeader';
+import { useAppStateValue } from '../../contexts/AppContext';
 
 const ModalDiv = styled.div`
   z-index: 200;
@@ -36,9 +36,9 @@ const Modal = (props) => {
   const [appState, appDispatch] = useAppStateValue();
 
   const { modalType } = appState;
-  const title = modalType === "save" ? "Save" : "Load";
+  const title = modalType === 'save' ? 'Save' : 'Load';
 
-  const close = () => appDispatch({ type: "closeModal" });
+  const close = () => appDispatch({ type: 'closeModal' });
 
   return (
     <>

@@ -2,30 +2,30 @@ const reducer = (state, action) => {
   console.log(action);
 
   switch (action.type) {
-    case "openAlert":
+    case 'openAlert':
       return {
         ...state,
         isAlertOpen: true,
         alertText: action.payload.text
       };
-    case "closeAlert":
+    case 'closeAlert':
       return {
         ...state,
         isAlertOpen: false
       };
-    case "openModal":
+    case 'openModal':
       return {
         ...state,
         isModalOpen: true,
         modalType: action.payload.type,
         saveXml: action.payload.xml
       };
-    case "closeModal":
+    case 'closeModal':
       return {
         ...state,
         isModalOpen: false
       };
-    case "toggleCode":
+    case 'toggleCode':
       return {
         ...state,
         isCodeOpen: !state.isCodeOpen

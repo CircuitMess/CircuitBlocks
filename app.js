@@ -1,8 +1,9 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
-const url = require("url");
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { app, BrowserWindow, ipcMain } = require('electron');
+const path = require('path');
+const url = require('url');
 
-const react_url = "http://localhost:3000";
+const reactUrl = 'http://localhost:3000';
 
 let win;
 
@@ -20,10 +21,10 @@ function createWindow() {
 
   // and load the index.html of the app.
   const startUrl =
-    react_url ||
+    reactUrl ||
     url.format({
-      pathname: path.join(__dirname, "./build/index.html"),
-      protocol: "file:",
+      pathname: path.join(__dirname, './build/index.html'),
+      protocol: 'file:',
       slashes: true
     });
   win.loadURL(startUrl);
@@ -32,7 +33,7 @@ function createWindow() {
   win.webContents.openDevTools();
 
   // Emitted when the window is closed.
-  win.on("closed", () => {
+  win.on('closed', () => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
@@ -43,18 +44,18 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on("ready", createWindow);
+app.on('ready', createWindow);
 
 // Quit when all windows are closed.
-app.on("window-all-closed", () => {
+app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== "darwin") {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on("activate", () => {
+app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
@@ -64,3 +65,36 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+const { load, save, listFiles } = require('./core/files');
+
+const callback = (type, event) => {
+  return (error, data) => {
+    if (error === null) {
+      event.reply(type, { error: null, data });
+      // win.webContents.send(type, { error: null, data });
+    } else {
+      event.reply(type, { error });
+      // win.webContents.send(type, { error });
+    }
+  };
+};
+
+ipcMain.on('load', (event, args) => {
+  console.count('load');
+  const { filename } = args;
+  load(filename, callback('load', event));
+});
+
+ipcMain.on('save', (event, args) => {
+  console.count('save');
+  const { filename, data } = args;
+  save(data, filename, callback('save', event));
+});
+
+ipcMain.on('listFiles', (event, args) => {
+  console.count('listFiles');
+  listFiles(callback('listFiles', event));
+});
+
+console.log('foobar');

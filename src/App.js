@@ -1,16 +1,16 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import loadFile from "./assets/xmls";
-import { AppProvider } from "./contexts/AppContext";
-import AppReducer from "./reducers/AppReducer";
-import { Home, Editor } from "./views";
-import "./App.css";
+import loadFile from './assets/xmls';
+import { AppProvider } from './contexts/AppContext';
+import AppReducer from './reducers/AppReducer';
+import { Home, Editor } from './views';
+import './App.css';
 
 const appInitState = {
   isModalOpen: false,
-  modalType: "save",
+  modalType: 'save',
   isAlertOpen: false,
-  alertText: "You cant save an empty file",
+  alertText: 'You cant save an empty file',
   isCodeOpen: false
 };
 
@@ -48,7 +48,7 @@ class App extends Component {
       if (xml) {
         this.editor.current.load(xml);
       } else {
-        alert("Error");
+        alert('Error');
       }
     } else {
       this.editor.current.clear();

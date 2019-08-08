@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import styled from 'styled-components';
 
-import Button, { SubmitButton } from "./Button";
+import Button, { SubmitButton } from './Button';
 
 const AlertBackdrop = styled.div`
   position: absolute;

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import HeaderBase from "./HeaderBase";
-import HeaderItem from "./HeaderItem";
+import HeaderBase from './HeaderBase';
+import HeaderItem from './HeaderItem';
 
 const HomeHeader = (props) => {
   const { closeHome } = props;

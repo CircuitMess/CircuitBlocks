@@ -1,5 +1,5 @@
-import React from "react";
-import { SectionItemWrapper } from "./SectionItem";
+import React from 'react';
+import { SectionItemWrapper } from './SectionItem';
 
 const NewProject = (props) => {
   const { onClick } = props;
