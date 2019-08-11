@@ -15,6 +15,8 @@ from StringIO import StringIO
 # eslint doesn't play nice with closure compiled code
 HEADER = "/* eslint no-unused-expressions: 0, no-undef: 0 */"
 HEADER += "import Blockly from 'node-blockly/browser-raw';"
+# self global doesn't exist in react
+HEADER += "var self = window.self;"
 FOOTER = "export default Blockly;"
 
 DEPS = [ "Blockly.Blocks", "Blockly.Block", "Blockly.Procedures", "Blockly.Generator", "Blockly.Msg", "Blockly.FieldDropdown", "Blockly.utils", "Blockly.Workspace" ]
@@ -168,7 +170,6 @@ if __name__ == "__main__":
 
     # Remove Blockly and BlocklyDuino dependencies from compiled code
     code = code.replace("var Blockly=Blockly||{};", "")
-    code = code.replace("||self;", "||window.self;")
 
     for dep in DEPS:
         code = code.replace(dep + "={};", "")

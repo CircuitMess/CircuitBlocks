@@ -1,6 +1,7 @@
 goog.provide("Blockly.Ext.Procedures");
 
 goog.require("Blockly.Procedures");
+goog.require("goog.dom");
 
 var oldFlyoutCat = Blockly.Procedures.flyoutCategory;
 
