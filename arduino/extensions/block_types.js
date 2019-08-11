@@ -1,3 +1,4 @@
+goog.provide("Blockly.BlockTypes");
 
 goog.require("Blockly.Blocks");
 goog.require("Blockly.Types");

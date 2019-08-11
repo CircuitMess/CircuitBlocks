@@ -1,3 +1,4 @@
+goog.provide("Blockly.Ext.Procedures");
 
 goog.require("Blockly.Procedures");
 

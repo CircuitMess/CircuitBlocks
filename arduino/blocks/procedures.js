@@ -10,6 +10,8 @@
  */
 'use strict';
 
+goog.provide("Blockly.Blocks.Procedures");
+
 goog.require('Blockly.Blocks');
 
 
