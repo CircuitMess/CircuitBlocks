@@ -44,3 +44,5 @@ goog.require("Blockly.Arduino.tone");
 goog.require("Blockly.Arduino.variables");
 
 goog.require("Blockly.Msg.en");
+
+goog.require("Blockly.Arduino.MAKERphone");

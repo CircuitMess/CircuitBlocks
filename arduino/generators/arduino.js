@@ -23,6 +23,9 @@ goog.require('Blockly.StaticTyping');
 Blockly.Arduino = new Blockly.Generator('Arduino');
 Blockly.Arduino.StaticTyping = new Blockly.StaticTyping();
 
+// Additional features that aren't blocks
+Blockly.Arduino.additionals = [];
+
 /**
  * List of illegal variable names.
  * This is not intended to be a security feature.  Blockly is 100% client-side,
@@ -135,6 +138,11 @@ Blockly.Arduino.init = function(workspace) {
  * @return {string} Completed sketch code.
  */
 Blockly.Arduino.finish = function(code) {
+  for(var additional in Blockly.Arduino.additionals){
+    if(!Blockly.Arduino.additionals.hasOwnProperty(additional)) continue;
+    Blockly.Arduino.additionals[additional]();
+  }
+
   // Convert the includes, definitions, and functions dictionaries into lists
   var includes = [], definitions = [], variables = [], functions = [];
   for (var name in Blockly.Arduino.includes_) {
