@@ -1,5 +1,11 @@
 goog.provide("Blockly.BlockTypes");
 
+goog.require('Blockly.Constants.Math');
+goog.require('Blockly.Constants.Logic');
+goog.require('Blockly.Constants.Text');
+goog.require('Blockly.Constants.Variables');
+goog.require('Blockly.Constants.Procedures');
+
 goog.require("Blockly.Blocks");
 goog.require("Blockly.Types");
 

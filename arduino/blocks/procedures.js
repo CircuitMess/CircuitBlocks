@@ -16,7 +16,7 @@ goog.require('Blockly.Blocks');
 
 
 /** Common HSV hue for all blocks in this category. */
-Blockly.Blocks.procedures.HUE = 290;
+Blockly.Blocks.Procedures.HUE = 290;
 
 Blockly.Blocks['arduino_functions'] = {
   /**
