@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Blockly from '../../BlocklyDuino';
+import Blockly from '../../Blockly';
 
 import AppContext from '../../contexts/AppContext';
 import { toolbox } from '../../assets/xmls.js';
@@ -72,6 +72,7 @@ class Editor extends Component {
       this.setState({ initState: initState, promptOpen: true, promptText: a });
     };
 
+    window.Blockly = Blockly;
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
     this.workspace.addChangeListener((e) => {
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
@@ -79,7 +80,7 @@ class Editor extends Component {
         this.setState({ code });
       }
     });
-    this.load(xml);
+    //this.load(xml);
     this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions);
   }
@@ -122,7 +123,8 @@ class Editor extends Component {
 
   load(data) {
     const xml = Blockly.Xml.textToDom(data);
-    Blockly.Xml.clearWorkspaceAndLoadFromXml(xml, this.workspace);
+    Blockly.getMainWorkspace().clear();
+    Blockly.Xml.domToWorkspace(xml, this.workspace);
   }
 
   toggleCode() {

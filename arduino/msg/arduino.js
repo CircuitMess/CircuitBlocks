@@ -14,7 +14,7 @@
  */
 'use strict';
 
-goog.provide('Blockly.Msg.en');
+goog.provide('Blockly.Arduino.Msg.en');
 
 goog.require('Blockly.Msg');
 
