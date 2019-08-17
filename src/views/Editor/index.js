@@ -11,17 +11,25 @@ import Prompt from '../../components/Prompt';
 
 const NAV_BAR_HEIGHT = 64;
 
-const xml = `<xml xmlns="https://developers.google.com/blockly/xml">
-<variables>
-  <variable id="7mJ{C@uaA68446C*.l.+">Foobar</variable>
-</variables>
-<block type="controls_if" id="3bFu]EuGml4DKM,qqVo/" x="110" y="75">
-  <value name="IF0">
-    <block type="variables_get" id="6VO[p;*;m.VHSfFqD9=">
-      <field name="VAR" id="7mJ{C@uaA68446C*.l.+">Foobar</field>
-    </block>
-  </value>
-</block>
+const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables></variables>
+  <block type="controls_repeat_ext" id="GjRfTgQ%?xU(rWxi%pl+" x="201" y="165">
+    <value name="TIMES">
+      <block type="math_number" id="K;jtzgt3E9*pzyW(Tz_=">
+        <field name="NUM">10</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="io_digitalwrite" id="~xaStXz~,~#~Z9S*v(h4">
+        <field name="PIN">0</field>
+        <value name="STATE">
+          <block type="io_highlow" id="f\`UziPkNCW*S-VOoNtQc">
+            <field name="STATE">LOW</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
 </xml>`;
 
 class Editor extends Component {
@@ -80,7 +88,7 @@ class Editor extends Component {
         this.setState({ code });
       }
     });
-    //this.load(xml);
+    this.load(xml);
     this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions);
   }
