@@ -20,8 +20,17 @@ goog.require('Blockly.Arduino');
  * @return {array} Completed code with order of operation.
  */
 Blockly.Arduino['variables_get'] = function(block) {
-  var code = Blockly.Arduino.variableDB_.getName(block.getFieldValue('VAR'),
-      Blockly.Variables.NAME_TYPE);
+  /*var code = Blockly.Arduino.variableDB_.getName(block.getFieldValue('VAR'),
+      Blockly.Variables.NAME_TYPE);*/
+
+  var variable = block.getVarModels()[0];
+  if(typeof variable === "undefined"){
+    console.log("Undefined var in block:");
+    console.log(variable);
+    return ["", Blockly.Arduino.ORDER_ATOMIC];
+  }
+
+  var code = Blockly.Arduino.variableDB_.getName(block.getVarModels()[0].getId(), Blockly.Variables.NAME_TYPE);
   return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
 

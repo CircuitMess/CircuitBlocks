@@ -1,3 +1,5 @@
+goog.provide("Blockly.Ext.Block");
+
 goog.require("Blockly.Block");
 
 // TODO: check

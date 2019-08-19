@@ -7,7 +7,7 @@ const loadFile = (file, fullPath = undefined) => {
   }
 };
 
-const toolbox = loadFile('toolbox.xml');
+const toolbox = loadFile('pxt-toolbox.xml');
 
 export default loadFile;
 export { toolbox };

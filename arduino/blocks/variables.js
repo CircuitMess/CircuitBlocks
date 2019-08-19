@@ -12,6 +12,8 @@
  */
 'use strict';
 
+goog.provide("Blockly.Blocks.variables");
+
 goog.require('Blockly.Blocks');
 goog.require('Blockly.Types');
 

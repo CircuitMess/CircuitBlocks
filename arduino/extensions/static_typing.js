@@ -40,6 +40,10 @@ Blockly.StaticTyping.prototype.collectVarsWithTypes = function(workspace) {
   this.pendingVarTypeDict = Object.create(null);
   var blocks = Blockly.StaticTyping.getAllStatementsOrdered(workspace);
   for (var i = 0; i < blocks.length; i++) {
+    if(!blocks[i].rendered){
+      continue;
+    }
+
     //blocks[i].select();  // for step debugging, highlights block in workspace
     // Each statement block iterates through its input children collecting vars
     var blockVarAndTypes = Blockly.StaticTyping.getBlockVars(blocks[i]);

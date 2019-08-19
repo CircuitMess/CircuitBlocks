@@ -1,0 +1,3 @@
+[submodule "pxt-blockly"]
+	path = pxt-blockly
+	url = https://github.com/microsoft/pxt-blockly.git

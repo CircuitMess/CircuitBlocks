@@ -3,7 +3,19 @@
   "version": "0.1.0",
   "main": "app.js",
   "private": true,
+<<<<<<< HEAD
   "dependencies": {},
+=======
+  "dependencies": {
+    "file-saver": "^2.0.2",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-monaco-editor": "^0.28.0",
+    "react-scripts": "3.0.1",
+    "styled-components": "^4.3.2"
+  },
+>>>>>>> ff4da13d32c644c950124d286cceb251533e9f5f
   "scripts": {
     "electron-dev": "electron .",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-dev\""
