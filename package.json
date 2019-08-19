@@ -3,23 +3,10 @@
   "version": "0.1.0",
   "main": "app.js",
   "private": true,
-  "dependencies": {
-    "file-saver": "^2.0.2",
-    "node-blockly": "^1.1.1",
-    "prop-types": "^15.7.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-monaco-editor": "^0.28.0",
-    "react-scripts": "3.0.1",
-    "styled-components": "^4.3.2"
-  },
+  "dependencies": {},
   "scripts": {
     "electron-dev": "electron .",
-    "start": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "dev": "concurrently \"yarn start\" \"wait-on http://localhost:3000 && yarn electron-dev\""
+    "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-dev\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -39,7 +26,7 @@
   "devDependencies": {
     "concurrently": "^4.1.1",
     "electron": "^6.0.0",
-    "eslint": "^5.16.0",
+    "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-react-app": "^4.0.1",
