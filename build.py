@@ -22,7 +22,8 @@ FOOTER = "export default Blockly;"
 OUTPUT = "client/src/Blockly.js"
 
 def import_path(path):
-    """Import a file with full path specification.
+    """
+    Import a file with full path specification.
     Allows one to import from any directory, something __import__ does not do.
     Args:
         path:  Path and filename of import.
