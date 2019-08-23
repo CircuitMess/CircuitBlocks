@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Blockly from '../../Blockly';
+import Blockly from '../../blockly/blockly';
 
 import AppContext from '../../contexts/AppContext';
 import { toolbox } from '../../assets/xmls.js';

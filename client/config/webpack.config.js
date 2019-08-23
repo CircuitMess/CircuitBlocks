@@ -334,6 +334,13 @@ module.exports = function(webpackEnv) {
           ],
           include: paths.appSrc,
         },
+        // Goog
+        {
+          test: /\.(js|mjs|jsx|ts|tsx)$/,
+          include: path.join(paths.appSrc, "blockly"),
+          loader: require.resolve('./goog-loader'),
+          enforce: 'pre'
+        },
         {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
