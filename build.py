@@ -6,6 +6,7 @@ import httplib
 import urllib
 import json
 from StringIO import StringIO
+import shutil
 
 """
     Script for bundling Arduino Blockly extensions into one Node.JS module.
@@ -13,13 +14,16 @@ from StringIO import StringIO
 """
 
 # eslint doesn't play nice with closure compiled code
-HEADER = "/* eslint no-unused-expressions: 0, no-undef: 0 */"
+UNIHEADER = "/* eslint no-unused-expressions: 0, no-undef: 0 */"
 # self global doesn't exist in react
-HEADER += "var self = window.self;"
+UNIHEADER += "var self = window.self;"
 
-FOOTER = "export default Blockly;"
+BLOCKLY_PROVIDES = [ "Blockly", "Blockly.Block", "Blockly.FieldDropdown",
+ "Blockly.Generator", "Blockly.Procedures", "Blockly.Workspace", "Blockly.Msg", "Blockly.utils" ]
+BLOCKS_PROVIDES = [ "Blockly.Blocks", "Blockly.Colours", "Blockly.Constants.Logic", "Blockly.Constants.Loops",
+ "Blockly.Constants.Math", "Blockly.Constants.Text", "Blockly.Constants.Procedures", "Blockly.Constants.Variables" ]
 
-OUTPUT = "client/src/Blockly.js"
+OUTPUT = os.path.join("client", "src", "blockly")
 
 def import_path(path):
     """
@@ -38,93 +42,38 @@ def import_path(path):
     del sys.path[-1]
     return module
 
-def calcSources(roots):
-    try:
-        treescan = import_path(os.path.join(closure_library, "closure", "bin", "build", "treescan.py"))
-        depstree = import_path(os.path.join(closure_library, "closure", "bin", "build", "depstree.py"))
-        builder = import_path(os.path.join(closure_library, "closure", "bin", "build", "closurebuilder.py"))
-    except ImportError:
-        print("Error importing dependencies")
-        exit(1)
+def copy(file, provides, requires = None):
+    input = open(os.path.join("..", "pxt-blockly", file), "r")
+    output = open(os.path.join(OUTPUT, file), "w")
 
-    sources = set()
+    output.write(UNIHEADER + "\n")
 
-    msg = os.path.join("pxt-blockly", "msg", "js", "en.js")
+    if requires is not None:
+        for require in requires:
+                output.write("goog.require('" + require + "');\n")
 
-    for root in roots:
-        for js_path in treescan.ScanTreeForJsFiles(root):
-            if js_path.endswith(msg): continue
-            sources.add(builder._PathSource(js_path))
+    for provide in provides:
+        output.write("goog.provide('" + provide + "');\n")
 
-    tree = depstree.DepsTree(sources)
+    output.write(input.read())
 
-    namespaces = set(["Blockly.Ardu", "Blockly"])
-
-    base = builder._GetClosureBaseFile(sources)
-    deps = [base] + tree.GetDependencies(namespaces)
-
-    return [js_source.GetPath() + '\n' for js_source in deps]
-
-if __name__ == "__main__":
-    closure_library = os.getenv("CLOSURE_LIB", "")
-    closure_compiler = os.getenv("CLOSURE_COMPILER", "")
-
-    if closure_library == "":
-        print("Closure lib path not specified, specify it with CLOSURE_LIB env variable")
-        exit(1)
-
-    if closure_compiler == "":
-        print("Closure compiler path not specified, specify it with CLOSURE_COMPILER env variable")
-        exit(1)
-
-    print("Closure library path: " + closure_library)
-    print("Closure compiler path: " + closure_compiler)
-    print("")
-
-    try:
-        jscompiler = import_path(os.path.join(closure_library, "closure", "bin", "build", "jscompiler.py"))
-    except ImportError:
-        print("Error importing dependencies")
-        exit(1)
-
-    roots = [
-        closure_library,
-        os.path.abspath(os.path.join(os.path.curdir, "pxt-blockly")),
-        os.path.abspath(os.path.join(os.path.curdir, "arduino"))
-    ]
-
-    # Patch pxt-blockly/blocks/procedures.js
-    with open("pxt-blockly/blocks/procedures.js", "r+a") as procedures:
-        proceduresBackup = procedures.read()
-        procedures.seek(0)
-        procedures.write("goog.provide('Blockly.Constants.Procedures');/*\n")
-
-    print("Calculating dependencies...")
-    sources = calcSources(roots)
-
-    try:
-        jscompiler = import_path(os.path.join(closure_library, "closure", "bin", "build", "jscompiler.py"))
-    except ImportError:
-        print("Error importing jscompiler")
-        exit(1)
-
-    # Compile
-    print("Compiling...")
-    compiled = jscompiler.Compile(closure_compiler,
-                     sources,
-                     jvm_flags=None,
-                     compiler_flags=["--compilation_level=SIMPLE"])
-    print("")
-
-    # Write compiled code
-    print("Writing to " + OUTPUT)
-    code = HEADER + compiled + FOOTER
-    output = open(OUTPUT, "w")
-    output.write(code)
+    input.close()
     output.close()
 
-    # Revert pxt-blockly/blocks/procedures.js
-    with open("pxt-blockly/blocks/procedures.js", "w") as procedures:
-        procedures.write(proceduresBackup)
+if __name__ == "__main__":
+    print("Compiling PXT Blockly...")
+
+    try:
+        pxt = import_path(os.path.join("..", "pxt-blockly", "build.py"))
+    except ImportError:
+        print("Error importing ../pxt-blockly/build.py")
+        exit(1)
+
+    print("Copying files...")
+
+    copy("blockly_compressed.js", BLOCKLY_PROVIDES)
+    copy("blocks_compressed.js", BLOCKS_PROVIDES, [ "Blockly" ])
+
+    shutil.copy(os.path.join("..", "pxt-blockly", "msg", "messages.js"), os.path.join(OUTPUT, "en.js"))
 
     print("Done.")
