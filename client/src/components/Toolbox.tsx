@@ -85,6 +85,54 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         category.subcategories.forEach(cat => toolbox.buildCategoryFlyout(cat, toolbox));
     }
 
+    constructLabel(text: string){
+        return this.createFlyoutGroupLabel(text);
+    }
+
+    createFlyoutGroupLabel(name: string, icon?: string, labelLineWidth?: string, helpCallback?: string) {
+        const groupLabel = this.createFlyoutLabel(name, undefined, icon);
+        groupLabel.setAttribute('web-class', 'blocklyFlyoutGroup');
+        groupLabel.setAttribute('web-line', '1.5');
+        if (labelLineWidth) groupLabel.setAttribute('web-line-width', labelLineWidth);
+        if (helpCallback) {
+            groupLabel.setAttribute('web-help-button', 'true');
+            groupLabel.setAttribute('callbackkey', helpCallback);
+        }
+        return groupLabel;
+    }
+
+    createFlyoutHeadingLabel(name: string, color: string, icon?: string, iconClass?: string) {
+        const headingLabel = this.createFlyoutLabel(name, tconf.convertColor(color), icon, iconClass);
+        headingLabel.setAttribute('web-class', 'blocklyFlyoutHeading');
+        return headingLabel;
+    }
+
+    showFlyoutHeadingLabel(name: string, subns: string, icon: string, color: string) {
+        const categoryName = name;
+        const iconClass = `blocklyTreeIcon${icon ? name.toLowerCase() : 'Default'}`.replace(/\s/g, '');
+        let headingLabel = this.createFlyoutHeadingLabel(categoryName, color, icon, iconClass);
+        return headingLabel;
+    }
+
+    createFlyoutLabel(name: string, color?: string, icon?: string, iconClass?: string): HTMLElement {
+        // Add the Heading label
+        let headingLabel = document.createElement("label") as HTMLElement;
+        headingLabel.setAttribute('text', name);
+        if (color) {
+            headingLabel.setAttribute('web-icon-color', tconf.convertColor(color));
+        }
+        if (icon) {
+            if (icon.length === 1) {
+                headingLabel.setAttribute('web-icon', icon);
+                if (iconClass) headingLabel.setAttribute('web-icon-class', iconClass);
+            }
+            else {
+                headingLabel.setAttribute('web-icon-class', `blocklyFlyoutIcon${name}`);
+            }
+        }
+        return headingLabel;
+    }
+
     buildFlyout(category: ToolboxCategory, toolbox: Toolbox){
         let workspace: any = toolbox.Blockly.getMainWorkspace();
         let flyout: any = toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
@@ -94,7 +142,16 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         let blocks: any[] = [];
 
+        blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.color, category.icon, tconf.getNamespaceColor(category.name.toLowerCase())));
+
+        let currentLabel: string = "";
         category.blocks.forEach(block => {
+            let label = block.group;
+            if(label && label != currentLabel){
+                currentLabel = label;
+                blocks.push(toolbox.constructLabel(label));
+            }
+
             blocks.push(toolbox.Blockly.Xml.textToDom(block.xml));
         });
 
