@@ -80,9 +80,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
     }
 
-    buildCategoryFlyout(category: ToolboxCategory, toolbox: Toolbox){
-        category.flyout = toolbox.buildFlyout(category, toolbox);
-        category.subcategories.forEach(cat => toolbox.buildCategoryFlyout(cat, toolbox));
+    buildCategoryFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
+        category.flyout = toolbox.buildFlyout(category, toolbox, parent);
+        category.subcategories.forEach(cat => toolbox.buildCategoryFlyout(cat, toolbox, category));
     }
 
     constructLabel(text: string){
@@ -107,7 +107,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return headingLabel;
     }
 
-    showFlyoutHeadingLabel(name: string, subns: string, icon: string, color: string) {
+    showFlyoutHeadingLabel(name: string, icon: string, color: string) {
         const categoryName = name;
         const iconClass = `blocklyTreeIcon${icon ? name.toLowerCase() : 'Default'}`.replace(/\s/g, '');
         let headingLabel = this.createFlyoutHeadingLabel(categoryName, color, icon, iconClass);
@@ -133,7 +133,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return headingLabel;
     }
 
-    buildFlyout(category: ToolboxCategory, toolbox: Toolbox){
+    buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
         let workspace: any = toolbox.Blockly.getMainWorkspace();
         let flyout: any = toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
         flyout.setVisible(false);
@@ -142,7 +142,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         let blocks: any[] = [];
 
-        blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.color, category.icon, tconf.getNamespaceColor(category.name.toLowerCase())));
+        let color: string = (category.color == "more" && parent) ? parent.color : category.color;
+
+        blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.icon, color));
 
         let currentLabel: string = "";
         category.blocks.forEach(block => {
@@ -376,7 +378,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                     {normalCategories.map((treeRow) => (
                         <CategoryItem toolbox={this} index={index++} treeRow={treeRow} onCategoryClick={this.setSelection}>
                             {treeRow.subcategories ? treeRow.subcategories.map((subTreeRow) => (
-                                <CategoryItem index={index++} toolbox={this} treeRow={subTreeRow} onCategoryClick={this.setSelection} />
+                                <CategoryItem index={index++} toolbox={this} treeRow={subTreeRow} parentTreeRow={treeRow} onCategoryClick={this.setSelection} />
                             )) : undefined}
                         </CategoryItem>
                     ))}
@@ -538,6 +540,7 @@ export interface ToolboxCategory {
 
 export interface TreeRowProps {
     treeRow: ToolboxCategory;
+    parentTreeRow?: ToolboxCategory;
     onClick?: (e: React.MouseEvent<any>) => void;
     onKeyDown?: (e: React.KeyboardEvent<any>) => void;
     selected?: boolean;
@@ -590,7 +593,7 @@ export class TreeRow extends React.Component<TreeRowProps, {}> {
     }
 
     getMetaColor() {
-        const { color } = this.props.treeRow;
+        let color = (this.props.treeRow.color == "more" && this.props.parentTreeRow) ? this.props.parentTreeRow.color : this.props.treeRow.color;
         return tconf.convertColor(color ? color : "black") || tconf.getNamespaceColor('default');
     }
 
@@ -793,20 +796,36 @@ interface ToolboxStyleProps {
 }
 
 export class ToolboxStyle extends React.Component<ToolboxStyleProps, {}> {
+
+    addCategoryStyle(category: ToolboxCategory, parent?: ToolboxCategory){
+        let color: string = (category.color == "more" && parent) ? parent.color : category.color;
+
+        this.style +=
+            `span.docs.inlineblock.cat_${this.index} {
+                    background-color: ${color};
+                    border-color: ${tconf.fadeColor(color, 0.1, false)};
+                }\n`;
+
+        this.index++;
+
+        category.subcategories.forEach(subcat => this.addCategoryStyle(subcat, category));
+    }
+
+    private index: number = 0;
+    private style: string = "";
+
     render() {
         const { categories } = this.props;
 
         let styles: string = "";
 
-        categories.forEach((category, index) => styles +=
-            `span.docs.inlineblock.cat_${index} {
-                    background-color: ${category.color};
-                    border-color: ${tconf.fadeColor(category.color, 0.1, false)};
-                }\n`
-        );
+        this.index = 0;
+        this.style = "";
+
+        categories.forEach(category => this.addCategoryStyle(category));
 
         return <style>
-            {styles}
+            {this.style}
         </style>
     }
 }

@@ -1,4 +1,4 @@
-import { ToolboxCategory } from "../Toolbox";
+import { ToolboxCategory} from "../Toolbox";
 import { Blocks } from './blocks'
 
 /*
@@ -643,21 +643,12 @@ export function cachedBuiltinCategories(): ToolboxCategory[] {
 
 let categories: ToolboxCategory[] = [];
 
-categories.push({
-    color: "#1e90ff",
+export const moreCategory: ToolboxCategory = {
+    name: "More",
+    color: "more",
     icon: "\uf005",
-    name: "Basic",
-
-    blocks: [],
-    subcategories: [{
-        color: "#1e90ff",
-        icon: "\uf005",
-        name: "More",
-
-        subcategories: []
-    }], // ToolboxCategory
-    advanced: false
-});
+    subcategories: []
+};
 
 categories.push({
     color: "#006970",
@@ -719,9 +710,7 @@ categories.push({
 
     subcategories: [
         {
-            color: "#006970",
-            icon: "\uf005",
-            name: "More",
+            ...moreCategory,
 
             blocks: [
                 {
@@ -732,8 +721,7 @@ categories.push({
                     name: "logic_ternary",
                     xml: Blocks.logic.logic_ternary
                 }
-            ],
-            subcategories: []
+            ]
         }
     ], // ToolboxCategory
     advanced: false
