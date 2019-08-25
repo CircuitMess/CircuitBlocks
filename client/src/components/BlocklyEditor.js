@@ -1,26 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const BlocklyEditor = (props) => {
-  const { setRef, width, height, isCodeOpen } = props;
-  // const [appState, appDispatch] = useAppStateValue();
-  // const { isCodeOpen } = appState;
+class BlocklyEditor extends React.Component {
+  propTypes = {
+    setRef: PropTypes.func.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    isCodeOpen: PropTypes.bool.isRequired
+  };
 
-  return (
-    <div
-      id="blocklyDiv"
-      className={isCodeOpen ? 'd-none' : ''}
-      style={{ width, height }}
-      ref={setRef}
-    />
-  );
-};
+  render() {
+    const {setRef, width, height, isCodeOpen} = this.props;
+    // const [appState, appDispatch] = useAppStateValue();
+    // const { isCodeOpen } = appState;
 
-BlocklyEditor.propTypes = {
-  setRef: PropTypes.func.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  isCodeOpen: PropTypes.bool.isRequired
-};
+    return (
+        <div
+          id="blocklyDiv"
+          className={isCodeOpen ? 'd-none' : ''}
+          style={{height}}
+          ref={setRef}
+        />
+    );
+  }
+}
 
 export default BlocklyEditor;

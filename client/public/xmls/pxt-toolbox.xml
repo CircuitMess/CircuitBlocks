@@ -182,11 +182,6 @@
     <category name="Text" colour="160">
         <block type="text"></block>
         <block type="text_join"></block>
-        <!--<block type="text_append">
-          <value name="TEXT">
-            <shadow type="text"></shadow>
-          </value>
-        </block>-->
         <block type="text_length">
             <value name="VALUE">
                 <shadow type="text">

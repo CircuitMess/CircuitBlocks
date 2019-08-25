@@ -1,0 +1,323 @@
+
+@import 'toolbox-zindex.less';
+
+/*******************************
+     User Global Variables
+*******************************/
+
+@primaryColor: @pink;
+@secondaryColor: @grey;
+
+@red:#A80000;
+@orange:#D83B01;
+@yellow:#FFB900;
+@green:#107C10;
+@teal:#008272;
+@blue:#0078D7;
+@purple:#5C2D91;
+@pink:#E2008C;
+@brown:#00BCF2;
+@grey:#505050;
+@lightGrey: #d9d9d9;
+@white: #fff;
+@black: #000;
+
+@greenTextColor: darken(@green, 5);
+
+@lightTextColor              : rgba(0, 0, 0, 0.68);
+@invertedUnselectedTextColor : rgba(255, 255, 255, 0.8);
+@darkTextColor: @invertedUnselectedTextColor;
+@textColor: @lightTextColor;
+
+@pageBackground: #ffffff;
+@pageMinWidth: 100%;
+
+/*-------------------
+     Fonts
+--------------------*/
+
+@importGoogleFonts: false;
+
+@docsHeaderFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@docsPageFont: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+@emSize      : 14px;
+@fontSize    : 12pt;
+
+/*-------------------
+   Links
+--------------------*/
+
+@linkColor           : #3977b4;
+@linkHoverUnderline  : underline;
+
+/*-------------------
+   Breakpoints
+--------------------*/
+
+@tabletBreakpoint: 814px; // iPhone X landscape is 812px;
+
+//default semantic
+@mobileBreakpoint            : 320px;
+@tabletBreakpoint            : 768px;
+@computerBreakpoint          : 992px;
+@largeMonitorBreakpoint      : 1200px;
+@widescreenMonitorBreakpoint : 1920px;
+/*
+// experiment
+@mobileBreakpoint            : unit( (63 * @emSize), px);
+@tabletBreakpoint            : unit( (79 * @emSize), px);
+@computerBreakpoint          : unit( (91 * @emSize), px);
+@largeMonitorBreakpoint      : unit( (99 * @emSize), px);
+@widescreenMonitorBreakpoint : unit( (119 * @emSize), px);
+*/
+
+@tallEditorBreakpoint: 44rem;
+@thinEditorBreakpoint: 50rem;
+
+/*--------------
+   Form Input
+---------------*/
+
+@inputColor: #fff;
+
+@inputPlaceholderColor: lighten(@inputColor, 45);
+@inputPlaceholderFocusColor: lighten(@inputColor, 35);
+
+/*-------------------
+     Neutral Text
+--------------------*/
+
+@invertedLightTextColor      : rgba(255, 255, 255, 0.9);
+
+/*******************************
+             States
+*******************************/
+
+/*-------------------
+      Disabled
+--------------------*/
+
+@disabledOpacity: 0.80;
+
+/*-------------------
+    Scroll Bars
+--------------------*/
+
+@useCustomScrollbars: false;
+@customScrollbarWidth: 7px;
+
+@thumbBackground: rgba(0, 0, 0, 0.25);
+@thumbInvertedBackground: rgba(255, 255, 255, 0.25);
+
+/*******************************
+     PXT Variables
+*******************************/
+
+@avatarImageUrl: "../docs/static/avatar.svg";
+@avatarImage: data-uri(@avatarImageUrl);
+
+@fileLogoUrl: "../docs/static/filelogo.svg";
+@fileLogo: data-uri(@fileLogoUrl);
+
+@githubFileLogoUrl: "../docs/static/githubfilelogo.svg";
+@githubFileLogo: data-uri(@githubFileLogoUrl);
+
+@loaderImageUrl: "../docs/static/loader.svg";
+@loaderImage: data-uri(@loaderImageUrl);
+
+@includePoweredByLogos: false;
+@poweredBySmallUrl: "../docs/static/logo/Powered-By-Microsoft-logo-small.png";
+@poweredBySmall: none;
+@poweredByLargeUrl: "../docs/static/logo/Powered-By-Microsoft-logo.png";
+@poweredByLarge: none;
+.includePoweredByLogos() when not (@includePoweredByLogos = false) {
+  @poweredBySmall: data-uri(@poweredBySmallUrl);
+  @poweredByLarge: data-uri(@poweredByLargeUrl);
+}
+
+@docsAvatarImageUrl: none;
+@docsAvatarImage: none;
+.setDocsAvatarUrl() when not (@docsAvatarImageUrl = none) {
+  @docsAvatarImage: data-uri(@docsAvatarImageUrl);
+}
+.setDocsAvatarUrl();
+
+/*-------------------
+   Menu
+--------------------*/
+
+@mainMenuBackground: @white;
+@mainMenuInvertedBackground: @black;
+@mainMenuTutorialBackground: @orange;
+
+@mainMenuHeight: 4.0rem;
+@mobileMenuHeight: 3.5rem;
+@sandboxMobileMenuHeight: 3.0rem;
+@thinMenuHeight: 3rem;
+
+@tutorialSelectedMenuColor: @primaryColor;
+@editorToggleColor: white;
+
+/*-------------------
+   Layout
+--------------------*/
+
+@sideBarWidth: 20rem;
+@sideBarWidthSmall: 18rem;
+@sideBarWidthLarge: 28rem;
+@simulatorWidth: 23rem;
+@simulatorWidthSmall: 20rem;
+
+/*-------------------
+   Background
+--------------------*/
+
+@simulatorBackground: #fff;
+@editorToolsBackground: @simulatorBackground;
+@blocklySvgColor: #fff;
+
+@homeScreenBackground: #ecf0f1;
+
+/*-------------------
+   Full screen
+--------------------*/
+
+@fullscreenBackgroundGradientStart: @mainMenuInvertedBackground;
+@fullscreenBackgroundGradientEnd: @simulatorBackground;
+
+/*-------------------
+   Extensions
+--------------------*/
+
+@extensionsHeaderBackground: @mainMenuInvertedBackground;
+@extensionsSecondaryBackground: fade(@extensionsHeaderBackground, 30%);
+@extensionsBackground: @blocklySvgColor;
+@extensionsHeaderColor: white;
+
+/*-------------------
+   Side Docs
+--------------------*/
+
+@sidedocsButtonsTop: (@mainMenuHeight + 1rem);
+@sidedocsButtonsRight: 4.25rem;
+
+/*-------------------
+   Editor
+--------------------*/
+
+@blocklyToolboxColor: white;
+@blocklyToolboxText: #575E75;
+@trashIconColor: @primaryColor;
+
+/*-------------------
+   Serial editor
+--------------------*/
+@serialBackgroundColor: lighten(@simulatorBackground, 2);
+@serialTextColor: @darkTextColor;
+@serialGraphBackground: @lightGrey;
+@serialGraphColor: black;
+@editorCloseColor: black;
+@editorCloseColorHover: darken(@editorCloseColor, 25%);
+@serialConsoleFont: @blocklyFont;
+@serialConsoleBackground: @simulatorBackground;
+
+/*-------------------
+   Blockly
+--------------------*/
+
+@blocklyRowWidthWide: 200px;
+@blocklyRowWidthComputer: 180px;
+@blocklyRowWidthTablet: 150px;
+@blocklyRowWidthMobile: 50px;
+
+@blocklyRowHeightWide: 40px;
+@blocklyRowHeightComputer: 40px;
+@blocklyRowHeightTablet: 45px;
+@blocklyRowHeightMobile: 50px;
+
+@blocklyFont: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+
+@blocklyScrollbarBackgroundColor: none;
+@blocklyScrollbarColor: #CECDCE;
+@blocklyScrollbarOpacity: 1;
+
+/*-------------------
+   Flyout
+--------------------*/
+
+@flyoutLabelColor: white;
+@blocklyFlyoutColor: @grey;
+@blocklyFlyoutColorOpacity: 0.9;
+@monacoFlyoutColor: fade(@blocklyFlyoutColor, 90%);
+@blocklyFlyoutButtonColor: @primaryColor;
+
+/*-------------------
+   Home
+--------------------*/
+
+@homeHeaderColor: @textColor;
+@homeCardBorderRadius: 0px;
+@homeCardBorderSize: 5px;
+@homeCardBorderColor: #e9eef2;
+@homeCardHoverBorderColor: white;
+@homeCardFocusBorderColor: yellow;
+@homeCardColor: @textColor;
+@homeCardMetaColor: @homeCardColor;
+@homeCardHeaderColor: @homeCardColor;
+@homeFooterColor: @homeCardColor;
+
+@homeCardImageBorderRadius: 0;
+@homeCardBackgroundColor: white;
+@homeCardHoverBackgroundColor: darken(@homeCardBackgroundColor, 5%);
+
+/* Detail view */
+@homeSelectedCardBorderSize: @homeCardBorderSize*2;
+@homeSelectedCardBorderColor: white;
+@homeDetailViewBackground: darken(@homeScreenBackground, 10%);
+@homeDetailViewColor: @homeCardColor;
+@homeDetailCloseColor: white;
+@homeDetailCloseBackground: @grey;
+
+/*-------------------
+   Tutorial
+--------------------*/
+
+@tutorialSegmentBackground: #f8f8f9;
+@tutorialSegmentColor: @textColor;
+
+/*-------------------
+    Banner
+-------------------*/
+@bannerHeight: 2rem;
+@bannerBackgroundColor: black;
+@bannerContrastColor: white;
+@bannerLinkColor: #3eb1d0;
+
+
+/*-------------------
+    Greenscreen
+-------------------*/
+@greenScreenColor: #00ff00;
+@greenScreenBlockColor: #107c10; // loops category typically uses green
+                                   // keep in sync with pxtarget blocks color changes
+@greenScreenGreen: #005d51; // a green that does not get erased by chromekey 
+
+
+
+/*-------------------
+    Debugger
+-------------------*/
+// TODO: Chance this for the color we want for variables in the debugger.
+@debugNumberVariable: darkorchid;
+@debugStringVariable: coral;
+@debugBooleanVariable: darkturquoise;
+@debugArrayVariable: #663905;
+@debugSpriteVariable: blue;
+
+@debugVariableOdd: #fafafa;
+@debugVariableEven: #f0f0f0;
+@debugVariableFrozen: #eee;
+
+@DebuggerBackgroundPrimaryColor: #e67e22;
+@DebuggerBackgroundSecondaryColor: lightgreen;
