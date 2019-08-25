@@ -3,10 +3,14 @@ export class Blocks {
     public static logic: any = {
         controls_if: '<block type="controls_if"><value name="IF0"><shadow type="logic_boolean"></shadow></value>',
         controls_if_else: '<block type="controls_if"><mutation else="1"></mutation><value name="IF0"><shadow type="logic_boolean"></shadow></value>',
-        logic_compare: '<block type="logic_compare"><value name="A"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">10</field></shadow></value>',
-        logic_operation: '<block type="logic_operation"></block>',
+        logic_compare_eq: '<block type="logic_compare"><value name="A"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">10</field></shadow></value>',
+        logic_compare_lt: '<block type="logic_compare"><field name="OP">LT</field><value name="A"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">10</field></shadow></value>',
+        logic_compare_str: '<block type="logic_compare"><field name="OP">EQ</field><value name="A"><shadow type="text"></shadow></value><value name="B"><shadow type="text"></shadow></value>',
+        logic_and: '<block type="logic_operation"><field name="OP">AND</field></block>',
+        logic_or: '<block type="logic_operation"><field name="OP">OR</field></block>',
         logic_negate: '<block type="logic_negate"></block>',
-        logic_boolean: '<block type="logic_boolean"></block>',
+        logic_boolean_true: '<block type="logic_boolean"><field name="BOOL">TRUE</field></block>',
+        logic_boolean_false: '<block type="logic_boolean"><field name="BOOL">FALSE</field></block>',
         logic_null: '<block type="logic_null" disabled="true"></block>',
         logic_ternary: '<block type="logic_ternary"></block>',
     };

@@ -674,16 +674,68 @@ categories.push({
             name: "controls_if_else",
             xml: Blocks.logic.controls_if_else,
             group: "Conditionals"
-        }
+        },
+        {
+            name: "logic_compare_eq",
+            xml: Blocks.logic.logic_compare_eq,
+            group: "Comparison"
+        },
+        {
+            name: "logic_compare_lt",
+            xml: Blocks.logic.logic_compare_lt,
+            group: "Comparison"
+        },
+        {
+            name: "logic_compare_str",
+            xml: Blocks.logic.logic_compare_str,
+            group: "Comparison"
+        },
+        {
+            name: "logic_and",
+            xml: Blocks.logic.logic_and,
+            group: "Boolean"
+        },
+        {
+            name: "logic_or",
+            xml: Blocks.logic.logic_or,
+            group: "Boolean"
+        },
+        {
+            name: "logic_negate",
+            xml: Blocks.logic.logic_negate,
+            group: "Boolean"
+        },
+        {
+            name: "logic_boolean_true",
+            xml: Blocks.logic.logic_boolean_true,
+            group: "Boolean"
+        },
+        {
+            name: "logic_boolean_false",
+            xml: Blocks.logic.logic_boolean_false,
+            group: "Boolean"
+        },
     ],
 
-    subcategories: [{
-        color: "#006970",
-        icon: "\uf005",
-        name: "More",
+    subcategories: [
+        {
+            color: "#006970",
+            icon: "\uf005",
+            name: "More",
 
-        subcategories: []
-    }], // ToolboxCategory
+            blocks: [
+                {
+                    name: "logic_null",
+                    xml: Blocks.logic.logic_null
+                },
+                {
+                    name: "logic_ternary",
+                    xml: Blocks.logic.logic_ternary
+                }
+            ],
+            subcategories: []
+        }
+    ], // ToolboxCategory
     advanced: false
 });
 

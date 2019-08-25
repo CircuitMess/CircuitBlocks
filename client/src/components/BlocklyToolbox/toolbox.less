@@ -5,15 +5,6 @@
         Blockly Toolbox
 *******************************/
 
-#blockly {
-    display: flex;
-    flex-direction: row;
-}
-
-#blocklyToolbox { width: 200px; flex-shrink: 0; flex-grow: 0; box-shadow: 4px 0 2px -4px rgba(0,0,0,.12), 4px 0 2px -4px rgba(0,0,0,.24); }
-
-#blocklyDiv { flex-grow: 1; }
-
 .blocklyToolboxDiv, .monacoToolboxDiv {
         background: @blocklyToolboxColor !important;
     color: @blocklyToolboxText;
@@ -29,6 +20,8 @@
     -o-transition: width 1s, background 0.3s; /* Opera */
     transition: width 1s, background 0.3s;
     transition-timing-function: ease-in;
+
+    box-shadow: 4px 0 2px -4px rgba(0,0,0,.12), 4px 0 2px -4px rgba(0,0,0,.24);
 }
 
 .blocklyToolboxDiv text, .monacoToolboxDiv text {
