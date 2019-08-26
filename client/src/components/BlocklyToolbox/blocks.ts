@@ -69,16 +69,22 @@ export class Blocks {
         text_join: '<block type="text_join"></block>',
         text_length: '<block type="text_length"><value name="VALUE"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
         text_isempty: '<block type="text_isEmpty"><value name="VALUE"><shadow type="text"><field name="TEXT"></field></shadow></value>',
-        text_indexof: '<block type="text_indexOf"><value name="VALUE"><block type="variables_get"><field name="VAR">text</field></value><value name="FIND"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
-        text_charat: '<block type="text_charAt"><value name="VALUE"><block type="variables_get"><field name="VAR">text</field></value>',
+        text_case_upper: '<block type="text_changeCase"><field name="CASE">UPPERCASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
+        text_case_lower: '<block type="text_changeCase"><field name="CASE">LOWERCASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
+        text_case_title: '<block type="text_changeCase"><field name="CASE">TITLECASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
+
         text_getsubstring: '<block type="text_getSubstring"><value name="STRING"><block type="variables_get"><field name="VAR">text</field></value>',
-        text_changecase: '<block type="text_changeCase"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
         text_trim: '<block type="text_trim"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
         text_count: '<block type="text_count"><value name="SUB"><shadow type="text"></shadow></value><value name="TEXT"><shadow type="text"></shadow></value>',
         text_replace: '<block type="text_replace"><value name="FROM"><shadow type="text"></shadow></value><value name="TO"><shadow type="text"></shadow></value><value name="TEXT"><shadow type="text"></shadow></value>',
         text_reverse: '<block type="text_reverse"><value name="TEXT"><shadow type="text"></shadow></value>',
+
         text_print: '<block type="text_print"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
         text_prompt_ext: '<block type="text_prompt_ext"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
+
+        text_charat: '<block type="text_charAt"><value name="VALUE"><block type="variables_get"><field name="VAR">text</field></value>',
+        text_indexof: '<block type="text_indexOf"><value name="VALUE"><block type="variables_get"><field name="VAR">text</field></value><value name="FIND"><shadow type="text"><field name="TEXT">abc</field></shadow></value>',
+
     };
 
     public static variables: any = {

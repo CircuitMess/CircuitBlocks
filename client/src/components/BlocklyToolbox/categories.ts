@@ -921,6 +921,88 @@ categories.push({
     }]
 });
 
+categories.push({
+    name: "Text",
+    color: "#996600",
+    icon: "\uf035",
+
+    blocks: [
+        {
+            name: "text",
+            xml: Blocks.text.text
+        },
+        {
+            name: "text_join",
+            xml: Blocks.text.text_join
+        },
+        {
+            name: "text_length",
+            xml: Blocks.text.text_length
+        },
+        {
+            name: "text_isempty",
+            xml: Blocks.text.text_isempty
+        },
+        {
+            name: "text_case_upper",
+            xml: Blocks.text.text_case_upper
+        },
+        {
+            name: "text_case_lower",
+            xml: Blocks.text.text_case_lower
+        },
+        {
+            name: "text_case_title",
+            xml: Blocks.text.text_case_title
+        }
+    ],
+
+    subcategories: [{
+        ...moreCategory,
+
+        blocks: [
+            {
+                name: "text_substring",
+                xml: Blocks.text.text_getsubstring
+            },
+            {
+                name: "text_trim",
+                xml: Blocks.text.text_trim
+            },
+            {
+                name: "text_count",
+                xml: Blocks.text.text_count
+            },
+            {
+                name: "text_replace",
+                xml: Blocks.text.text_replace
+            },
+            {
+                name: "text_reverse",
+                xml: Blocks.text.text_reverse
+            },
+
+            {
+                name: "text_print",
+                xml: Blocks.text.text_print
+            },
+            {
+                name: "text_prompt_ext",
+                xml: Blocks.text.text_prompt_ext
+            },
+
+            {
+                name: "text_charat",
+                xml: Blocks.text.text_charat
+            },
+            {
+                name: "text_indexof",
+                xml: Blocks.text.text_indexof
+            }
+        ]
+    }]
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }
