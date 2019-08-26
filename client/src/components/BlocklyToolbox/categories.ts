@@ -727,6 +727,48 @@ categories.push({
     advanced: false
 });
 
+categories.push({
+    name: "Loops",
+    icon: "\uf01e",
+    color: "#107c10",
+
+    blocks: [
+        {
+            name: "loops_repeat_ext",
+            xml: Blocks.loops.controls_repeat_ext
+        },
+        {
+            name: "loops_repeat",
+            xml: Blocks.loops.controls_repeat
+        },
+        {
+            name: "loops_while",
+            xml: Blocks.loops.controls_whileuntil
+        },
+        {
+            name: "loops_for",
+            xml: Blocks.loops.controls_for
+        }
+    ],
+
+    subcategories: [
+        {
+            ...moreCategory,
+
+            blocks: [
+                {
+                    name: "loops_foreach",
+                    xml: Blocks.loops.controls_foreach
+                },
+                {
+                    name: "loops_flowcontrol",
+                    xml: Blocks.loops.controls_flow_statements
+                },
+            ]
+        }
+    ]
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }
