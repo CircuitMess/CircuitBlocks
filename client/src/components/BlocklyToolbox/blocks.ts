@@ -26,24 +26,42 @@ export class Blocks {
     };
 
     public static math: any = {
+        math_number: '<block type="math_number" gap="32"><field name="NUM">123</field>',
+
+        math_const_pi: '<block type="math_constant"><field name="CONSTANT">PI</field></block>',
+        math_const_e: '<block type="math_constant"><field name="CONSTANT">E</field></block>',
+
+        math_round: '<block type="math_round"><value name="NUM"><shadow type="math_number"><field name="NUM">3.1</field></shadow></value>',
+        math_random_int: '<block type="math_random_int"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">100</field></shadow></value>',
+        math_random_float: '<block type="math_random_float"></block>',
+
         math_arithmetic_sum: '<block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
         math_arithmetic_sub: '<block type="math_arithmetic"><field name="OP">MINUS</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
         math_arithmetic_mul: '<block type="math_arithmetic"><field name="OP">MULTIPLY</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
         math_arithmetic_div: '<block type="math_arithmetic"><field name="OP">DIVIDE</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
         math_arithmetic_pow: '<block type="math_arithmetic"><field name="OP">POWER</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
 
-        math_number: '<block type="math_number" gap="32"><field name="NUM">123</field>',
-        math_number_minmax: '<block type="math_number_minmax" gap="32"><mutation min="0" max="100"></mutation>',
-        math_single: '<block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
-        math_trig: '<block type="math_trig"><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
-        math_constant: '<block type="math_constant"></block>',
-        math_number_property: '<block type="math_number_property"><value name="NUMBER_TO_CHECK"><shadow type="math_number"><field name="NUM">0</field></shadow></value>',
-        math_round: '<block type="math_round"><value name="NUM"><shadow type="math_number"><field name="NUM">3.1</field></shadow></value>',
-        math_on_list: '<block type="math_on_list"></block>',
         math_modulo: '<block type="math_modulo"><value name="DIVIDEND"><shadow type="math_number"><field name="NUM">64</field></shadow></value><value name="DIVISOR"><shadow type="math_number"><field name="NUM">10</field></shadow></value>',
+
+        math_single_root: '<block type="math_single"><field name="OP">ROOT</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_abs: '<block type="math_single"><field name="OP">ABS</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_neg: '<block type="math_single"><field name="OP">NEG</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_ln: '<block type="math_single"><field name="OP">LN</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_log: '<block type="math_single"><field name="OP">LOG10</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_exp: '<block type="math_single"><field name="OP">EXP</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+        math_single_sci: '<block type="math_single"><field name="OP">POW10</field><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
+
+        math_trig_sin: '<block type="math_trig"><field name="OP">SIN</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+        math_trig_cos: '<block type="math_trig"><field name="OP">COS</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+        math_trig_tan: '<block type="math_trig"><field name="OP">TAN</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+        math_trig_asin: '<block type="math_trig"><field name="OP">ASIN</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+        math_trig_acos: '<block type="math_trig"><field name="OP">ACOS</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+        math_trig_atan: '<block type="math_trig"><field name="OP">ATAN</field><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
+
         math_constrain: '<block type="math_constrain"><value name="VALUE"><shadow type="math_number"><field name="NUM">50</field></shadow></value><value name="LOW"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="HIGH"><shadow type="math_number"><field name="NUM">100</field></shadow></value>',
-        math_random_int: '<block type="math_random_int"><value name="FROM"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">100</field></shadow></value>',
-        math_random_float: '<block type="math_random_float"></block>',
+        math_property_even: '<block type="math_number_property"><field name="PROPERTY">EVEN</field><value name="NUMBER_TO_CHECK"><shadow type="math_number"><field name="NUM">12</field></shadow></value>',
+        math_property_odd: '<block type="math_number_property"><field name="PROPERTY">ODD</field><value name="NUMBER_TO_CHECK"><shadow type="math_number"><field name="NUM">12</field></shadow></value>',
+        math_on_list: '<block type="math_on_list"></block>'
     };
 
     public static text: any = {

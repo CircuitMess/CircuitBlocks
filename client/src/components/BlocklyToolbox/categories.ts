@@ -776,32 +776,149 @@ categories.push({
 
     blocks: [
         {
+            name: "math_number",
+            xml: Blocks.math.math_number
+        },
+        {
+            name: "math_const_pi",
+            xml: Blocks.math.math_const_pi
+        },
+        {
+            name: "math_const_e",
+            xml: Blocks.math.math_const_e
+        },
+        {
+            name: "math_round",
+            xml: Blocks.math.math_round
+        },
+        {
+            name: "math_rand_int",
+            xml: Blocks.math.math_random_int
+        },
+        {
+            name: "math_rand_float",
+            xml: Blocks.math.math_random_float
+        },
+        {
             name: "math_arithmetic_sum",
-            xml: Blocks.math.math_arithmetic_sum
+            xml: Blocks.math.math_arithmetic_sum,
+            group: "Arithmetic"
         },
         {
             name: "math_arithmetic_sub",
-            xml: Blocks.math.math_arithmetic_sub
+            xml: Blocks.math.math_arithmetic_sub,
+            group: "Arithmetic"
         },
         {
             name: "math_arithmetic_mul",
-            xml: Blocks.math.math_arithmetic_mul
+            xml: Blocks.math.math_arithmetic_mul,
+            group: "Arithmetic"
         },
         {
             name: "math_arithmetic_div",
-            xml: Blocks.math.math_arithmetic_div
+            xml: Blocks.math.math_arithmetic_div,
+            group: "Arithmetic"
         },
         {
             name: "math_arithmetic_pow",
-            xml: Blocks.math.math_arithmetic_pow
+            xml: Blocks.math.math_arithmetic_pow,
+            group: "Arithmetic"
         },
         {
             name: "math_arithmetic_modulo",
-            xml: Blocks.math.math_modulo
-        }
+            xml: Blocks.math.math_modulo,
+            group: "Arithmetic"
+        },
+        {
+            name: "math_single_root",
+            xml: Blocks.math.math_single_root,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_abs",
+            xml: Blocks.math.math_single_abs,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_neg",
+            xml: Blocks.math.math_single_neg,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_ln",
+            xml: Blocks.math.math_single_ln,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_log",
+            xml: Blocks.math.math_single_log,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_exp",
+            xml: Blocks.math.math_single_exp,
+            group: "Single operand"
+        },
+        {
+            name: "math_single_sci",
+            xml: Blocks.math.math_single_sci,
+            group: "Single operand"
+        },
+        {
+            name: "math_trig_sin",
+            xml: Blocks.math.math_trig_sin,
+            group: "Trigonometry"
+        },
+        {
+            name: "math_trig_cos",
+            xml: Blocks.math.math_trig_cos,
+            group: "Trigonometry"
+        },
+        {
+            name: "math_trig_tan",
+            xml: Blocks.math.math_trig_tan,
+            group: "Trigonometry"
+        },
+        {
+            name: "math_trig_asin",
+            xml: Blocks.math.math_trig_asin,
+            group: "Trigonometry"
+        },
+        {
+            name: "math_trig_acos",
+            xml: Blocks.math.math_trig_acos,
+            group: "Trigonometry"
+        },
+        {
+            name: "math_trig_atan",
+            xml: Blocks.math.math_trig_atan,
+            group: "Trigonometry"
+        },
+
     ],
 
-    subcategories: []
+    subcategories: [{
+        ...moreCategory,
+
+        blocks: [
+            {
+                name: "math_constraint",
+                xml: Blocks.math.math_constrain
+            },
+            {
+                name: "math_property_even",
+                xml: Blocks.math.math_property_even
+            },
+            {
+                name: "math_property_odd",
+                xml: Blocks.math.math_property_odd
+            },
+            /*{
+                name: "math_on_list",
+                xml: Blocks.math.math_on_list
+            }*/
+        ]
+    }]
 });
 
 export function getCategories(): ToolboxCategory[] {
