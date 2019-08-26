@@ -769,6 +769,41 @@ categories.push({
     ]
 });
 
+categories.push({
+    name: "Math",
+    color: "#712672",
+    icon: "\uf1ec",
+
+    blocks: [
+        {
+            name: "math_arithmetic_sum",
+            xml: Blocks.math.math_arithmetic_sum
+        },
+        {
+            name: "math_arithmetic_sub",
+            xml: Blocks.math.math_arithmetic_sub
+        },
+        {
+            name: "math_arithmetic_mul",
+            xml: Blocks.math.math_arithmetic_mul
+        },
+        {
+            name: "math_arithmetic_div",
+            xml: Blocks.math.math_arithmetic_div
+        },
+        {
+            name: "math_arithmetic_pow",
+            xml: Blocks.math.math_arithmetic_pow
+        },
+        {
+            name: "math_arithmetic_modulo",
+            xml: Blocks.math.math_modulo
+        }
+    ],
+
+    subcategories: []
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }

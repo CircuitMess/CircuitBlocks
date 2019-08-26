@@ -26,9 +26,14 @@ export class Blocks {
     };
 
     public static math: any = {
+        math_arithmetic_sum: '<block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
+        math_arithmetic_sub: '<block type="math_arithmetic"><field name="OP">MINUS</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
+        math_arithmetic_mul: '<block type="math_arithmetic"><field name="OP">MULTIPLY</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
+        math_arithmetic_div: '<block type="math_arithmetic"><field name="OP">DIVIDE</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
+        math_arithmetic_pow: '<block type="math_arithmetic"><field name="OP">POWER</field><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
+
         math_number: '<block type="math_number" gap="32"><field name="NUM">123</field>',
         math_number_minmax: '<block type="math_number_minmax" gap="32"><mutation min="0" max="100"></mutation>',
-        math_arithmetic: '<block type="math_arithmetic"><value name="A"><shadow type="math_number"><field name="NUM">1</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">1</field></shadow></value>',
         math_single: '<block type="math_single"><value name="NUM"><shadow type="math_number"><field name="NUM">9</field></shadow></value>',
         math_trig: '<block type="math_trig"><value name="NUM"><shadow type="math_number"><field name="NUM">45</field></shadow></value>',
         math_constant: '<block type="math_constant"></block>',
