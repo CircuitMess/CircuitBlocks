@@ -41,12 +41,10 @@ const Section = (props) => {
   };
 
   return (
-    <SectionWrapper>
-      <SectionHeader>
-        <Title>{title}</Title>
-      </SectionHeader>
-      <SectionContainer>
-        {project && <NewProject onClick={openNew} />}
+    <div class="section">
+      <h2>{title}</h2>
+      <div class="card-container">
+        {/* {project && <NewProject onClick={openNew} />} */}
         {items &&
           items.map((item, index) => (
             <SectionItem
@@ -56,8 +54,8 @@ const Section = (props) => {
               first={!project && index === 0}
             />
           ))}
-      </SectionContainer>
-    </SectionWrapper>
+      </div>
+    </div>
   );
 };
 

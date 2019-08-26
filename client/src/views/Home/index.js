@@ -106,12 +106,16 @@ const Home = (props) => {
 
   React.useEffect(() => {
     ipcRenderer.send('listFiles');
+    document.querySelector('body').classList.add('logged-in');
   }, []);
 
   return (
-    <Wrapper>
+    <>
+      {/* <Wrapper> */}
+      {/* <BackgroundImage /> */}
+      <div class="bg-cover shrink"></div>
       <HomeHeader onPressLogo={closeHome} />
-      <button type="button" onClick={load}>
+      {/* <button type="button" onClick={load}>
         Load file
       </button>
       <button type="button" onClick={save}>
@@ -119,8 +123,7 @@ const Home = (props) => {
       </button>
       <button type="button" onClick={listFiles}>
         List files
-      </button>
-      <BackgroundImage />
+      </button> */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -129,7 +132,8 @@ const Home = (props) => {
           <Section title="Examples" items={examples} open={open} closeHome={closeHome} />
         </>
       )}
-    </Wrapper>
+      {/* </Wrapper> */}
+    </>
   );
 };
 

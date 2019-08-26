@@ -18,11 +18,14 @@ const SectionItem = (props) => {
   const { first, onClick, title, lastEdited, image } = props;
 
   return (
-    <SectionItemWrapper first={first} onClick={onClick}>
-      {title} <br />
-      {lastEdited} <br />
-      {image} <br />
-    </SectionItemWrapper>
+    <div class="card" onClick={onClick}>
+      <div class="image"></div>
+      <div class="cover">
+        <div class="title">{title}</div>
+        <div class="author">{lastEdited}</div>
+        <div class="description">{image}</div>
+      </div>
+    </div>
   );
 };
 
