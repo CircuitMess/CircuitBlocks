@@ -1,5 +1,9 @@
-import { ToolboxCategory} from "../Toolbox";
-import { Blocks } from './blocks'
+import {ToolboxCategory} from "../Toolbox";
+import {Blocks} from './blocks'
+
+export enum ToolboxCategorySpecial {
+    VARIABLES, FUNCTIONS
+}
 
 /*
 export function cachedBuiltinCategories(): ToolboxCategory[] {
@@ -1001,6 +1005,16 @@ categories.push({
             }
         ]
     }]
+});
+
+categories.push({
+    name: "Variables",
+    icon: "\uf039",
+    color: "#A80000",
+    special: ToolboxCategorySpecial.VARIABLES,
+
+    blocks: [],
+    subcategories: []
 });
 
 export function getCategories(): ToolboxCategory[] {

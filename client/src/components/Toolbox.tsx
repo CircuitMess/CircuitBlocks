@@ -1,7 +1,7 @@
 import * as React from "react"
 
 import * as tconf from './BlocklyToolbox/toolbox'
-import { getCategories } from "./BlocklyToolbox/categories";
+import {getCategories, ToolboxCategorySpecial} from "./BlocklyToolbox/categories";
 
 import 'semantic-ui-css/semantic.min.css'
 import './BlocklyToolbox/toolbox.less'
@@ -59,6 +59,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     private categories: ToolboxCategory[];
     private Blockly: any;
 
+    private variablesCat: ToolboxCategory | undefined;
+
     constructor(props: ToolboxProps) {
         super(props);
         this.state = {
@@ -78,9 +80,25 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.categories = getCategories();
 
         this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
+
+        this.Blockly.addChangeListener((e: any) => {
+            if(e.type == "var_create"){
+                this.rebuildVariablesFlyout();
+            }
+        });
+    }
+
+    rebuildVariablesFlyout(){
+        if(!this.variablesCat) return;
+
+        this.variablesCat.flyout = this.buildFlyout(this.variablesCat, this, undefined, true);
     }
 
     buildCategoryFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
+        if(category.special == ToolboxCategorySpecial.VARIABLES){
+            this.variablesCat = category;
+        }
+
         category.flyout = toolbox.buildFlyout(category, toolbox, parent);
         category.subcategories.forEach(cat => toolbox.buildCategoryFlyout(cat, toolbox, category));
     }
@@ -133,9 +151,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return headingLabel;
     }
 
-    buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
+    buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory, visible?: boolean){
         let workspace: any = toolbox.Blockly.getMainWorkspace();
-        let flyout: any = toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
+        let flyout: any =  category.flyout ? category.flyout : toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
         flyout.setVisible(false);
 
         if(!category.blocks) return flyout;
@@ -146,19 +164,23 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.icon, color));
 
-        let currentLabel: string = "";
-        category.blocks.forEach(block => {
-            let label = block.group;
-            if(label && label != currentLabel){
-                currentLabel = label;
-                blocks.push(toolbox.constructLabel(label));
-            }
+        if(category.special == ToolboxCategorySpecial.VARIABLES){
+            toolbox.Blockly.Variables.flyoutCategory(toolbox.Blockly.getMainWorkspace()).forEach((item: any) => blocks.push(item));
+        }else{
+            let currentLabel: string = "";
+            category.blocks.forEach(block => {
+                let label = block.group;
+                if(label && label != currentLabel){
+                    currentLabel = label;
+                    blocks.push(toolbox.constructLabel(label));
+                }
 
-            blocks.push(toolbox.Blockly.Xml.textToDom(block.xml));
-        });
+                blocks.push(toolbox.Blockly.Xml.textToDom(block.xml));
+            });
+        }
 
         flyout.show(blocks);
-        flyout.setVisible(false);
+        flyout.setVisible(!!visible);
 
         return flyout;
     }
@@ -537,6 +559,7 @@ export interface ToolboxCategory {
     advanced?: boolean;
 
     flyout?: any;
+    special?: ToolboxCategorySpecial;
 }
 
 export interface TreeRowProps {
