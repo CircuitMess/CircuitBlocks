@@ -1,4 +1,4 @@
-/* eslint no-unused-expressions: 0, no-undef: 0 */
+/* eslint-disable */
 var self = window.self;
 
 goog.require("Blockly");

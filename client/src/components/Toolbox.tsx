@@ -231,8 +231,6 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                 this.showFlyout(category);
             }
         }
-
-        console.log("Selected: " + index);
     }
 
     selectFirstItem() {
@@ -375,13 +373,16 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
             <ToolboxSearch ref="searchbox"  toolbox={this} editorname={editorname} />
             <div className="blocklyTreeRoot">
                 <div role="tree">
-                    {normalCategories.map((treeRow) => (
-                        <CategoryItem toolbox={this} index={index++} treeRow={treeRow} onCategoryClick={this.setSelection}>
-                            {treeRow.subcategories ? treeRow.subcategories.map((subTreeRow) => (
-                                <CategoryItem index={index++} toolbox={this} treeRow={subTreeRow} parentTreeRow={treeRow} onCategoryClick={this.setSelection} />
-                            )) : undefined}
+                    {normalCategories.map((treeRow) => { let i = index++;
+                        return <CategoryItem toolbox={this} key={ "catitem_" + i } index={i} treeRow={treeRow}
+                                      onCategoryClick={this.setSelection}>
+                            {treeRow.subcategories.map((subTreeRow) => {
+                                let j = index++;
+                                return <CategoryItem key={"catitem_" + j} index={j} toolbox={this} treeRow={subTreeRow}
+                                                     parentTreeRow={treeRow} onCategoryClick={this.setSelection}/>
+                            })}
                         </CategoryItem>
-                    ))}
+                    })}
                     {hasAdvanced ? <TreeSeparator key="advancedseparator" /> : undefined}
                     {hasAdvanced ? <CategoryItem index={ -1 } toolbox={this} treeRow={{ subcategories: [], name: tconf.advancedTitle(), color: tconf.getNamespaceColor('advanced'), icon: tconf.getNamespaceIcon(showAdvanced ? 'advancedexpanded' : 'advancedcollapsed') }} onCategoryClick={this.advancedClicked} /> : undefined}
                     {showAdvanced ? advancedCategories.map((treeRow) => (
