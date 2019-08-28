@@ -1017,6 +1017,16 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "Functions",
+    icon: "\uf109",
+    color: "#005a9e",
+    special: ToolboxCategorySpecial.FUNCTIONS,
+
+    blocks: [],
+    subcategories: []
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }

@@ -1,10 +1,12 @@
 import * as React from "react"
+import * as ReactDOM from "react-dom"
 
 import * as tconf from './BlocklyToolbox/toolbox'
 import {getCategories, ToolboxCategorySpecial} from "./BlocklyToolbox/categories";
 
 import 'semantic-ui-css/semantic.min.css'
 import './BlocklyToolbox/toolbox.less'
+import {CreateFunctionDialog} from "./CreateFunction";
 
 
 // this is a supertype of pxtc.SymbolInfo (see partitionBlocks)
@@ -61,6 +63,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
     private variablesCat: ToolboxCategory | undefined;
 
+    private functionsDialog: CreateFunctionDialog | null = null;
+
     constructor(props: ToolboxProps) {
         super(props);
         this.state = {
@@ -86,6 +90,18 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                 this.rebuildVariablesFlyout();
             }
         });
+
+        this.Blockly.Functions.editFunctionExternalHandler = (mutation: Element, cb: any /*Blockly.Functions.ConfirmEditCallback*/) => {
+            Promise.resolve()
+                //.delay(10)
+                .then(() => {
+                    if (!this.functionsDialog) {
+                        const wrapper = document.body.appendChild(document.createElement('div'));
+                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog), wrapper) as CreateFunctionDialog;
+                    }
+                    this.functionsDialog.show(mutation, cb, this.Blockly.getMainWorkspace());
+                });
+        }
     }
 
     rebuildVariablesFlyout(){
@@ -164,8 +180,10 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.icon, color));
 
-        if(category.special == ToolboxCategorySpecial.VARIABLES){
+        if(category.special == ToolboxCategorySpecial.VARIABLES) {
             toolbox.Blockly.Variables.flyoutCategory(toolbox.Blockly.getMainWorkspace()).forEach((item: any) => blocks.push(item));
+        }else if(category.special == ToolboxCategorySpecial.FUNCTIONS){
+            toolbox.Blockly.Functions.flyoutCategory(toolbox.Blockly.getMainWorkspace()).forEach((item: any) => blocks.push(item));
         }else{
             let currentLabel: string = "";
             category.blocks.forEach(block => {
