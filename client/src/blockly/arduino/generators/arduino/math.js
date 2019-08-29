@@ -249,8 +249,15 @@ Blockly.Arduino['math_number_property'] = function(block) {
 Blockly.Arduino['math_change'] = function(block) {
   var argument0 = Blockly.Arduino.valueToCode(block, 'DELTA',
       Blockly.Arduino.ORDER_ADDITIVE) || '0';
-  var varName = Blockly.Arduino.variableDB_.getName(
-      block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+
+  var variable = block.getVarModels()[0];
+  if(typeof variable === "undefined"){
+    console.log("Undefined var in block:");
+    console.log(variable);
+    return ["", Blockly.Arduino.ORDER_ATOMIC];
+  }
+
+  var varName = Blockly.Arduino.variableDB_.getName(variable.id_, Blockly.Variables.NAME_TYPE);
   return varName + ' += ' + argument0 + ';\n';
 };
 
