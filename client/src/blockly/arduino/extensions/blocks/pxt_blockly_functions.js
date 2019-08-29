@@ -14,3 +14,17 @@ const updateDisplay = function(){
 };
 
 Blockly.Blocks['function_definition'].updateDisplay_ = updateDisplay;
+
+Blockly.Blocks['function_definition'].getReturnType = function(){
+    var returnType = Blockly.Types.NULL;
+    var returnBlock = this.getInputTargetBlock('RETURN');
+    if (returnBlock) {
+        // First check if the block itself has a type already
+        if (returnBlock.getBlockType) {
+            returnType = returnBlock.getBlockType();
+        } else {
+            returnType = Blockly.Types.getChildBlockType(returnBlock);
+        }
+    }
+    return returnType;
+};
