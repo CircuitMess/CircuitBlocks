@@ -6,7 +6,6 @@ export interface ISettingsProps {
     //parent: IProjectView;
     visible?: boolean;
     functionCreateCallback?: () => void;
-    blockly: any;
 }
 
 interface FunctionEditorTypeInfo {
@@ -18,11 +17,11 @@ interface FunctionEditorTypeInfo {
 
 export interface CreateFunctionDialogState {
     visible?: boolean;
-    functionEditorWorkspace?: any; // Blockly.WorkspaceSvg
+    functionEditorWorkspace?: Blockly.WorkspaceSvg;
     functionCallback?: any; // Blockly.Functions.ConfirmEditCallback
     initialMutation?: Element | null;
     functionBeingEdited?: any; // Blockly.FunctionDeclarationBlock
-    mainWorkspace?: any; // Blockly.Workspace
+    mainWorkspace?: Blockly.Workspace;
 }
 
 export interface ModalButton {
@@ -41,7 +40,6 @@ export interface ModalButton {
 
 export class CreateFunctionDialog extends React.Component<ISettingsProps, CreateFunctionDialogState> {
     static cachedFunctionTypes: FunctionEditorTypeInfo[] | null = null;
-    private Blockly: any;
 
     constructor(props: ISettingsProps) {
         super(props);
@@ -52,8 +50,6 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
             initialMutation: null,
             functionBeingEdited: null
         };
-
-        this.Blockly = props.blockly;
 
         this.hide = this.hide.bind(this);
         this.modalDidOpen = this.modalDidOpen.bind(this);
@@ -76,7 +72,7 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
         });
     }
 
-    show(initialMutation: Element, cb: any /*Blockly.Functions.ConfirmEditCallback*/, mainWorkspace: any /*Blockly.Workspace*/) {
+    show(initialMutation: Element, cb: any /*Blockly.Functions.ConfirmEditCallback*/, mainWorkspace: Blockly.Workspace) {
         this.setState({
             visible: true,
             functionCallback: cb,
@@ -97,10 +93,10 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
         // TODO: pxt.BrowserUtils.addClass(Blockly.WidgetDiv.DIV as HTMLElement, "functioneditor");
 
         // Create the function editor workspace
-        functionEditorWorkspace = this.Blockly.inject(workspaceDiv, {
+        functionEditorWorkspace = Blockly.inject(workspaceDiv, {
             trashcan: false,
             scrollbars: true
-        }) as any /*Blockly.WorkspaceSvg*/;
+        }) as Blockly.WorkspaceSvg;
         (functionEditorWorkspace as any).showContextMenu_ = () => { }; // Disable the context menu
         functionEditorWorkspace.clear();
 
@@ -121,7 +117,7 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
             functionEditorWorkspace,
             functionBeingEdited
         });
-        this.Blockly.svgResize(functionEditorWorkspace);
+        Blockly.svgResize(functionEditorWorkspace);
     }
 
     cancel() {
@@ -130,10 +126,10 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
     }
 
     confirm() {
-        this.Blockly.hideChaff();
+        Blockly.hideChaff();
         const { functionBeingEdited, mainWorkspace, functionCallback } = this.state;
         const mutation = (functionBeingEdited as any).mutationToDom();
-        if (this.Blockly.Functions.validateFunctionExternal(mutation, mainWorkspace)) {
+        if (Blockly.Functions.validateFunctionExternal(mutation, mainWorkspace)) {
             functionCallback(mutation);
             if(this.props.functionCreateCallback) this.props.functionCreateCallback();
             this.hide();

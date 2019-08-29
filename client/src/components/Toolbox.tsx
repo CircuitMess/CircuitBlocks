@@ -100,7 +100,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                 .then(() => {
                     if (!this.functionsDialog) {
                         const wrapper = document.body.appendChild(document.createElement('div'));
-                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog, { blockly: this.Blockly, functionCreateCallback: () => this.rebuildFunctionsFlyout() }), wrapper) as CreateFunctionDialog;
+                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog, { functionCreateCallback: () => this.rebuildFunctionsFlyout() }), wrapper) as CreateFunctionDialog;
                     }
                     this.functionsDialog.show(mutation, cb, this.workspace);
                 });
