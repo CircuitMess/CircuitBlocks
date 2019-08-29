@@ -60,8 +60,10 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
     private categories: ToolboxCategory[];
     private Blockly: any;
+    private workspace: any;
 
     private variablesCat: ToolboxCategory | undefined;
+    private functionsCat: ToolboxCategory | undefined;
 
     private functionsDialog: CreateFunctionDialog | null = null;
 
@@ -81,6 +83,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.items = [];
 
         this.Blockly = props.blockly;
+        this.workspace = this.Blockly.getMainWorkspace();
         this.categories = getCategories();
 
         this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
@@ -97,9 +100,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                 .then(() => {
                     if (!this.functionsDialog) {
                         const wrapper = document.body.appendChild(document.createElement('div'));
-                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog), wrapper) as CreateFunctionDialog;
+                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog, { functionCreateCallback: () => this.rebuildFunctionsFlyout() }), wrapper) as CreateFunctionDialog;
                     }
-                    this.functionsDialog.show(mutation, cb, this.Blockly.getMainWorkspace());
+                    this.functionsDialog.show(mutation, cb, this.workspace);
                 });
         }
     }
@@ -110,9 +113,17 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.variablesCat.flyout = this.buildFlyout(this.variablesCat, this, undefined, true);
     }
 
+    rebuildFunctionsFlyout(){
+        if(!this.functionsCat) return;
+
+        this.functionsCat.flyout = this.buildFlyout(this.functionsCat, this, undefined, true);
+    }
+
     buildCategoryFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
         if(category.special == ToolboxCategorySpecial.VARIABLES){
             this.variablesCat = category;
+        }else if(category.special == ToolboxCategorySpecial.FUNCTIONS){
+            this.functionsCat = category;
         }
 
         category.flyout = toolbox.buildFlyout(category, toolbox, parent);
@@ -168,7 +179,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     }
 
     buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory, visible?: boolean){
-        let workspace: any = toolbox.Blockly.getMainWorkspace();
+        let workspace: any = toolbox.workspace;
         let flyout: any =  category.flyout ? category.flyout : toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
         flyout.setVisible(false);
 
@@ -181,9 +192,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.icon, color));
 
         if(category.special == ToolboxCategorySpecial.VARIABLES) {
-            toolbox.Blockly.Variables.flyoutCategory(toolbox.Blockly.getMainWorkspace()).forEach((item: any) => blocks.push(item));
+            toolbox.Blockly.Variables.flyoutCategory(toolbox.workspace).forEach((item: any) => blocks.push(item));
         }else if(category.special == ToolboxCategorySpecial.FUNCTIONS){
-            toolbox.Blockly.Functions.flyoutCategory(toolbox.Blockly.getMainWorkspace()).forEach((item: any) => blocks.push(item));
+            toolbox.Blockly.Functions.flyoutCategory(toolbox.workspace).forEach((item: any) => blocks.push(item));
         }else{
             let currentLabel: string = "";
             category.blocks.forEach(block => {
@@ -366,12 +377,12 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     private showFlyout(treeRow: ToolboxCategory) {
         this.closeFlyout();
 
-        this.Blockly.getMainWorkspace().toolbox_.flyout_ = treeRow.flyout;
-        this.Blockly.getMainWorkspace().toolbox_.flyout_.setVisible(true);
+        this.workspace.toolbox_.flyout_ = treeRow.flyout;
+        this.workspace.toolbox_.flyout_.setVisible(true);
     }
 
     closeFlyout() {
-        this.Blockly.getMainWorkspace().toolbox_.flyout_.setVisible(false);
+        this.workspace.toolbox_.flyout_.setVisible(false);
     }
 
     handleRootElementRef = (c: HTMLDivElement) => {

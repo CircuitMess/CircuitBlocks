@@ -19,6 +19,7 @@ goog.require("Blockly.Arduino.spi");
 goog.require("Blockly.Arduino.servo");
 goog.require("Blockly.Arduino.lists");
 goog.require("Blockly.Arduino.procedures");
+goog.require("Blockly.Arduino.functions");
 goog.require("Blockly.Arduino.time");
 goog.require("Blockly.Arduino.map");
 goog.require("Blockly.Arduino.colour");
@@ -46,6 +47,7 @@ goog.require("Blockly.Blocks.map");
 goog.require("Blockly.Blocks.spi");
 goog.require("Blockly.Blocks.Procedures");
 goog.require("Blockly.Blocks.servo");
+goog.require("Blockly.Ext.Functions");
 
 
 export default Blockly;

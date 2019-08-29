@@ -5,6 +5,7 @@ import {defaultIconForArgType} from "./BlocklyToolbox/toolbox";
 export interface ISettingsProps {
     //parent: IProjectView;
     visible?: boolean;
+    functionCreateCallback?: () => void;
 }
 
 interface FunctionEditorTypeInfo {
@@ -130,6 +131,7 @@ export class CreateFunctionDialog extends React.Component<ISettingsProps, Create
         const mutation = (functionBeingEdited as any).mutationToDom();
         if (Blockly.Functions.validateFunctionExternal(mutation, mainWorkspace)) {
             functionCallback(mutation);
+            if(this.props.functionCreateCallback) this.props.functionCreateCallback();
             this.hide();
         }
     }
