@@ -5,6 +5,7 @@ goog.provide("Blockly.Block");
 goog.provide("Blockly.FieldDropdown");
 goog.provide("Blockly.Generator");
 goog.provide("Blockly.Procedures");
+goog.provide("Blockly.Functions");
 goog.provide("Blockly.Workspace");
 goog.provide("Blockly.Msg");
 goog.provide("Blockly.utils");
@@ -25890,3 +25891,4 @@ goog.global.console || (goog.global.console = {
   }
 });
 goog.global.Blockly = Blockly;
+Blockly.goog = goog;

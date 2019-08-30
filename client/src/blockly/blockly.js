@@ -10,6 +10,7 @@ goog.require("Blockly.Ext.Procedures");
 goog.require("Blockly.Ext.Block");
 goog.require("Blockly.BlockVarTypes");
 goog.require("Blockly.BlockTypes");
+goog.require("Blockly.Ext.Functions");
 
 goog.require("Blockly.Arduino");
 goog.require("Blockly.Arduino.Boards");
@@ -47,7 +48,8 @@ goog.require("Blockly.Blocks.map");
 goog.require("Blockly.Blocks.spi");
 goog.require("Blockly.Blocks.Procedures");
 goog.require("Blockly.Blocks.servo");
-goog.require("Blockly.Ext.Functions");
+goog.require("Blockly.Ext.Blocks.Functions");
+goog.require('Blockly.Blocks.functions');
 
 
 export default Blockly;

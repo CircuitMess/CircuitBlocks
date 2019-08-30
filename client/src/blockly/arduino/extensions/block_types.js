@@ -155,3 +155,27 @@ Blockly.Blocks['procedures_defnoreturn'].getArgType = function(varName) {
 
 Blockly.Blocks['procedures_defreturn'].setArgsType = Blockly.Blocks['procedures_defnoreturn'].setArgsType;
 Blockly.Blocks['procedures_defreturn'].getArgType = Blockly.Blocks['procedures_defnoreturn'].getArgType;
+
+// Function arguments
+
+Blockly.Blocks['function_definition'].getArgType = function(varName) {
+  for (var name in this.argsTypes) {
+    if (name == varName) {
+      return this.argsTypes[varName];
+    }
+  }
+  return null;
+};
+
+
+Blockly.Blocks["argument_reporter_number"].getBlockType = function(){
+  return Blockly.Types.NUMBER;
+};
+
+Blockly.Blocks["argument_reporter_boolean"].getBlockType = function(){
+  return Blockly.Types.BOOLEAN;
+};
+
+Blockly.Blocks["argument_reporter_string"].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};

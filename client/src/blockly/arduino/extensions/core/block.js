@@ -10,7 +10,7 @@ goog.provide("Blockly.Ext.Block");
  * DEPRECATED Return all variables referenced by this block.
  * @return {!Array.<string>} List of variable names.
  */
-/*Blockly.Block.prototype.getVars = function() {
+Blockly.Block.prototype.getVars = function() {
   var vars = [];
   for (var i = 0, input; input = this.inputList[i]; i++) {
     for (var j = 0, field; field = input.fieldRow[j]; j++) {
@@ -20,7 +20,7 @@ goog.provide("Blockly.Ext.Block");
     }
   }
   return vars;
-};*/
+};
 
 /**
  * Notification that a variable is renaming.

@@ -2,7 +2,7 @@ goog.require("Blockly");
 goog.require("Blockly.Blocks");
 goog.require("Blockly.Constants.Procedures");
 
-goog.provide("Blockly.Ext.Functions");
+goog.provide("Blockly.Ext.Blocks.Functions");
 
 Blockly.Blocks['function_definition'].updateDisplay__ = Blockly.Blocks['function_definition'].updateDisplay_;
 
@@ -26,5 +26,6 @@ Blockly.Blocks['function_definition'].getReturnType = function(){
             returnType = Blockly.Types.getChildBlockType(returnBlock);
         }
     }
+
     return returnType;
 };

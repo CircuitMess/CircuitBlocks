@@ -1,6 +1,14 @@
 goog.require("Blockly.Arduino");
+goog.require("Blockly.Type");
+goog.require("Blockly.Types");
 
 goog.provide("Blockly.Arduino.functions");
+
+const arduinoTypes = {
+    string: Blockly.Types.TEXT,
+    boolean: Blockly.Types.BOOLEAN,
+    number: Blockly.Types.NUMBER
+};
 
 Blockly.Arduino["function_definition"] = function(block){
     var funcName = Blockly.Arduino.variableDB_.getName(block.getFieldValue('function_name'), Blockly.Procedures.NAME_TYPE);
@@ -23,10 +31,14 @@ Blockly.Arduino["function_definition"] = function(block){
     // Get arguments with type
     var args = [];
     for (var x = 0; x < block.arguments_.length; x++) {
+        let typeText = block.arguments_[x].type;
+        let type = arduinoTypes.hasOwnProperty(typeText) ? arduinoTypes[typeText] : Blockly.Types.UNDEF;
+
+
         args[x] =
-            Blockly.Arduino.getArduinoType_(block.getArgType(block.arguments_[x])) +
+            Blockly.Arduino.getArduinoType_(type) +
             ' ' +
-            Blockly.Arduino.variableDB_.getName(block.arguments_[x],
+            Blockly.Arduino.variableDB_.getName(block.arguments_[x].name,
                 Blockly.Variables.NAME_TYPE);
     }
 
@@ -57,14 +69,20 @@ Blockly.Arduino["function_call"] = function(block){
     return code;
 };
 
-Blockly.Arduino["argument_reporter_number"] = function(block){
-
+Blockly.Arduino["function_callreturn"] = function(block){
+    var funcName = Blockly.Arduino.variableDB_.getName(
+        block.getFieldValue('function_name'), Blockly.Functions.NAME_TYPE);
+    var args = [];
+    for (var i = 0; i < block.arguments_.length; i++) {
+        args[i] = Blockly.Arduino.valueToCode(block, block.arguments_[i].id,
+            Blockly.Arduino.ORDER_NONE) || 'null';
+    }
+    var code = funcName + '(' + args.join(', ') + ')';
+    return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
 };
 
-Blockly.Arduino["argument_reporter_boolean"] = function(block){
+Blockly.Arduino["argument_reporter_number"] = Blockly.Arduino["argument_reporter_boolean"]
+    = Blockly.Arduino["argument_reporter_string"] = Blockly.Arduino["argument_reporter_custom"] = function(block){
 
-};
-
-Blockly.Arduino["argument_reporter_string"] = function(block){
-
+    return [ block.getFieldValue("VALUE"), Blockly.Arduino.ORDER_UNARY_POSTFIX ];
 };
