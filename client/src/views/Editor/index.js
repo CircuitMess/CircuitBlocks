@@ -8,8 +8,8 @@ import BlocklyEditor from '../../components/BlocklyEditor';
 import { EditorHeader } from '../../components/Header';
 import Popups from '../../components/Popups';
 import Prompt from '../../components/Prompt';
-import Toolbox from "../../components/Toolbox";
-import * as ReactDOM from "react-dom";
+import Toolbox from '../../components/Toolbox';
+import * as ReactDOM from 'react-dom';
 
 const NAV_BAR_HEIGHT = 64;
 
@@ -96,12 +96,16 @@ class Editor extends Component {
     window.addEventListener('resize', this.updateDimensions);
   }
 
-  injectToolbox(){
-    const blocklyToolboxDiv = ReactDOM.findDOMNode(this.blocklyDiv).getElementsByClassName("blocklyToolboxDiv")[0];
+  injectToolbox() {
+    const blocklyToolboxDiv = ReactDOM.findDOMNode(this.blocklyDiv).getElementsByClassName(
+      'blocklyToolboxDiv'
+    )[0];
 
-    const blocklyToolbox = <div className="blocklyToolbox">
-      <Toolbox editorname="blocks" blockly={Blockly}/>
-    </div>;
+    const blocklyToolbox = (
+      <div className="blocklyToolbox">
+        <Toolbox editorname="blocks" blockly={Blockly} />
+      </div>
+    );
 
     ReactDOM.render(blocklyToolbox, blocklyToolboxDiv);
   }
