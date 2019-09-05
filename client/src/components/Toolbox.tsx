@@ -1,10 +1,12 @@
 import * as React from "react"
+import * as ReactDOM from "react-dom"
 
 import * as tconf from './BlocklyToolbox/toolbox'
-import { getCategories } from "./BlocklyToolbox/categories";
+import {getCategories, ToolboxCategorySpecial} from "./BlocklyToolbox/categories";
 
 import 'semantic-ui-css/semantic.min.css'
 import './BlocklyToolbox/toolbox.less'
+import {CreateFunctionDialog} from "./CreateFunction";
 
 
 // this is a supertype of pxtc.SymbolInfo (see partitionBlocks)
@@ -58,6 +60,12 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
     private categories: ToolboxCategory[];
     private Blockly: any;
+    private workspace: any;
+
+    private variablesCat: ToolboxCategory | undefined;
+    private functionsCat: ToolboxCategory | undefined;
+
+    private functionsDialog: CreateFunctionDialog | null = null;
 
     constructor(props: ToolboxProps) {
         super(props);
@@ -75,12 +83,49 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.items = [];
 
         this.Blockly = props.blockly;
+        this.workspace = this.Blockly.getMainWorkspace();
         this.categories = getCategories();
 
         this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
+
+        this.Blockly.addChangeListener((e: any) => {
+            if(e.type == "var_create"){
+                this.rebuildVariablesFlyout();
+            }
+        });
+
+        this.Blockly.Functions.editFunctionExternalHandler = (mutation: Element, cb: any /*Blockly.Functions.ConfirmEditCallback*/) => {
+            Promise.resolve()
+                //.delay(10)
+                .then(() => {
+                    if (!this.functionsDialog) {
+                        const wrapper = document.body.appendChild(document.createElement('div'));
+                        this.functionsDialog = ReactDOM.render(React.createElement(CreateFunctionDialog, { blockly: this.Blockly, functionCreateCallback: () => this.rebuildFunctionsFlyout() }), wrapper) as CreateFunctionDialog;
+                    }
+                    this.functionsDialog.show(mutation, cb, this.workspace);
+                });
+        }
+    }
+
+    rebuildVariablesFlyout(){
+        if(!this.variablesCat) return;
+
+        this.variablesCat.flyout = this.buildFlyout(this.variablesCat, this, undefined, true);
+    }
+
+    rebuildFunctionsFlyout(){
+        if(!this.functionsCat) return;
+
+        this.functionsCat.flyout = this.buildFlyout(this.functionsCat, this, undefined, true);
     }
 
     buildCategoryFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
+        if(category.special == ToolboxCategorySpecial.VARIABLES){
+            this.variablesCat = category;
+        }else if(category.special == ToolboxCategorySpecial.FUNCTIONS){
+            this.functionsCat = category;
+        }
+
         category.flyout = toolbox.buildFlyout(category, toolbox, parent);
         category.subcategories.forEach(cat => toolbox.buildCategoryFlyout(cat, toolbox, category));
     }
@@ -133,9 +178,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return headingLabel;
     }
 
-    buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory){
-        let workspace: any = toolbox.Blockly.getMainWorkspace();
-        let flyout: any = toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
+    buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory, visible?: boolean){
+        let workspace: any = toolbox.workspace;
+        let flyout: any =  category.flyout ? category.flyout : toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
         flyout.setVisible(false);
 
         if(!category.blocks) return flyout;
@@ -146,19 +191,25 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         blocks.push(toolbox.showFlyoutHeadingLabel(category.name, category.icon, color));
 
-        let currentLabel: string = "";
-        category.blocks.forEach(block => {
-            let label = block.group;
-            if(label && label != currentLabel){
-                currentLabel = label;
-                blocks.push(toolbox.constructLabel(label));
-            }
+        if(category.special == ToolboxCategorySpecial.VARIABLES) {
+            toolbox.Blockly.Variables.flyoutCategory(toolbox.workspace).forEach((item: any) => blocks.push(item));
+        }else if(category.special == ToolboxCategorySpecial.FUNCTIONS){
+            toolbox.Blockly.Functions.flyoutCategory(toolbox.workspace).forEach((item: any) => blocks.push(item));
+        }else{
+            let currentLabel: string = "";
+            category.blocks.forEach(block => {
+                let label = block.group;
+                if(label && label != currentLabel){
+                    currentLabel = label;
+                    blocks.push(toolbox.constructLabel(label));
+                }
 
-            blocks.push(toolbox.Blockly.Xml.textToDom(block.xml));
-        });
+                blocks.push(toolbox.Blockly.Xml.textToDom(block.xml));
+            });
+        }
 
         flyout.show(blocks);
-        flyout.setVisible(false);
+        flyout.setVisible(!!visible);
 
         return flyout;
     }
@@ -231,8 +282,6 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
                 this.showFlyout(category);
             }
         }
-
-        console.log("Selected: " + index);
     }
 
     selectFirstItem() {
@@ -328,12 +377,12 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     private showFlyout(treeRow: ToolboxCategory) {
         this.closeFlyout();
 
-        this.Blockly.getMainWorkspace().toolbox_.flyout_ = treeRow.flyout;
-        this.Blockly.getMainWorkspace().toolbox_.flyout_.setVisible(true);
+        this.workspace.toolbox_.flyout_ = treeRow.flyout;
+        this.workspace.toolbox_.flyout_.setVisible(true);
     }
 
     closeFlyout() {
-        this.Blockly.getMainWorkspace().toolbox_.flyout_.setVisible(false);
+        this.workspace.toolbox_.flyout_.setVisible(false);
     }
 
     handleRootElementRef = (c: HTMLDivElement) => {
@@ -375,13 +424,16 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
             <ToolboxSearch ref="searchbox"  toolbox={this} editorname={editorname} />
             <div className="blocklyTreeRoot">
                 <div role="tree">
-                    {normalCategories.map((treeRow) => (
-                        <CategoryItem toolbox={this} index={index++} treeRow={treeRow} onCategoryClick={this.setSelection}>
-                            {treeRow.subcategories ? treeRow.subcategories.map((subTreeRow) => (
-                                <CategoryItem index={index++} toolbox={this} treeRow={subTreeRow} parentTreeRow={treeRow} onCategoryClick={this.setSelection} />
-                            )) : undefined}
+                    {normalCategories.map((treeRow) => { let i = index++;
+                        return <CategoryItem toolbox={this} key={ "catitem_" + i } index={i} treeRow={treeRow}
+                                      onCategoryClick={this.setSelection}>
+                            {treeRow.subcategories.map((subTreeRow) => {
+                                let j = index++;
+                                return <CategoryItem key={"catitem_" + j} index={j} toolbox={this} treeRow={subTreeRow}
+                                                     parentTreeRow={treeRow} onCategoryClick={this.setSelection}/>
+                            })}
                         </CategoryItem>
-                    ))}
+                    })}
                     {hasAdvanced ? <TreeSeparator key="advancedseparator" /> : undefined}
                     {hasAdvanced ? <CategoryItem index={ -1 } toolbox={this} treeRow={{ subcategories: [], name: tconf.advancedTitle(), color: tconf.getNamespaceColor('advanced'), icon: tconf.getNamespaceIcon(showAdvanced ? 'advancedexpanded' : 'advancedcollapsed') }} onCategoryClick={this.advancedClicked} /> : undefined}
                     {showAdvanced ? advancedCategories.map((treeRow) => (
@@ -536,6 +588,7 @@ export interface ToolboxCategory {
     advanced?: boolean;
 
     flyout?: any;
+    special?: ToolboxCategorySpecial;
 }
 
 export interface TreeRowProps {

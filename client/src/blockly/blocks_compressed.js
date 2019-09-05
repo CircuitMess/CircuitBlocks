@@ -1,9 +1,10 @@
-/* eslint no-unused-expressions: 0, no-undef: 0 */
+/* eslint-disable */
 var self = window.self;
 
 goog.require("Blockly");
 
 goog.provide("Blockly.Blocks");
+
 goog.provide("Blockly.Colours");
 goog.provide("Blockly.Constants.Logic");
 goog.provide("Blockly.Constants.Loops");
@@ -11,6 +12,8 @@ goog.provide("Blockly.Constants.Math");
 goog.provide("Blockly.Constants.Text");
 goog.provide("Blockly.Constants.Procedures");
 goog.provide("Blockly.Constants.Variables");
+
+var goog = Blockly.goog;
 
 Blockly.Colours = {
   text: "#575E75",

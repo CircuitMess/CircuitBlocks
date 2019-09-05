@@ -182,3 +182,16 @@
 
         return rgb;
     }
+
+    export function defaultIconForArgType(typeName: string = "") {
+        switch (typeName) {
+            case "number":
+                return "calculator";
+            case "string":
+                return "text width";
+            case "boolean":
+                return "random";
+            default:
+                return "align justify"
+        }
+    }
