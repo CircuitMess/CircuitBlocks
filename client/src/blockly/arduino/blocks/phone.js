@@ -3,19 +3,6 @@ goog.require("Blockly.Blocks");
 
 goog.provide("Blockly.Blocks.phone");
 
-Blockly.Blocks['vibrate'] = {
-    init: function() {
-        this.appendValueInput("duration")
-            .setCheck("Number")
-            .appendField("Vibrate for");
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(230);
-        this.setTooltip("Vibrate the MAKERphone.");
-        this.setHelpUrl("");
-    }
-};
-
 Blockly.defineBlocksWithJsonArray([
     {
         type: "vibrate",
@@ -97,27 +84,3 @@ Blockly.defineBlocksWithJsonArray([
         tooltip: "Returns the joystick offset on the selected axis."
     }
 ]);
-
-Blockly.Blocks['button_released'] = {
-    init: function() {
-        this.appendValueInput("button")
-            .setCheck("Number")
-            .appendField(new Blockly.FieldDropdown([["#1","0"], ["#2","1"], ["#3","2"], ["#4","3"], ["#5","4"], ["#6","5"], ["#7","6"], ["#8","7"], ["#9","8"], ["*","9"], ["#0","10"], ["#","11"], [">","12"], ["Home","13"], ["<","15"], ["A","16"], ["B","17"]]), "button");
-        this.setOutput(true, "Boolean");
-        this.setColour(230);
-        this.setTooltip("If a button has been released.");
-        this.setHelpUrl("");
-    }
-};
-
-Blockly.Blocks['button_held'] = {
-    init: function() {
-        this.appendValueInput("button")
-            .setCheck("Number")
-            .appendField(new Blockly.FieldDropdown([["#1","0"], ["#2","1"], ["#3","2"], ["#4","3"], ["#5","4"], ["#6","5"], ["#7","6"], ["#8","7"], ["#9","8"], ["*","9"], ["#0","10"], ["#","11"], [">","12"], ["Home","13"], ["<","15"], ["A","16"], ["B","17"]]), "button");
-        this.setOutput(true, "Boolean");
-        this.setColour(230);
-        this.setTooltip("If a button has been held.");
-        this.setHelpUrl("");
-    }
-};

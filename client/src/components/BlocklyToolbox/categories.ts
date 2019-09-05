@@ -1049,6 +1049,74 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "Display",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    blocks: [
+        {
+            name: "display_colour",
+            xml: Blocks.display.colour
+        },
+        {
+            name: "display_popup",
+            xml: Blocks.display.popup
+        },
+        {
+            name: "display_clear",
+            xml: Blocks.display.clear
+        },
+        {
+            name: "display_invert",
+            xml: Blocks.display.invert
+        },
+
+        {
+            name: "display_fontsize",
+            group: "Text",
+            xml: Blocks.display.fontsize
+        },
+        {
+            name: "display_fontcolour",
+            group: "Text",
+            xml: Blocks.display.fontcolour
+        },
+        {
+            name: "display_fontcolour",
+            group: "Text",
+            xml: Blocks.display.println
+        },
+        {
+            name: "draw_text",
+            group: "Text",
+            xml: Blocks.display.drawtext
+        },
+
+        {
+            name: "draw_rect",
+            group: "Shapes",
+            xml: Blocks.display.drawrect
+        },
+        {
+            name: "draw_circle",
+            group: "Shapes",
+            xml: Blocks.display.drawcircle
+        },
+        {
+            name: "draw_ellipse",
+            group: "Shapes",
+            xml: Blocks.display.drawellipse
+        },
+        {
+            name: "draw_triangle",
+            group: "Shapes",
+            xml: Blocks.display.drawtriangle
+        }
+    ],
+    subcategories: []
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }
