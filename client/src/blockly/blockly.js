@@ -1,6 +1,10 @@
 goog.require("Blockly");
 goog.require("Blockly.Blocks");
 
+goog.require('Blockly.Msg');
+goog.require('Blockly.Msg.en');
+goog.require('Blockly.Arduino.Msg.en');
+
 goog.require("Blockly.Type");
 goog.require("Blockly.Types");
 goog.require("Blockly.StaticTyping");
@@ -33,10 +37,6 @@ goog.require("Blockly.Arduino.math");
 goog.require("Blockly.Arduino.variables");
 goog.require("Blockly.Arduino.MAKERphone");
 
-goog.require('Blockly.Msg');
-goog.require('Blockly.Msg.en');
-goog.require('Blockly.Arduino.Msg.en');
-
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
 goog.require("Blockly.Blocks.serial");
@@ -50,6 +50,5 @@ goog.require("Blockly.Blocks.Procedures");
 goog.require("Blockly.Blocks.servo");
 goog.require("Blockly.Ext.Blocks.Functions");
 goog.require('Blockly.Blocks.functions');
-
 
 export default Blockly;
