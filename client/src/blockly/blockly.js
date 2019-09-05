@@ -16,6 +16,9 @@ goog.require("Blockly.BlockVarTypes");
 goog.require("Blockly.BlockTypes");
 goog.require("Blockly.Ext.Functions");
 
+goog.require("Blockly.Extensions.ReturnDecimal");
+goog.require("Blockly.Extensions.ReturnBoolean");
+
 goog.require("Blockly.Arduino");
 goog.require("Blockly.Arduino.Boards");
 goog.require("Blockly.Arduino.logic");
@@ -36,6 +39,7 @@ goog.require("Blockly.Arduino.tone");
 goog.require("Blockly.Arduino.math");
 goog.require("Blockly.Arduino.variables");
 goog.require("Blockly.Arduino.MAKERphone");
+goog.require("Blockly.Arduino.phone");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
@@ -50,5 +54,6 @@ goog.require("Blockly.Blocks.Procedures");
 goog.require("Blockly.Blocks.servo");
 goog.require("Blockly.Ext.Blocks.Functions");
 goog.require('Blockly.Blocks.functions');
+goog.require('Blockly.Blocks.phone');
 
 export default Blockly;

@@ -126,4 +126,10 @@ export class Blocks {
         spi_transfer_return: '<block type="spi_transfer_return"></block>',
     };
 
+    public static phone: any = {
+        vibrate: '<block type="vibrate"></block>',
+        button_action: '<block type="button_action"></block>',
+        joystick: '<block type="joystick"></block>'
+    };
+
 }

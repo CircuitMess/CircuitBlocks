@@ -1027,6 +1027,28 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "I/O",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    blocks: [
+        {
+            name: "vibrate",
+            xml: Blocks.phone.vibrate
+        },
+        {
+            name: "button_action",
+            xml: Blocks.phone.button_action
+        },
+        {
+            name: "joystick",
+            xml: Blocks.phone.joystick
+        }
+    ],
+    subcategories: []
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }
