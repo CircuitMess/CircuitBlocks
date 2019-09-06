@@ -143,9 +143,8 @@
       "jest-watch-typeahead/testname"
     ]
   },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
+  "devDependencies": {
+    "@types/styled-components": "^4.1.18",
+    "babel-plugin-styled-components": "^1.10.6"
   }
 }
