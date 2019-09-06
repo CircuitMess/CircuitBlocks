@@ -15,6 +15,10 @@ const Section = styled.div`
     padding-top: 16px;
     height: 400px;
   }
+
+  &:last-child {
+    padding-bottom: 32px;
+  }
 `;
 
 export default Section;

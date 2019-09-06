@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Dropdown from './Dropdown';
-
 const ProfileWrapper = styled.div`
   .name {
     display: block;
