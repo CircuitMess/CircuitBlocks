@@ -3,11 +3,17 @@
   "version": "0.1.0",
   "main": "app.js",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@grpc/proto-loader": "^0.5.2",
+    "grpc": "^1.23.3"
+  },
   "scripts": {
     "electron-start": "electron .",
     "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
-    "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\""
+    "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\"",
+    "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./proto --grpc_out=./proto --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I ./proto ./proto/*.proto",
+    "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out ./proto -I ./proto ./proto/*.proto",
+    "proto": "npm run proto-js && npm-run proto-ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,6 +42,8 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.6.1",
+    "grpc-tools": "^1.8.0",
+    "grpc_tools_node_protoc_ts": "^2.5.4",
     "prettier": "^1.18.2",
     "wait-on": "^3.3.0"
   }
