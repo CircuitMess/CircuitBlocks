@@ -107,6 +107,14 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         }
     }
 
+    updateHeights(height: number){
+        function updateHeight(category: ToolboxCategory){
+
+        }
+
+        this.categories.forEach(updateHeight);
+    }
+
     rebuildVariablesFlyout(){
         if(!this.variablesCat) return;
 
@@ -379,6 +387,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         this.workspace.toolbox_.flyout_ = treeRow.flyout;
         this.workspace.toolbox_.flyout_.setVisible(true);
+        this.workspace.toolbox_.flyout_.scrollToStart();
+        this.workspace.toolbox_.flyout_.position();
     }
 
     closeFlyout() {
