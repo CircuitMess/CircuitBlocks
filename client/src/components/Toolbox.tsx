@@ -67,6 +67,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
     private functionsDialog: CreateFunctionDialog | null = null;
 
+    private searchFlyout: any;
+
     constructor(props: ToolboxProps) {
         super(props);
         this.state = {
@@ -180,6 +182,44 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return headingLabel;
     }
 
+    search(term: string){
+        let workspace: any = this.workspace;
+        let flyout: any = this.searchFlyout ? this.searchFlyout : this.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
+        this.searchFlyout = flyout;
+
+        if(term == ""){
+            flyout.setVisible(false);
+        }
+
+        this.clear();
+
+        let blocks: any[] = [];
+
+        let Blockly = this.Blockly;
+
+        function searchCategories(cat: ToolboxCategory){
+            if(!cat.blocks) return;
+
+            cat.blocks.forEach((block: any) => {
+                if(block.name.replace(/_/g, " ").toLowerCase().includes(term.toLowerCase())){
+                    blocks.push(Blockly.Xml.textToDom(block.xml));
+                }
+            });
+
+            cat.subcategories.forEach(searchCategories);
+        }
+
+        this.categories.forEach(searchCategories);
+
+        if(blocks.length == 0){
+            blocks.push(this.constructLabel("No results"));
+        }
+
+        flyout.show(blocks);
+        flyout.setVisible(true);
+        this.workspace.toolbox_.flyout_ = flyout;
+    }
+
     buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory, visible?: boolean){
         let workspace: any = toolbox.workspace;
         let flyout: any =  category.flyout ? category.flyout : toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
@@ -248,6 +288,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     }
 
     clear() {
+        this.closeFlyout();
         this.clearSelection();
         this.selectedIndex = 0;
         this.selectedTreeRow = undefined;
@@ -768,7 +809,7 @@ export class ToolboxSearch extends React.Component<ToolboxSearchProps, ToolboxSe
     constructor(props: ToolboxSearchProps) {
         super(props);
         this.state = {
-        }
+        };
 
         this.searchImmediate = this.searchImmediate.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
@@ -801,7 +842,7 @@ export class ToolboxSearch extends React.Component<ToolboxSearchProps, ToolboxSe
         let searchAccessibilityLabel = '';
         let hasSearch = false;
 
-
+        toolbox.search(searchTerm);
 
         // Execute search
         /*parent.searchAsync(searchTerm)
