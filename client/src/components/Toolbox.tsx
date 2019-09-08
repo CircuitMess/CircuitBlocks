@@ -89,6 +89,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
 
         this.Blockly.addChangeListener((e: any) => {
+            this.rebuildFunctionsFlyout();
             if(e.type == "var_create"){
                 this.rebuildVariablesFlyout();
             }
@@ -107,13 +108,6 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         }
     }
 
-    updateHeights(height: number){
-        function updateHeight(category: ToolboxCategory){
-
-        }
-
-        this.categories.forEach(updateHeight);
-    }
 
     rebuildVariablesFlyout(){
         if(!this.variablesCat) return;
@@ -189,6 +183,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     buildFlyout(category: ToolboxCategory, toolbox: Toolbox, parent?: ToolboxCategory, visible?: boolean){
         let workspace: any = toolbox.workspace;
         let flyout: any =  category.flyout ? category.flyout : toolbox.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
+        let wasVisible = flyout.isVisible();
         flyout.setVisible(false);
 
         if(!category.blocks) return flyout;
@@ -217,7 +212,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         }
 
         flyout.show(blocks);
-        flyout.setVisible(!!visible);
+        flyout.setVisible(!!visible && wasVisible);
 
         return flyout;
     }
