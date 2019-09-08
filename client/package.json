@@ -43,6 +43,7 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "0.5.0",
+    "monaco-editor": "^0.15.0",
     "node-blockly": "^1.1.1",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.5.0",
@@ -56,7 +57,7 @@
     "react-app-polyfill": "^1.0.2",
     "react-dev-utils": "^9.0.3",
     "react-dom": "^16.9.0",
-    "react-monaco-editor": "^0.28.0",
+    "react-monaco-editor": "^0.31.0",
     "resolve": "1.12.0",
     "resolve-url-loader": "3.1.0",
     "sass-loader": "7.2.0",
@@ -145,6 +146,7 @@
   },
   "devDependencies": {
     "@types/styled-components": "^4.1.18",
-    "babel-plugin-styled-components": "^1.10.6"
+    "babel-plugin-styled-components": "^1.10.6",
+    "monaco-editor-webpack-plugin": "^1.7.0"
   }
 }
