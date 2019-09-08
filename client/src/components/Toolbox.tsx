@@ -94,6 +94,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
             this.rebuildFunctionsFlyout();
             if(e.type == "var_create"){
                 this.rebuildVariablesFlyout();
+            }else if(e.type == "create"){
+                if(!this.workspace.toolbox_.flyout_.isVisible()) this.clearSelection();
             }
         });
 
