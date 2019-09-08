@@ -1117,6 +1117,37 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "Time",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "infinite_loop",
+            xml: Blocks.time.infinite_loop
+        },
+        {
+            name: "time_delay",
+            xml: Blocks.time.time_delay
+        },
+        {
+            name: "time_delay_microseconds",
+            xml: Blocks.time.time_delaymicros
+        },
+        {
+            name: "time_micros",
+            xml: Blocks.time.time_micros
+        },
+        {
+            name: "time_millis",
+            xml: Blocks.time.time_millis
+        }
+    ]
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }
