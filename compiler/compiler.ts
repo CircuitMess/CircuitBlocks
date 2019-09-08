@@ -4,10 +4,12 @@ import * as grpc from "grpc";
 import {BuildParams} from "../proto/builder_pb";
 import * as path from 'path';
 import * as os from 'os';
+import * as child_process from 'child_process';
 
 export class ArduinoCompiler {
 
     private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
+    private static process: child_process.ChildProcess;
 
     private static readonly CB_TMP: string = path.join(os.tmpdir(), "circuitblocks");
     private static ARDUINO_INSTALL: string = "";
@@ -22,6 +24,14 @@ export class ArduinoCompiler {
     public static setup(install: string, home: string){
         this.ARDUINO_INSTALL = install;
         this.ARDUINO_HOME = home;
+    }
+
+    public static startDaemon(){
+        this.process = child_process.execFile(path.join(this.ARDUINO_INSTALL, "arduino-builder"), ["--daemon"]);
+    }
+
+    public static stopDaemon(){
+        this.process.kill();
     }
 
     /**
