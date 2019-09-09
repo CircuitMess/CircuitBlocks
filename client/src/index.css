@@ -18,3 +18,8 @@ html {
 ::-webkit-scrollbar-thumb {
   background: #00000080;
 }
+
+#root {
+  height: 100%;
+  width: 100%;
+}

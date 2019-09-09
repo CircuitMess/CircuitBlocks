@@ -6,8 +6,6 @@ import App from './new/App';
 // import App from './Monaco';
 import * as serviceWorker from './serviceWorker';
 
-import './foo.css';
-
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
