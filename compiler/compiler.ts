@@ -21,6 +21,7 @@ export class ArduinoCompiler {
      * Sets the relevant Arduino directories.
      * @param install Arduino install directory. Contains directories "hardware", "tools", "tools-builder", etc.
      * @param home Arduino home directory. Usually in the user's My Documents. Usually contains directories "libraries"
+     * @param local Arduino local directory
      * and "sketches".
      */
     public static setup(install: string, home: string, local: string){
@@ -110,16 +111,33 @@ export class ArduinoCompiler {
         const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, "packages", "cm");
 
         buildParams.setSketchlocation(sketchPath);
-        buildParams.setFqbn("esp32:1.0.0:ringo");
         buildParams.setBuildpath(path.join(this.CB_TMP, "build"));
-
-        buildParams.setHardwarefolders([ path.join(this.ARDUINO_INSTALL, "hardware"), path.join(CM_LOCAL, "hardware") ].join(","));
-        buildParams.setToolsfolders([ path.join(this.ARDUINO_INSTALL, "hardware", "tools"), path.join(this.ARDUINO_INSTALL, "tools"), path.join(CM_LOCAL, "tools") ].join(","));
-        buildParams.setCustombuildproperties("runtime.tools.ctags.path=" + path.join(this.ARDUINO_INSTALL, "tools-builder", "ctags", "5.8-arduino11"));
-
         buildParams.setBuildcachepath(path.join(this.CB_TMP, "cache"));
+
+        buildParams.setHardwarefolders([
+            path.join(this.ARDUINO_INSTALL, "hardware"),
+            path.join(this.ARDUINO_LOCAL, "packages")
+        ].join(","));
+
+        buildParams.setToolsfolders([
+            path.join(this.ARDUINO_INSTALL, "tools-builder"),
+            path.join(this.ARDUINO_INSTALL, "hardware", "tools", "avr"),
+            path.join(this.ARDUINO_LOCAL, "packages")
+        ].join(","));
+
         buildParams.setBuiltinlibrariesfolders(path.join(this.ARDUINO_INSTALL, "libraries"));
         buildParams.setOtherlibrariesfolders(path.join(this.ARDUINO_HOME, "libraries"));
+
+        buildParams.setCustombuildproperties([
+            "runtime.tools.mkspiffs.path=" + path.join(CM_LOCAL, "tools", "mkdpiffs", "0.2.3"),
+            "runtime.tools.mkspiffs-0.2.3.path=" + path.join(CM_LOCAL, "tools", "mkdpiffs", "0.2.3"),
+            "runtime.tools.xtensa-esp32-elf-gcc.path=" + path.join(CM_LOCAL, "tools", "xtensa-esp32-elf-gcc", "1.22.0-80-g6c4433a-5.2.0"),
+            "runtime.tools.xtensa-esp32-elf-gcc-1.22.0-80-g6c4433a-5.2.0.path=" + path.join(CM_LOCAL, "tools", "xtensa-esp32-elf-gcc", "1.22.0-80-g6c4433a-5.2.0"),
+            "runtime.tools.esptool_py.path=" + path.join(CM_LOCAL, "tools", "esptool_py", "2.6.1"),
+            "runtime.tools.esptool_py-2.6.1.path=" + path.join(CM_LOCAL, "tools", "esptool_py", "2.6.1")
+        ].join(","));
+        buildParams.setArduinoapiversion("10809");
+        buildParams.setFqbn("cm:esp32:ringo:PartitionScheme=min_spiffs,FlashFreq=80,UploadSpeed=921600,DebugLevel=none");
 
         return buildParams;
     }

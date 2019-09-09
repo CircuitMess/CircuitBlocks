@@ -4,7 +4,7 @@ ArduinoCompiler.setup("/home/cm/Downloads/arduino-1.8.9", "/home/cm/Arduino", "/
 
 ArduinoCompiler.startDaemon();
 
-const code = "void setup(){}\nvoid loop(){}";
+const code = "#include <MAKERphone.h>\n\nvoid setup(){}\nvoid loop(){}";
 
 ArduinoCompiler.compile(code).then(data => {
     console.log("Binary: " + data.binary);
