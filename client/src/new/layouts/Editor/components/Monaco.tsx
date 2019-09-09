@@ -10,7 +10,6 @@ interface Props {
 class Monaco extends React.Component<Props, any> {
   editorDidMount(editor: monacoTypes.IStandaloneCodeEditor, monaco: any) {
     console.log('editorDidMount', editor);
-    // editor.focus();
   }
 
   render() {
@@ -24,7 +23,9 @@ class Monaco extends React.Component<Props, any> {
       minimap: {
         enabled: false
       },
-      automaticLayout: true
+      automaticLayout: true,
+      scrollBeyondLastLine: false,
+      renderIndentGuides: true
     };
 
     return (

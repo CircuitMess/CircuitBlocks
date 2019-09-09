@@ -29,8 +29,8 @@
   "devDependencies": {
     "@types/electron": "^1.6.10",
     "@types/node": "^12.7.4",
-    "@typescript-eslint/eslint-plugin": "^2.1.0",
-    "@typescript-eslint/parser": "^2.1.0",
+    "@typescript-eslint/eslint-plugin": "1.13.0",
+    "@typescript-eslint/parser": "1.13.0",
     "concurrently": "^4.1.1",
     "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",

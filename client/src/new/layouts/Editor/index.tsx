@@ -108,7 +108,7 @@ int main() {
   sort(results.begin(), results.end(), sortFunction);
 
   for(int i = 0; i < results.size(); i++) {
-    printf("(%d, %d) -> %d\n", results[i].x, results[i].y, results[i].distance);
+    printf("(%d, %d) -> %d\\n", results[i].x, results[i].y, results[i].distance);
   }
 
   return 0;
