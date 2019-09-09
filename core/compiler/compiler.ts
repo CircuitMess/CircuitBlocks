@@ -1,7 +1,7 @@
 
-import {BuilderClient} from "../proto/builder_grpc_pb";
+import {BuilderClient} from "../../proto/builder_grpc_pb";
 import * as grpc from "grpc";
-import {BuildParams} from "../proto/builder_pb";
+import {BuildParams} from "../../proto/builder_pb";
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
