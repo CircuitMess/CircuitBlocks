@@ -30,7 +30,7 @@ Blockly.Arduino['variables_get'] = function(block) {
     return ["", Blockly.Arduino.ORDER_ATOMIC];
   }
 
-  var code = Blockly.Arduino.variableDB_.getName(block.getVarModels()[0].getId(), Blockly.Variables.NAME_TYPE);
+  var code = Blockly.Arduino.variableDB_.getName(variable.id_, Blockly.Variables.NAME_TYPE);
   return [code, Blockly.Arduino.ORDER_ATOMIC];
 };
 
@@ -44,8 +44,16 @@ Blockly.Arduino['variables_get'] = function(block) {
 Blockly.Arduino['variables_set'] = function(block) {
   var argument0 = Blockly.Arduino.valueToCode(block, 'VALUE',
       Blockly.Arduino.ORDER_ASSIGNMENT) || '0';
-  var varName = Blockly.Arduino.variableDB_.getName(
-      block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+
+  var variable = block.getVarModels()[0];
+  if(typeof variable === "undefined"){
+    console.log("Undefined var in block:");
+    console.log(variable);
+    return ["", Blockly.Arduino.ORDER_ATOMIC];
+  }
+
+  //var varName = Blockly.Arduino.variableDB_.getName(block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+  var varName = Blockly.Arduino.variableDB_.getName(variable.id_, Blockly.Variables.NAME_TYPE);
   return varName + ' = ' + argument0 + ';\n';
 };
 
