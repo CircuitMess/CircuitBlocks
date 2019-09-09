@@ -15,6 +15,7 @@ export class ArduinoCompiler {
     private static readonly CB_TMP: string = path.join(os.tmpdir(), "circuitblocks");
     private static ARDUINO_INSTALL: string = "";
     private static ARDUINO_HOME: string = "";
+    private static ARDUINO_LOCAL: string = "";
 
     /**
      * Sets the relevant Arduino directories.
@@ -22,9 +23,10 @@ export class ArduinoCompiler {
      * @param home Arduino home directory. Usually in the user's My Documents. Usually contains directories "libraries"
      * and "sketches".
      */
-    public static setup(install: string, home: string){
+    public static setup(install: string, home: string, local: string){
         this.ARDUINO_INSTALL = install;
         this.ARDUINO_HOME = home;
+        this.ARDUINO_LOCAL = local;
     }
 
     public static startDaemon(){
@@ -105,12 +107,14 @@ export class ArduinoCompiler {
     private static buildParams(sketchPath: string,): BuildParams {
         const buildParams: BuildParams = new BuildParams();
 
+        const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, "packages", "cm");
+
         buildParams.setSketchlocation(sketchPath);
-        buildParams.setFqbn("arduino:avr:uno");
+        buildParams.setFqbn("esp32:1.0.0:ringo");
         buildParams.setBuildpath(path.join(this.CB_TMP, "build"));
 
-        buildParams.setHardwarefolders(path.join(this.ARDUINO_INSTALL, "hardware"));
-        buildParams.setToolsfolders([ path.join(this.ARDUINO_INSTALL, "hardware", "tools"), path.join(this.ARDUINO_INSTALL, "tools") ].join(","));
+        buildParams.setHardwarefolders([ path.join(this.ARDUINO_INSTALL, "hardware"), path.join(CM_LOCAL, "hardware") ].join(","));
+        buildParams.setToolsfolders([ path.join(this.ARDUINO_INSTALL, "hardware", "tools"), path.join(this.ARDUINO_INSTALL, "tools"), path.join(CM_LOCAL, "tools") ].join(","));
         buildParams.setCustombuildproperties("runtime.tools.ctags.path=" + path.join(this.ARDUINO_INSTALL, "tools-builder", "ctags", "5.8-arduino11"));
 
         buildParams.setBuildcachepath(path.join(this.CB_TMP, "cache"));

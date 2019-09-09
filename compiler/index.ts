@@ -1,6 +1,6 @@
 import {ArduinoCompiler} from "./compiler";
 
-ArduinoCompiler.setup("/home/cm/Downloads/arduino-1.8.9", "/home/cm/Arduino");
+ArduinoCompiler.setup("/home/cm/Downloads/arduino-1.8.9", "/home/cm/Arduino", "/home/cm/.arduino15");
 
 ArduinoCompiler.startDaemon();
 
