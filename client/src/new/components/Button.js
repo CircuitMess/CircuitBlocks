@@ -56,6 +56,10 @@ const Button = styled.div`
     margin-left: 4px;
   }
 
+  &.active {
+    background-color: #2f2fb5;
+  }
+
   ${(props) => props.color && colors[props.color]}
 `;
 

@@ -26,15 +26,20 @@ const Wrapper = styled.div`
 interface Props {
   closeCode: () => void;
   fullScreenToggle: () => void;
+  toggleTheme: () => void;
+  theme: string;
 }
 
 const CodeHeader: React.FC<Props> = (props) => {
-  const { closeCode, fullScreenToggle } = props;
+  const { closeCode, fullScreenToggle, toggleTheme } = props;
 
   return (
     <Wrapper>
       <div className="title"> Code </div>
       <div className="icons">
+        <i className="material-icons" onClick={toggleTheme}>
+          lightbulb
+        </i>
         <i className="material-icons" onClick={fullScreenToggle}>
           fullscreen
         </i>

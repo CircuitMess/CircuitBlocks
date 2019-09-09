@@ -156,7 +156,7 @@ class Editor extends Component {
     this.setState((state) => {
       const isCodeOpen = !state.isCodeOpen;
       // this.workspace.setVisible(!isCodeOpen);
-      return { isCodeOpen: isCodeOpen };
+      return { isCodeOpen };
     });
   }
 

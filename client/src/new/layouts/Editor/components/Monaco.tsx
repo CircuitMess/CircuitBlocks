@@ -3,8 +3,9 @@ import { editor as monacoTypes } from 'monaco-editor';
 import MonacoEditor from 'react-monaco-editor';
 
 interface Props {
-  code: string;
+  code?: string;
   ref: React.RefObject<typeof monacoTypes>;
+  theme?: string;
 }
 
 class Monaco extends React.Component<Props, any> {
@@ -13,7 +14,8 @@ class Monaco extends React.Component<Props, any> {
   }
 
   render() {
-    const code = this.props.code;
+    const { code, theme } = this.props;
+
     const options: monacoTypes.IEditorConstructionOptions = {
       selectOnLineNumbers: true,
       readOnly: true,
@@ -31,7 +33,7 @@ class Monaco extends React.Component<Props, any> {
     return (
       <MonacoEditor
         language="cpp"
-        theme="vs-dark"
+        theme={theme ? theme : 'vs-dark'}
         height="90%"
         value={code}
         options={options}

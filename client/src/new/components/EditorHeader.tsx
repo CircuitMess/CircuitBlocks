@@ -47,10 +47,11 @@ interface Props {
   toggle: () => void;
   run: () => void;
   isCodeOpen: boolean;
+  running: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
-  const { home, title, load, save, toggle, run, isCodeOpen } = props;
+  const { home, title, load, save, toggle, run, isCodeOpen, running } = props;
 
   return (
     <StyledHeader>
@@ -68,13 +69,13 @@ const EditorHeader: React.FC<Props> = (props) => {
         <Button className="icon disabled mr-2" onClick={save}>
           <i className="material-icons"> save </i>
         </Button>
-        <Button className="icon-text" onClick={toggle}>
+        <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
         </Button>
         <Button className="icon-text" color="red" onClick={run}>
           <div className="text"> Run </div>
-          <i className="material-icons"> play_arrow </i>
+          <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>
       </div>
     </StyledHeader>

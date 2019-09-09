@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
+import Blockly from '../../../blockly/blockly';
 
+import { toolbox } from '../../../assets/xmls.js';
 import EditorHeader from '../../components/EditorHeader';
 import * as Modal from '../../components/Modal';
 import EditorPopup from './components/EditorPopup';
-import CodeHeader from './components/CodeHeader';
+import EditorPopupHeader from './components/EditorPopupHeader';
 import Monaco from './components/Monaco';
+import BlocklyEditor from '../../../components/BlocklyEditor';
+import ReactDOM from 'react-dom';
+import Toolbox from '../../../components/Toolbox';
+import Prompt from '../../components/Modal/Prompt';
+
+const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables></variables>
+  <block type="controls_repeat_ext" id="GjRfTgQ%?xU(rWxi%pl+" x="201" y="165">
+    <value name="TIMES">
+      <block type="math_number" id="K;jtzgt3E9*pzyW(Tz_=">
+        <field name="NUM">10</field>
+      </block>
+    </value>
+    <statement name="DO">
+      <block type="io_digitalwrite" id="~xaStXz~,~#~Z9S*v(h4">
+        <field name="PIN">0</field>
+        <value name="STATE">
+          <block type="io_highlow" id="f\`UziPkNCW*S-VOoNtQc">
+            <field name="STATE">LOW</field>
+          </block>
+        </value>
+      </block>
+    </statement>
+  </block>
+</xml>`;
 
 interface EditorProps {
   isEditorOpen: boolean;
@@ -13,175 +40,209 @@ interface EditorProps {
   monacoRef: React.RefObject<any>;
 }
 
-const CODE = `#include <stdio.h>
-#include <iostream>
-#include <stack>
-#include <vector>
-#include <algorithm>
+interface State {
+  isModalOpen: boolean;
+  isCodeOpen: boolean;
+  isCodeFull: boolean;
+  width?: number;
+  height?: number;
+  code?: string;
+  theme: 'vs-light' | 'vs-dark';
+  initState?: string;
+  isPromptOpen?: boolean;
+  promptText?: string;
+}
 
-using namespace std;
+const CODE = `// Code goes here\n`;
+const NAV_BAR_HEIGHT = 64;
 
-#define MAX_SIZE 100
+class Editor extends Component<EditorProps, State> {
+  blocklyDiv: any = undefined;
+  workspace: any = undefined;
+  callback: (value: string) => void = () => {};
 
-char arr[MAX_SIZE][MAX_SIZE];
-bool been[MAX_SIZE][MAX_SIZE];
+  constructor(props: EditorProps) {
+    super(props);
 
-struct item {
-  int x;
-  int y;
-  int distance;
-};
+    this.state = {
+      isModalOpen: false,
+      isCodeOpen: true,
+      isCodeFull: false,
+      code: CODE,
+      height: window.innerHeight - NAV_BAR_HEIGHT,
+      theme: 'vs-dark'
+    };
 
-int arr_size;
-int beg_x, beg_y;
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
 
-void printBeen(int x, int y) {
-  for(int i = 0; i < arr_size; i++) {
-    for(int j = 0; j < arr_size; j++) {
-      if(i == x && j == y) {
-        cout << 'X';
-      } else {
-        cout << been[i][j];
+  updateDimensions() {
+    const { innerWidth, innerHeight } = window;
+    this.setState({
+      width: innerWidth,
+      height: innerHeight - NAV_BAR_HEIGHT
+    });
+
+    Blockly.svgResize(this.workspace);
+  }
+
+  componentDidMount() {
+    Blockly.prompt = (a, b, c) => {
+      const initState = a.split("'")[1];
+      this.callback = c;
+      this.setState({ initState: initState, isPromptOpen: true, promptText: a });
+    };
+
+    (window as any).Blockly = Blockly;
+    this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
+    this.workspace.addChangeListener((e: any) => {
+      const code = Blockly.Arduino.workspaceToCode(this.workspace);
+      if (this.state.code !== code) {
+        console.log(code);
+        this.setState({ code });
       }
-    }
-    cout << endl;
-  }
-}
-
-bool sortFunction(item first, item second) {
-  return first.distance < second.distance;
-}
-
-int main() {
-  cin >> arr_size;
-  for(int i = 0; i< arr_size; i++) {
-    for(int j = 0; j < arr_size; j++) {
-      cin >> arr[i][j];
-      if(arr[i][j] == 'X') {
-        beg_x = i;
-        beg_y = j;
-      }
-    }
+    });
+    this.load(xml);
+    this.updateDimensions();
+    this.injectToolbox();
+    window.addEventListener('resize', this.updateDimensions);
   }
 
-  vector<item> results;
-  stack<item> items;
+  injectToolbox() {
+    const blockly = ReactDOM.findDOMNode(this.blocklyDiv) as Element;
+    const blocklyToolboxDiv = blockly.getElementsByClassName('blocklyToolboxDiv')[0];
 
-  item beginPoint = {beg_x, beg_y, 0};
-  items.push(beginPoint);
+    const blocklyToolbox = (
+      <div className="blocklyToolbox">
+        <Toolbox editorname="blocks" blockly={Blockly} />
+      </div>
+    );
 
-  while(!items.empty()) {
-    item thisPoint = items.top();
-    items.pop();
-
-    // Tmp vars
-    int x, y, distance;
-    x = thisPoint.x;
-    y = thisPoint.y;
-    distance = thisPoint.y;
-
-    // been
-    if(been[x][y]) {
-      continue;
-    }
-    been[x][y] = true;
-
-    // check if Coin
-    if(arr[x][y] == 'C') {
-      results.push_back(thisPoint);
-    }
-
-    if(x > 0 && !been[x - 1][y]) {
-      items.push({x - 1, y, distance + 1});
-    }
-    if(x < arr_size - 1 && !been[x + 1][y]) {
-      items.push({x + 1, y, distance + 1});
-    }
-    if(y > 0 && !been[x][y - 1]) {
-      items.push({x, y - 1, distance + 1});
-    }
-    if(y < arr_size - 1 && !been[x][y + 1]) {
-      items.push({x, y + 1, distance + 1});
-    }
+    ReactDOM.render(blocklyToolbox, blocklyToolboxDiv);
   }
 
-  sort(results.begin(), results.end(), sortFunction);
-
-  for(int i = 0; i < results.size(); i++) {
-    printf("(%d, %d) -> %d\\n", results[i].x, results[i].y, results[i].distance);
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
   }
 
-  return 0;
-}
-`;
-
-const Editor: React.FC<EditorProps> = (props) => {
-  const { isEditorOpen, openHome, title, monacoRef } = props;
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCodeOpen, setIsCodeOpen] = useState(true);
-  const [isCodeFull, setIsCodeFull] = useState(false);
-
-  const run = () => {
+  run = () => {
     console.log('RUN');
   };
 
-  const load = () => {
+  loadButton = () => {
     console.log('Load');
   };
 
-  const save = () => {
+  load = (data: string) => {
+    const xml = Blockly.Xml.textToDom(data);
+    Blockly.getMainWorkspace().clear();
+    Blockly.Xml.domToWorkspace(xml, this.workspace);
+  };
+
+  save = () => {
     console.log('Save');
   };
 
-  const toggle = () => {
-    setIsCodeOpen((isOpen) => !isOpen);
+  toggle = () => {
+    this.setState({ isCodeOpen: !this.state.isCodeOpen });
   };
 
-  const saveExternal = () => {
+  saveExternal = () => {
     console.log('save external');
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
   };
 
-  const footer = {
-    left: [{ text: 'Save externally', onClick: saveExternal }],
-    right: [
-      { text: 'Cancel', onClick: closeModal },
-      { text: 'Save', onClick: save, color: 'blue' },
-      { text: 'Save', onClick: save, color: 'blue', disabled: true }
-    ]
+  closeCode = () => {
+    this.state.isCodeOpen && this.toggle();
   };
 
-  const closeCode = () => {
-    setIsCodeOpen(false);
+  fullScreenToggle = () => {
+    this.setState({ isCodeFull: !this.state.isCodeFull });
   };
 
-  const fullScreenToggle = () => {
-    setIsCodeFull((isFull) => !isFull);
+  setRef = (ref: any) => {
+    this.blocklyDiv = ref;
   };
 
-  return (
-    <div className={isEditorOpen ? '' : 'd-none'}>
-      {isModalOpen && (
-        <Modal.Modal footer={footer} title="Modal title" close={closeModal}>
-          <h1>Foobar</h1>
-          <h1>Foobar</h1>
-        </Modal.Modal>
-      )}
-      <EditorHeader home={openHome} {...{ load, run, title, save, toggle, isCodeOpen }} />
+  toggleTheme = () => {
+    this.setState({ theme: this.state.theme === 'vs-dark' ? 'vs-light' : 'vs-dark' });
+  };
 
-      <h1>Blockly</h1>
+  closePrompt = () => {
+    this.setState({ isPromptOpen: false });
+  };
 
-      {isCodeOpen && (
-        <EditorPopup className={isCodeFull ? 'fullscreen' : ''}>
-          <CodeHeader closeCode={closeCode} fullScreenToggle={fullScreenToggle} />
-          <Monaco ref={monacoRef} code={CODE} />
-        </EditorPopup>
-      )}
-    </div>
-  );
-};
+  render() {
+    const {
+      isModalOpen,
+      isCodeOpen,
+      isCodeFull,
+      height,
+      code,
+      theme,
+      isPromptOpen,
+      initState,
+      promptText
+    } = this.state;
+    const { isEditorOpen, openHome, title, monacoRef } = this.props;
+
+    const footer = {
+      left: [{ text: 'Save externally', onClick: this.saveExternal }],
+      right: [
+        { text: 'Cancel', onClick: this.closeModal },
+        { text: 'Save', onClick: this.save, color: 'blue' },
+        { text: 'Save', onClick: this.save, color: 'blue', disabled: true }
+      ]
+    };
+
+    return (
+      <div className={isEditorOpen ? '' : 'd-none'}>
+        {isModalOpen && (
+          <Modal.Modal footer={footer} title="Modal title" close={this.closeModal}>
+            <h1>Foobar</h1>
+            <h1>Foobar</h1>
+          </Modal.Modal>
+        )}
+
+        {isPromptOpen && (
+          <Prompt
+            initValue={initState || ''}
+            callback={this.callback}
+            promptText={promptText || ''}
+            closePrompt={this.closePrompt}
+          />
+        )}
+
+        <EditorHeader
+          home={openHome}
+          load={this.loadButton}
+          run={this.run}
+          save={this.save}
+          toggle={this.toggle}
+          title={title}
+          isCodeOpen={isCodeOpen}
+          running={true}
+        />
+
+        <BlocklyEditor height={height} isCodeOpen={false} setRef={this.setRef} />
+
+        {isCodeOpen && (
+          <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
+            <EditorPopupHeader
+              closeCode={this.closeCode}
+              fullScreenToggle={this.fullScreenToggle}
+              toggleTheme={this.toggleTheme}
+              theme={theme}
+            />
+            <Monaco ref={monacoRef} code={code} theme={theme} />
+          </EditorPopup>
+        )}
+      </div>
+    );
+  }
+}
 
 export default Editor;
