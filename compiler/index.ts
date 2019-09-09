@@ -4,7 +4,9 @@ ArduinoCompiler.setup("/home/cm/Downloads/arduino-1.8.9", "/home/cm/Arduino");
 
 ArduinoCompiler.startDaemon();
 
-ArduinoCompiler.compile("test.ino").then(data => {
+const code = "void setup(){}\nvoid loop(){}";
+
+ArduinoCompiler.compile(code).then(data => {
     console.log("Binary: " + data.binary);
     console.log(data.status.join("\n"));
     ArduinoCompiler.stopDaemon();

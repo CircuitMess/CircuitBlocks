@@ -4,6 +4,7 @@ import * as grpc from "grpc";
 import {BuildParams} from "../proto/builder_pb";
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
 import * as child_process from 'child_process';
 
 export class ArduinoCompiler {
@@ -35,6 +36,20 @@ export class ArduinoCompiler {
     }
 
     /**
+     * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
+     * @see compileSketch
+     * @param code Arduino C code
+     */
+    public static compile(code: string){
+        let sketchDir = path.join(this.CB_TMP, "sketch");
+        let sketchPath = path.join(sketchDir, "sketch.ino");
+        fs.mkdirSync(sketchDir, { recursive: true });
+        fs.writeFileSync(sketchPath, code);
+
+        return this.compileSketch(sketchPath);
+    }
+
+    /**
      * Compiles the specified Arduino sketch.
      *
      * Returns a promise. On success, resolves with the following object:
@@ -43,15 +58,16 @@ export class ArduinoCompiler {
      * On error rejects with the following object:
      * { message: a short error message, error: the error object returned by the compiler }
      *
-     * @param sketch Path to the sketch to be compiled.
+     * @param sketchPath Absolute path to the sketch to be compiled.
      */
-    public static compile(sketch: string): Promise<{ binary: string, status: string[] }> {
-        const compiledPath: string = path.join(this.CB_TMP, "build", sketch + ".elf");
+    public static compileSketch(sketchPath: string): Promise<{ binary: string, status: string[] }> {
+        const sketchName = path.parse(sketchPath).base;
+        const compiledPath: string = path.join(this.CB_TMP, "build", sketchName + ".elf");
 
         return new Promise((resolve, reject) => {
             if(this.ARDUINO_INSTALL == "" || this.ARDUINO_HOME == "") throw new Error("Arduino directories not set up. Run the setup method first");
 
-            let stream = this.client.build(this.buildParams(sketch), function(err, response){
+            let stream = this.client.build(this.buildParams(sketchPath), function(err, response){
                 if(err) reject({ error: err });
             });
 
@@ -86,10 +102,10 @@ export class ArduinoCompiler {
         });
     }
 
-    private static buildParams(sketch: string,): BuildParams {
+    private static buildParams(sketchPath: string,): BuildParams {
         const buildParams: BuildParams = new BuildParams();
 
-        buildParams.setSketchlocation(path.join(this.ARDUINO_HOME, "sketches", sketch));
+        buildParams.setSketchlocation(sketchPath);
         buildParams.setFqbn("arduino:avr:uno");
         buildParams.setBuildpath(path.join(this.CB_TMP, "build"));
 
