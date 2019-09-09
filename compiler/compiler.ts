@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
+import * as serialPort from 'serialport';
 
 export class ArduinoCompiler {
 
@@ -39,11 +40,57 @@ export class ArduinoCompiler {
     }
 
     /**
+     * Retrieves the possible MAKERphone ports.
+     */
+    public static identifyPort(): Promise<any[]> {
+        return new Promise<any>((resolve, reject) => {
+            serialPort.list((err, ports) => {
+                resolve(ports.filter(port => port.vendorId == "10c4" && port.productId == "ea60"));
+            });
+        });
+    }
+
+    /**
+     * Uploads the specified binary to the MAKERphone
+     * @param binary Path to the binary
+     * @param port MAKERphone port
+     */
+    public static upload(binary: string, port: string){
+        const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, "packages", "cm");
+
+        const win = os.type() == "Windows_NT";
+        const TOOL = path.join(CM_LOCAL, "tools", "esptool_py", "2.6.1", "esptool." + (win ? "exe" : "py"));
+
+        const binaryPath = path.parse(binary);
+
+        const options: string[] = [
+            TOOL,
+            "--chip esp32",
+            "--port " + port,
+            "--baud 921600",
+            "--before default_reset",
+            "--after hard_reset",
+            "write_flash",
+            "-z",
+            "--flash_mode dio",
+            "--flash_freq 80m",
+            "--flash_size detect",
+            "0xe000 " + path.join(CM_LOCAL, "hardware", "esp32", "1.0.0", "tools", "partitions", "boot_app0.bin"),
+            "0x1000 " + path.join(CM_LOCAL, "hardware", "esp32", "1.0.0", "tools", "sdk", "bin", "bootloader_dio_80m.bin"),
+            "0x10000 " + binary,
+            "0x8000 " + path.join(binaryPath.dir, binaryPath.name + ".partitions.bin")
+        ];
+
+        if(!win) options.unshift("python");
+        child_process.execSync(options.join(" "));
+    }
+
+    /**
      * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
      * @see compileSketch
      * @param code Arduino C code
      */
-    public static compile(code: string){
+    public static compile(code: string): Promise<{ binary: string, status: string[] }>{
         let sketchDir = path.join(this.CB_TMP, "sketch");
         let sketchPath = path.join(sketchDir, "sketch.ino");
         fs.mkdirSync(sketchDir, { recursive: true });
@@ -65,7 +112,7 @@ export class ArduinoCompiler {
      */
     public static compileSketch(sketchPath: string): Promise<{ binary: string, status: string[] }> {
         const sketchName = path.parse(sketchPath).base;
-        const compiledPath: string = path.join(this.CB_TMP, "build", sketchName + ".elf");
+        const compiledPath: string = path.join(this.CB_TMP, "build", sketchName + ".bin");
 
         return new Promise((resolve, reject) => {
             if(this.ARDUINO_INSTALL == "" || this.ARDUINO_HOME == "") throw new Error("Arduino directories not set up. Run the setup method first");
