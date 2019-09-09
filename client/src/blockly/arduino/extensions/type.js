@@ -9,6 +9,7 @@
  */
 'use strict';
 
+goog.require("Blockly");
 goog.provide('Blockly.Type');
 
 

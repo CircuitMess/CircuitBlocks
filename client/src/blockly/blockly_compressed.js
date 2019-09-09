@@ -8,6 +8,7 @@ goog.provide("Blockly.Procedures");
 goog.provide("Blockly.Functions");
 goog.provide("Blockly.Workspace");
 goog.provide("Blockly.Msg");
+goog.provide("Blockly.Extensions");
 goog.provide("Blockly.utils");
 
 var $jscomp = $jscomp || {};

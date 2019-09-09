@@ -195,6 +195,7 @@ Blockly.StaticTyping.prototype.assignTypeToVars =
 Blockly.StaticTyping.prototype.setBlockTypeWarning =
   function(block, blockType, varName) {
     var warningLabel = 'varType';
+    var varLabel = Blockly.Arduino.variableDB_.getName(varName, Blockly.Variables.NAME_TYPE);
     if ((blockType == Blockly.Types.CHILD_BLOCK_MISSING) ||
       (this.varTypeDict[varName] == Blockly.Types.CHILD_BLOCK_MISSING)) {
       // User still has to attach a block to this variable or its first
@@ -202,7 +203,7 @@ Blockly.StaticTyping.prototype.setBlockTypeWarning =
       block.setWarningText(null, warningLabel);
     } else if ((this.varTypeDict[varName] !== blockType) &&
       (blockType !== Blockly.Types.UNDEF)) {
-      block.setWarningText('The variable ' + varName + ' has been first ' +
+      block.setWarningText('The variable ' + varLabel + ' has been first ' +
         'assigned to the "' + this.varTypeDict[varName].typeName + '" type\n' +
         'and this block tries to assign the type "' + blockType.typeName + '"!',
         warningLabel);

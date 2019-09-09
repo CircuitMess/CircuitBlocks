@@ -1027,6 +1027,127 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "I/O",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    blocks: [
+        {
+            name: "vibrate",
+            xml: Blocks.phone.vibrate
+        },
+        {
+            name: "button_action",
+            xml: Blocks.phone.button_action
+        },
+        {
+            name: "joystick",
+            xml: Blocks.phone.joystick
+        }
+    ],
+    subcategories: []
+});
+
+categories.push({
+    name: "Display",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    blocks: [
+        {
+            name: "display_colour",
+            xml: Blocks.display.colour
+        },
+        {
+            name: "display_popup",
+            xml: Blocks.display.popup
+        },
+        {
+            name: "display_clear",
+            xml: Blocks.display.clear
+        },
+        {
+            name: "display_invert",
+            xml: Blocks.display.invert
+        },
+
+        {
+            name: "display_fontsize",
+            group: "Text",
+            xml: Blocks.display.fontsize
+        },
+        {
+            name: "display_fontcolour",
+            group: "Text",
+            xml: Blocks.display.fontcolour
+        },
+        {
+            name: "display_fontcolour",
+            group: "Text",
+            xml: Blocks.display.println
+        },
+        {
+            name: "draw_text",
+            group: "Text",
+            xml: Blocks.display.drawtext
+        },
+
+        {
+            name: "draw_rect",
+            group: "Shapes",
+            xml: Blocks.display.drawrect
+        },
+        {
+            name: "draw_circle",
+            group: "Shapes",
+            xml: Blocks.display.drawcircle
+        },
+        {
+            name: "draw_ellipse",
+            group: "Shapes",
+            xml: Blocks.display.drawellipse
+        },
+        {
+            name: "draw_triangle",
+            group: "Shapes",
+            xml: Blocks.display.drawtriangle
+        }
+    ],
+    subcategories: []
+});
+
+categories.push({
+    name: "Time",
+    icon: "\uf109",
+    color: "#005a9e",
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "infinite_loop",
+            xml: Blocks.time.infinite_loop
+        },
+        {
+            name: "time_delay",
+            xml: Blocks.time.time_delay
+        },
+        {
+            name: "time_delay_microseconds",
+            xml: Blocks.time.time_delaymicros
+        },
+        {
+            name: "time_micros",
+            xml: Blocks.time.time_micros
+        },
+        {
+            name: "time_millis",
+            xml: Blocks.time.time_millis
+        }
+    ]
+});
+
 export function getCategories(): ToolboxCategory[] {
     return categories;
 }

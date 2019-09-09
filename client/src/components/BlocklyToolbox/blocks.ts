@@ -126,4 +126,28 @@ export class Blocks {
         spi_transfer_return: '<block type="spi_transfer_return"></block>',
     };
 
+    public static phone: any = {
+        vibrate: '<block type="vibrate"></block>',
+        button_action: '<block type="button_action"></block>',
+        joystick: '<block type="joystick"></block>'
+    };
+
+    public static display: any = {
+        colour: '<block type="display_colour"></block>',
+        popup: '<block type="display_popup"></block>',
+        clear: '<block type="display_clear"></block>',
+        invert: '<block type="display_invert"></block>',
+
+        fontsize: '<block type="display_fontsize"></block>',
+        fontcolour: '<block type="display_fontcolour"></block>',
+        println: '<block type="display_println"></block>',
+        drawtext: '<block type="draw_text"></block>',
+
+        drawrect: '<block type="draw_rect"></block>',
+        drawcircle: '<block type="draw_circle"></block>',
+        drawellipse: '<block type="draw_ellipse"></block>',
+        drawtriangle: '<block type="draw_triangle"></block>',
+
+    };
+
 }
