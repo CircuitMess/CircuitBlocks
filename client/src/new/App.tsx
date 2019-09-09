@@ -6,10 +6,14 @@ import { Home, Editor } from './layouts';
 import './tmp.css';
 import '../assets/material_icons.css';
 import '../assets/poppins.css';
+import '../assets/source_code_pro.css';
 
 const App = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(true);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+
+  const monacoRef = React.createRef();
+  // const blocklyRef = React.createRef();
 
   const openHome = () => {
     setIsEditorOpen(false);
@@ -35,7 +39,12 @@ const App = () => {
         <Alert title="Foobar" body="Something......" close={closeAlert} yes={okAlert} />
       )}
       <Home isEditorOpen={isEditorOpen} openEditor={openEditor} />
-      <Editor isEditorOpen={isEditorOpen} title={'Foobar'} openHome={openHome} />
+      <Editor
+        isEditorOpen={isEditorOpen}
+        title={'Foobar'}
+        openHome={openHome}
+        monacoRef={monacoRef}
+      />
     </>
   );
 };

@@ -2,44 +2,36 @@ import React from 'react';
 import { editor as monacoTypes } from 'monaco-editor';
 import MonacoEditor from 'react-monaco-editor';
 
-const CODE = `// your code goes here
-
-void setup() {
-  Serial.begin(9600);
+interface Props {
+  code: string;
+  ref: React.RefObject<typeof monacoTypes>;
 }
 
-void loop() {
-  Serial.println("Hello world");
-  delay(1000);
-}
-
-`;
-
-class App extends React.Component<any, { code: string }> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      code: CODE
-    };
-  }
-
+class Monaco extends React.Component<Props, any> {
   editorDidMount(editor: monacoTypes.IStandaloneCodeEditor, monaco: any) {
     console.log('editorDidMount', editor);
-    editor.focus();
+    // editor.focus();
   }
 
   render() {
-    const code = this.state.code;
+    const code = this.props.code;
     const options: monacoTypes.IEditorConstructionOptions = {
       selectOnLineNumbers: true,
       readOnly: true,
-      fontSize: 15
+      fontFamily: 'Source Code Pro',
+      fontWeight: '400',
+      fontSize: 13,
+      minimap: {
+        enabled: false
+      },
+      automaticLayout: true
     };
 
     return (
       <MonacoEditor
         language="cpp"
         theme="vs-dark"
+        height="90%"
         value={code}
         options={options}
         editorDidMount={this.editorDidMount}
@@ -48,4 +40,4 @@ class App extends React.Component<any, { code: string }> {
   }
 }
 
-export default App;
+export default Monaco;

@@ -22,7 +22,6 @@ const projects = [
 ];
 
 const Main = styled.div`
-  height: calc(100% - 448px); /* header image 400px, footer 48px */
   background-color: #fafafa;
 `;
 
@@ -53,7 +52,7 @@ const Home: React.FC<HomeProps> = (props) => {
         <>
           <Main>
             <ProjectSection title={'Foobar'} projects={projects} />
-            {/* <ProjectSection title={'Foobar'} projects={projects} /> */}
+            <ProjectSection title={'Foobar'} projects={projects} />
           </Main>
           <Footer>
             <p>v0.1</p>
