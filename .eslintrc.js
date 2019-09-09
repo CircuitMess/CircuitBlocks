@@ -8,6 +8,7 @@ module.exports = {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly'
   },
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true
@@ -15,11 +16,19 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module'
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', '@typescript-eslint'],
   rules: {
     'prettier/prettier': ['error', { singleQuote: true }],
     'react/jsx-filename-extension': 0,
     allowTemplateLiterals: 0,
-    consistentReturn: 'off'
+    consistentReturn: 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    }
   }
 };

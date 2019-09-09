@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const { homePath } = require('./consts');
+import homePath from './consts';
 
 const saveFile = (data, filename, callback) => {
   const filePath = path.join(homePath, filename);
@@ -21,3 +21,4 @@ const saveFile = (data, filename, callback) => {
 // saveFile('lksadflk sjfsjadlf jasdfl ', 'foo.xml', (error) => console.log(error));
 
 module.exports = saveFile;
+export default saveFile;

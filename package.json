@@ -1,12 +1,14 @@
 {
   "name": "circuit_blocks",
   "version": "0.1.0",
-  "main": "app.js",
+  "main": "dist/app.js",
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "electron": "^6.0.0"
+  },
   "scripts": {
-    "electron-start": "electron .",
-    "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
+    "build": "tsc",
+    "electron-start": "yarn build && electron dist/app.js",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\""
   },
   "eslintConfig": {
@@ -25,18 +27,23 @@
     ]
   },
   "devDependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/node": "^12.7.4",
+    "@typescript-eslint/eslint-plugin": "^2.1.0",
+    "@typescript-eslint/parser": "^2.1.0",
     "concurrently": "^4.1.1",
-    "electron": "^6.0.0",
     "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-config-react-app": "^4.0.1",
+    "eslint-plugin-flowtype": "^4.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.6.1",
     "prettier": "^1.18.2",
+    "typescript": "^3.6.2",
     "wait-on": "^3.3.0"
   }
 }

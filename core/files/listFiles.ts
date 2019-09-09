@@ -1,13 +1,13 @@
-const fs = require('fs');
+import { existsSync, mkdirSync, readdir } from 'fs';
 
-const { homePath } = require('./consts');
+import homePath from './consts';
 
 const listFiles = (callback) => {
-  if (!fs.existsSync(homePath)) {
-    fs.mkdirSync(homePath);
+  if (!existsSync(homePath)) {
+    mkdirSync(homePath);
   }
 
-  fs.readdir(homePath, (readError, items) => {
+  readdir(homePath, (readError, items) => {
     if (readError === null) {
       callback(null, items.filter((item) => item.indexOf('.json') === -1));
       return;
@@ -22,4 +22,4 @@ const listFiles = (callback) => {
 //   console.log(data);
 // });
 
-module.exports = listFiles;
+export default listFiles;

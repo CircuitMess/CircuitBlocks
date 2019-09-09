@@ -1,11 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-const url = require('url');
+import { app, BrowserWindow, ipcMain } from 'electron';
+import path from 'path';
+import url from 'url';
+
+import { load, save, listFiles } from './core/files';
 
 const reactUrl = 'http://localhost:3000';
 
-let win;
+let win: BrowserWindow;
 
 function createWindow() {
   // Create the browser window.
@@ -66,8 +68,6 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-const { load, save, listFiles } = require('./core/files');
-
 const callback = (type, event) => {
   return (error, data) => {
     if (error === null) {
@@ -92,7 +92,7 @@ ipcMain.on('save', (event, args) => {
   save(data, filename, callback('save', event));
 });
 
-ipcMain.on('listFiles', (event, args) => {
+ipcMain.on('listFiles', (event, _args) => {
   console.count('listFiles');
   listFiles(callback('listFiles', event));
 });
