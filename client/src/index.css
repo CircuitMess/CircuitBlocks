@@ -10,3 +10,11 @@ body {
 html {
   height: 100%;
 }
+
+::-webkit-scrollbar {
+  width: 0px;
+  background: #00000020;
+}
+::-webkit-scrollbar-thumb {
+  background: #00000080;
+}

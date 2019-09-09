@@ -14,15 +14,22 @@ const appInitState = {
   isCodeOpen: false
 };
 
-class App extends Component {
-  constructor(props) {
+interface Props {}
+interface State {
+  homeOpen: boolean;
+}
+
+class App extends Component<Props, State> {
+  editor: any = null;
+
+  constructor(props: Props) {
     super(props);
 
     this.state = {
       homeOpen: true
     };
 
-    this.editor = React.createRef(null);
+    this.editor = React.createRef();
 
     this.toggleHome = this.toggleHome.bind(this);
     this.closeHome = this.closeHome.bind(this);
@@ -42,7 +49,7 @@ class App extends Component {
     this.setState({ homeOpen: !this.state.homeOpen });
   }
 
-  open(filename) {
+  open(filename?: string) {
     if (filename) {
       const xml = loadFile(`tutorials/${filename}`);
       if (xml) {
