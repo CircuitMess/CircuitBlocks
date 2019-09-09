@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const Button = styled.div`
+  -moz-user-select: none;
+  user-select: none;
   display: inline-block;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.25);

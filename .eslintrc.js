@@ -22,7 +22,10 @@ module.exports = {
     'react/jsx-filename-extension': 0,
     allowTemplateLiterals: 0,
     consistentReturn: 'off',
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    'no-console': 0,
+    'lines-between-class-members': 0,
+    'prefer-template': 0
   },
   settings: {
     'import/resolver': {

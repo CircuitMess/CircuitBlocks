@@ -2,6 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+  -moz-user-select: none;
+  user-select: none;
+
   .title {
     font-family: Poppins;
     font-style: normal;

@@ -4,10 +4,10 @@
   "main": "dist/app.js",
   "private": true,
   "dependencies": {
-    "electron": "^6.0.0",
     "@grpc/proto-loader": "^0.5.2",
-    "grpc": "^1.23.3"
-
+    "electron": "^6.0.0",
+    "grpc": "^1.23.3",
+    "serialport": "^7.1.5"
   },
   "scripts": {
     "build": "tsc",
