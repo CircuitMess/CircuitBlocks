@@ -62,6 +62,10 @@ const Button = styled.div`
     background-color: #2f2fb5;
   }
 
+  &.running {
+    background-color: #e3384d80;
+  }
+
   ${(props) => props.color && colors[props.color]}
 `;
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Blockly from '../../../blockly/blockly';
+import { IpcRenderer, AllElectron } from 'electron';
 
 import { toolbox } from '../../../assets/xmls.js';
 import EditorHeader from '../../components/EditorHeader';
@@ -11,6 +12,10 @@ import BlocklyEditor from '../../../components/BlocklyEditor';
 import ReactDOM from 'react-dom';
 import Toolbox from '../../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
+import Notification, { NotificationWrapper } from '../../components/Notification';
+
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -51,10 +56,39 @@ interface State {
   initState?: string;
   isPromptOpen?: boolean;
   promptText?: string;
+  running: boolean;
+  notifications: Notification[];
 }
 
 const CODE = `// Code goes here\n`;
 const NAV_BAR_HEIGHT = 64;
+
+interface Notification {
+  id: string;
+  message: string;
+  icon?: string;
+}
+
+const INIT_STATE: State = {
+  isModalOpen: false,
+  isCodeOpen: true,
+  isCodeFull: false,
+  code: CODE,
+  height: window.innerHeight - NAV_BAR_HEIGHT,
+  theme: 'vs-dark',
+  running: false,
+  notifications: [
+    {
+      id: 'foo',
+      message: 'something'
+    },
+    {
+      id: 'asd',
+      message: 'aksjdlkajd lkajdlk ajldkj ga',
+      icon: 'danger'
+    }
+  ]
+};
 
 class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
@@ -65,12 +99,7 @@ class Editor extends Component<EditorProps, State> {
     super(props);
 
     this.state = {
-      isModalOpen: false,
-      isCodeOpen: true,
-      isCodeFull: false,
-      code: CODE,
-      height: window.innerHeight - NAV_BAR_HEIGHT,
-      theme: 'vs-dark'
+      ...INIT_STATE
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -106,6 +135,28 @@ class Editor extends Component<EditorProps, State> {
     this.updateDimensions();
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
+
+    // const electron = (window as any).require('electron');
+    // const ipcRenderer = electron.ipcRenderer;
+
+    ipcRenderer.send('startDaemon');
+    ipcRenderer.send('ports', (event: any, args: any) => {
+      console.log(event, args);
+    });
+
+    // ipcRenderer.once('listFiles', (event, arg) => {
+    //   if (arg.error) {
+    //     setItems({ error: true });
+    //   } else {
+    //     setItems({ error: false, data: arg.data });
+    //   }
+
+    //   setLoading(false);
+    // });
+
+    // React.useEffect(() => {
+    //   ipcRenderer.send('listFiles');
+    // }, []);
   }
 
   injectToolbox() {
@@ -127,6 +178,8 @@ class Editor extends Component<EditorProps, State> {
 
   run = () => {
     console.log('RUN');
+    this.setState({ running: true });
+    setTimeout(() => this.setState({ running: false }), 2000);
   };
 
   loadButton = () => {
@@ -185,7 +238,9 @@ class Editor extends Component<EditorProps, State> {
       theme,
       isPromptOpen,
       initState,
-      promptText
+      promptText,
+      running,
+      notifications
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -196,6 +251,13 @@ class Editor extends Component<EditorProps, State> {
         { text: 'Save', onClick: this.save, color: 'blue' },
         { text: 'Save', onClick: this.save, color: 'blue', disabled: true }
       ]
+    };
+
+    const close = (id: string) => () => {
+      this.setState((oldState) => {
+        const newNotifications = oldState.notifications.filter((item) => item.id !== id);
+        return { notifications: newNotifications };
+      });
     };
 
     return (
@@ -224,8 +286,16 @@ class Editor extends Component<EditorProps, State> {
           toggle={this.toggle}
           title={title}
           isCodeOpen={isCodeOpen}
-          running={true}
+          running={running}
         />
+
+        {notifications && (
+          <NotificationWrapper>
+            {notifications.map((item) => (
+              <Notification {...item} close={close(item.id)} />
+            ))}
+          </NotificationWrapper>
+        )}
 
         <BlocklyEditor height={height} isCodeOpen={false} setRef={this.setRef} />
 

@@ -4,6 +4,7 @@ import path from 'path';
 import url from 'url';
 
 import { load, save, listFiles } from './core/files';
+// import ArduinoCompiler from './core/compiler/compiler';
 
 const reactUrl = 'http://localhost:3000';
 
@@ -97,4 +98,25 @@ ipcMain.on('listFiles', (event, _args) => {
   listFiles(callback('listFiles', event));
 });
 
-console.log('foobar');
+// TODO: Add env variables
+const username = process.env.user;
+
+// ArduinoCompiler.setup(
+//   `/home/${username}/installs/arduino-1.8.9`,
+//   `/home/${username}/Arduino`,
+//   `/home/${username}/.arduino15`
+// );
+
+// ipcMain.once('startDaemon', () => {
+//   ArduinoCompiler.startDaemon();
+// });
+
+// ipcMain.on('ports', (event) => {
+//   ArduinoCompiler.identifyPort()
+//     .then((data) => {
+//       event.reply('ports', { error: null, data });
+//     })
+//     .catch((error) => {
+//       event.reply('ports', { error });
+//     });
+// });

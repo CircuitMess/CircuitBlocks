@@ -11,6 +11,8 @@
   },
   "scripts": {
     "build": "tsc",
+    "clean": "rm -rf node_modules",
+    "clean-install": "yarn clean && yarn install",
     "electron-start": "yarn build && electron dist/app.js",
     "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\"",
@@ -39,6 +41,7 @@
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
     "concurrently": "^4.1.1",
+    "electron-rebuild": "^1.8.6",
     "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^6.0.0",

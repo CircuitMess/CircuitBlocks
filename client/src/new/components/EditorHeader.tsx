@@ -73,8 +73,8 @@ const EditorHeader: React.FC<Props> = (props) => {
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
         </Button>
-        <Button className="icon-text" color="red" onClick={run}>
-          <div className="text"> Run </div>
+        <Button className={`icon-text ${running ? 'running' : ''}`} color="red" onClick={run}>
+          <div className="text">Run{running ? 'ning' : ''}</div>
           <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>
       </div>

@@ -1,14 +1,26 @@
 import ArduinoCompiler from './compiler';
 
 ArduinoCompiler.setup(
-  '/home/cm/Downloads/arduino-1.8.9',
-  '/home/cm/Arduino',
-  '/home/cm/.arduino15'
+  '/home/fran/installs/arduino-1.8.9',
+  '/home/fran/Arduino',
+  '/home/fran/.arduino15'
 );
 
-ArduinoCompiler.startDaemon();
+// ArduinoCompiler.startDaemon();
 
-const code = '#include <MAKERphone.h>\n\nvoid setup(){}\nvoid loop(){}';
+const code = `#include <MAKERphone.h>
+
+  MAKERphone mp;
+  
+  void setup() {
+    mp.begin(0);
+  }
+  
+  void loop() {
+    mp.popup("Foobar", 100);
+    delay(1000);
+  
+  }`;
 
 ArduinoCompiler.compile(code).then(
   (data) => {
@@ -36,3 +48,17 @@ ArduinoCompiler.compile(code).then(
     console.log(error.error);
   }
 );
+
+// setInterval(() => {
+//   ArduinoCompiler.identifyPort()
+//     .then((ports) => {
+//       console.log(ports);
+
+//       if (ports.length === 0) {
+//         console.log('No port found');
+//       }
+//     })
+//     .catch((_reason) => {
+//       console.log('Upload failed');
+//     });
+// }, 1000);
