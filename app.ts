@@ -111,7 +111,9 @@ ArduinoCompiler.startDaemon();
 
 let port: any;
 
-ipcMain.on('ports', (event) => {
+ipcMain.on('ports', (event, args) => {
+  console.log(event, args);
+
   ArduinoCompiler.identifyPort()
     .then((data) => {
       if (data.length === 0) {
@@ -128,6 +130,8 @@ ipcMain.on('ports', (event) => {
 
 ipcMain.on('upload', (event, args) => {
   const { code } = args;
+
+  console.log(code);
 
   ArduinoCompiler.compile(code)
     .then(({ binary }) => {

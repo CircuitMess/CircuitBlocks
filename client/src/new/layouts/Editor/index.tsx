@@ -14,9 +14,6 @@ import Toolbox from '../../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
 
-const electron: AllElectron = (window as any).require('electron');
-const ipcRenderer: IpcRenderer = electron.ipcRenderer;
-
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
   <block type="controls_repeat_ext" id="GjRfTgQ%?xU(rWxi%pl+" x="201" y="165">
@@ -81,6 +78,9 @@ const INIT_STATE: State = {
   notifications: []
 };
 
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
+
 class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
   workspace: any = undefined;
@@ -107,15 +107,6 @@ class Editor extends Component<EditorProps, State> {
   }
 
   componentDidMount() {
-    this.addNotification('This one will not go away', -1);
-
-    setTimeout(() => {
-      this.addNotification('Foobar');
-      setTimeout(() => {
-        this.addNotification('Something else went wrong');
-      }, 1000);
-    }, 1000);
-
     Blockly.prompt = (a, b, c) => {
       const initState = a.split("'")[1];
       this.callback = c;
@@ -136,13 +127,13 @@ class Editor extends Component<EditorProps, State> {
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
 
-    const electron = (window as any).require('electron');
-    const ipcRenderer = electron.ipcRenderer;
-
-    // ipcRenderer.send('startDaemon');
-    ipcRenderer.send('ports', (event: any, args: any) => {
-      console.log(event, args);
+    ipcRenderer.on('ports', (event: any, args: any) => {
+      console.log(args);
     });
+
+    setInterval(() => {
+      ipcRenderer.send('ports');
+    }, 500);
 
     // ipcRenderer.once('listFiles', (event, arg) => {
     //   if (arg.error) {
@@ -179,7 +170,8 @@ class Editor extends Component<EditorProps, State> {
   run = () => {
     console.log('RUN');
     this.setState({ running: true });
-    setTimeout(() => this.setState({ running: false }), 2000);
+    ipcRenderer.send('upload', { code: this.state.code });
+    // setTimeout(() => this.setState({ running: false }), 2000);
   };
 
   openLoadModal = () => {
