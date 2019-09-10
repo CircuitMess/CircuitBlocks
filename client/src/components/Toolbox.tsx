@@ -189,11 +189,12 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         let flyout: any = this.searchFlyout ? this.searchFlyout : this.Blockly.Functions.createFlyout(workspace, workspace.toolbox_.flyout_.svgGroup_);
         this.searchFlyout = flyout;
 
+        this.clear();
+
         if(term == ""){
             flyout.setVisible(false);
+            return;
         }
-
-        this.clear();
 
         let blocks: any[] = [];
 
@@ -254,7 +255,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         }
 
         flyout.show(blocks);
-        flyout.setVisible(!!visible && wasVisible);
+        flyout.setVisible((!!visible) && wasVisible);
 
         return flyout;
     }
