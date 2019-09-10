@@ -136,10 +136,10 @@ class Editor extends Component<EditorProps, State> {
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
 
-    // const electron = (window as any).require('electron');
-    // const ipcRenderer = electron.ipcRenderer;
+    const electron = (window as any).require('electron');
+    const ipcRenderer = electron.ipcRenderer;
 
-    ipcRenderer.send('startDaemon');
+    // ipcRenderer.send('startDaemon');
     ipcRenderer.send('ports', (event: any, args: any) => {
       console.log(event, args);
     });

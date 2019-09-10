@@ -3655,10 +3655,10 @@ electron@*:
     electron-download "^4.1.0"
     extract-zip "^1.0.3"
 
-electron@4.2.6:
-  version "4.2.6"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-4.2.6.tgz#533763a7970136011fd36e4a5f2b3715b2015994"
-  integrity sha512-qnaQXQcRKugXoQ7/4J4lYKzyU/RJMK/qrIGyC8KsgGG/IVVagolNPYy7QrsGpJ7YwpQHzNjwtDNaJ/UI7VTCyA==
+electron@^4.2.6:
+  version "4.2.10"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-4.2.10.tgz#7096450bb14875ec2e6797316c0c1034e7fe2b76"
+  integrity sha512-dFhsJOW7OZX8JxjoBdugUZh6VWbs5PjlQIH6/w1KsZO7otgBy44j9vPI31KnIid3bdMtNbmTEF+6PA32z88kRw==
   dependencies:
     "@types/node" "^10.12.18"
     electron-download "^4.1.0"

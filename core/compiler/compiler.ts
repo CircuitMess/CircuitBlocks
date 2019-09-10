@@ -5,8 +5,8 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 
-import { BuilderClient } from '../../proto/builder_grpc_pb';
-import { BuildParams } from '../../proto/builder_pb';
+import { BuilderClient } from '../proto/builder_grpc_pb';
+import { BuildParams } from '../proto/builder_pb';
 
 export default class ArduinoCompiler {
   private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
