@@ -67,6 +67,7 @@ interface Notification {
   id: string;
   message: string;
   icon?: string;
+  close?: boolean;
 }
 
 const INIT_STATE: State = {
@@ -77,17 +78,7 @@ const INIT_STATE: State = {
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
   running: false,
-  notifications: [
-    {
-      id: 'foo',
-      message: 'something'
-    },
-    {
-      id: 'asd',
-      message: 'aksjdlkajd lkajdlk ajldkj ga',
-      icon: 'danger'
-    }
-  ]
+  notifications: []
 };
 
 class Editor extends Component<EditorProps, State> {
@@ -116,6 +107,15 @@ class Editor extends Component<EditorProps, State> {
   }
 
   componentDidMount() {
+    this.addNotification('This one will not go away', -1);
+
+    setTimeout(() => {
+      this.addNotification('Foobar');
+      setTimeout(() => {
+        this.addNotification('Something else went wrong');
+      }, 1000);
+    }, 1000);
+
     Blockly.prompt = (a, b, c) => {
       const initState = a.split("'")[1];
       this.callback = c;
@@ -182,8 +182,37 @@ class Editor extends Component<EditorProps, State> {
     setTimeout(() => this.setState({ running: false }), 2000);
   };
 
-  loadButton = () => {
-    console.log('Load');
+  openLoadModal = () => {
+    this.setState({ isModalOpen: true });
+  };
+
+  closeNotification = (id: string) => () => {
+    this.setState((oldState) => {
+      const newNotifications = oldState.notifications.map((item) =>
+        item.id !== id ? item : { ...item, close: true }
+      );
+
+      setTimeout(() => {
+        this.setState((oldState) => {
+          const removeNotifications = oldState.notifications.filter((item) => item.id !== id);
+          return { notifications: removeNotifications };
+        });
+      }, 300);
+
+      return { notifications: newNotifications };
+    });
+  };
+
+  addNotification = (message: string, time: number = 2000) => {
+    const notification: Notification = {
+      message,
+      id: new Date().getTime().toString()
+    };
+    this.setState({ notifications: [...this.state.notifications, notification] });
+
+    if (time !== -1) {
+      setTimeout(this.closeNotification(notification.id), time);
+    }
   };
 
   load = (data: string) => {
@@ -253,13 +282,6 @@ class Editor extends Component<EditorProps, State> {
       ]
     };
 
-    const close = (id: string) => () => {
-      this.setState((oldState) => {
-        const newNotifications = oldState.notifications.filter((item) => item.id !== id);
-        return { notifications: newNotifications };
-      });
-    };
-
     return (
       <div className={isEditorOpen ? '' : 'd-none'}>
         {isModalOpen && (
@@ -280,7 +302,7 @@ class Editor extends Component<EditorProps, State> {
 
         <EditorHeader
           home={openHome}
-          load={this.loadButton}
+          load={this.openLoadModal}
           run={this.run}
           save={this.save}
           toggle={this.toggle}
@@ -292,7 +314,7 @@ class Editor extends Component<EditorProps, State> {
         {notifications && (
           <NotificationWrapper>
             {notifications.map((item) => (
-              <Notification {...item} close={close(item.id)} />
+              <Notification key={item.id} {...item} onClick={this.closeNotification(item.id)} />
             ))}
           </NotificationWrapper>
         )}
