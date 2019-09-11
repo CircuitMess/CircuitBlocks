@@ -84,6 +84,17 @@ Blockly.Arduino['draw_circle'] = function(block) {
     return code;
 };
 
+Blockly.Arduino['draw_ellipse'] = function(block) {
+    var x = Blockly.Arduino.valueToCode(block, 'X', Blockly.Arduino.ORDER_ATOMIC);
+    var y = Blockly.Arduino.valueToCode(block, 'Y', Blockly.Arduino.ORDER_ATOMIC);
+    var rx = Blockly.Arduino.valueToCode(block, 'RX', Blockly.Arduino.ORDER_ATOMIC);
+    var ry = Blockly.Arduino.valueToCode(block, 'RY', Blockly.Arduino.ORDER_ATOMIC);
+    var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = `mp.tft.drawCircle(${x}, ${y}, ${rx}, ${ry}, ${colour});\n`;
+    return code;
+};
+
 Blockly.Arduino['draw_triangle'] = function(block) {
     var x0 = Blockly.Arduino.valueToCode(block, 'X0', Blockly.Arduino.ORDER_ATOMIC);
     var y0 = Blockly.Arduino.valueToCode(block, 'Y0', Blockly.Arduino.ORDER_ATOMIC);
