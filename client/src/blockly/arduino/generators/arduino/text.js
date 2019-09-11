@@ -175,7 +175,7 @@ Blockly.Arduino['text_print'] = function(block) {
   } else {
     argument0 = 'String(' + argument0 + ')';
   }
-  return serialId + '.print(' + argument0 + ');\n';
+  return serialId + '.println(' + argument0 + ');\n';
 };
 
 /**
