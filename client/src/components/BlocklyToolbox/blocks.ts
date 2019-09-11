@@ -71,7 +71,6 @@ export class Blocks {
         text_isempty: '<block type="text_isEmpty"><value name="VALUE"><shadow type="text"><field name="TEXT"></field></shadow></value></block>',
         text_case_upper: '<block type="text_changeCase"><field name="CASE">UPPERCASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>',
         text_case_lower: '<block type="text_changeCase"><field name="CASE">LOWERCASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>',
-        text_case_title: '<block type="text_changeCase"><field name="CASE">TITLECASE</field><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>',
 
         text_getsubstring: '<block type="text_getSubstring"><value name="STRING"><block type="variables_get"><field name="VAR">text</field></block></value></block>',
         text_trim: '<block type="text_trim"><value name="TEXT"><shadow type="text"><field name="TEXT">abc</field></shadow></value></block>',
