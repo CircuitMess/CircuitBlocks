@@ -42,11 +42,18 @@ export default class ArduinoCompiler {
 
   /**
    * Retrieves the possible MAKERphone ports.
+   * @param thirdParty accept any usb to serial
    */
-  public static identifyPort(): Promise<any[]> {
+  public static identifyPort(thirdParty: boolean = false): Promise<any[]> {
     return new Promise<any>((resolve, _reject) => {
       serialPort.list((err, ports) => {
-        resolve(ports.filter((port) => port.vendorId === '10c4' && port.productId === 'ea60'));
+        resolve(
+          ports.filter((port) =>
+            thirdParty
+              ? port.vendorId && port.productId
+              : port.vendorId === '10c4' && port.productId === 'ea60'
+          )
+        );
       });
     });
   }

@@ -5,9 +5,7 @@ import Modal, { Props } from './Modal';
 
 const ScrollArea = styled.div``;
 
-interface LoadModalProps extends Props {
-  data: any[];
-}
+interface LoadModalProps extends Props {}
 
 const LoadModal: React.FC<LoadModalProps> = (props) => (
   <Modal {...props}>

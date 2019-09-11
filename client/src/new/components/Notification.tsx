@@ -74,6 +74,7 @@ const NotificationStyle = styled.div`
     top: 50%;
     right: 8px;
     transform: translateY(-50%);
+    cursor: pointer;
   }
 `;
 
@@ -89,17 +90,14 @@ const Notification: React.FC<NotificationProps> = ({
   message,
   icon = 'warning',
   close
-}) => {
-  console.log(close);
-  return (
-    <NotificationStyle className={close ? 'closeAnimation' : ''}>
-      <i className="material-icons">{icon}</i>
-      <div className="text">{message}</div>
-      <i className="material-icons close" onClick={onClick}>
-        close
-      </i>
-    </NotificationStyle>
-  );
-};
+}) => (
+  <NotificationStyle className={close ? 'closeAnimation' : ''}>
+    <i className="material-icons">{icon}</i>
+    <div className="text">{message}</div>
+    <i className="material-icons close" onClick={onClick}>
+      close
+    </i>
+  </NotificationStyle>
+);
 
 export default Notification;

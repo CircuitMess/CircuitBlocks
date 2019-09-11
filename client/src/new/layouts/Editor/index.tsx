@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import Blockly from '../../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
+import { saveAs } from 'file-saver';
 
 import { toolbox } from '../../../assets/xmls.js';
-import EditorHeader from '../../components/EditorHeader';
+import EditorHeader from './components/EditorHeader';
 import * as Modal from '../../components/Modal';
 import EditorPopup from './components/EditorPopup';
 import EditorPopupHeader from './components/EditorPopupHeader';
@@ -13,9 +14,6 @@ import ReactDOM from 'react-dom';
 import Toolbox from '../../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
-
-const electron: AllElectron = (window as any).require('electron');
-const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -38,6 +36,8 @@ const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   </block>
 </xml>`;
 
+const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
+
 interface EditorProps {
   isEditorOpen: boolean;
   openHome: () => void;
@@ -47,6 +47,10 @@ interface EditorProps {
 
 interface State {
   isModalOpen: boolean;
+  modal: {
+    type: 'save' | 'load';
+    data?: any;
+  };
   isCodeOpen: boolean;
   isCodeFull: boolean;
   width?: number;
@@ -58,6 +62,11 @@ interface State {
   promptText?: string;
   running: boolean;
   notifications: Notification[];
+  makerPhoneConnected: number;
+  filename: string;
+  filenames?: string[];
+  filenameError?: string;
+  xml?: string;
 }
 
 const CODE = `// Code goes here\n`;
@@ -72,14 +81,22 @@ interface Notification {
 
 const INIT_STATE: State = {
   isModalOpen: false,
+  modal: {
+    type: 'save'
+  },
   isCodeOpen: true,
   isCodeFull: false,
   code: CODE,
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
   running: false,
-  notifications: []
+  notifications: [],
+  makerPhoneConnected: 0,
+  filename: ''
 };
+
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
@@ -107,15 +124,6 @@ class Editor extends Component<EditorProps, State> {
   }
 
   componentDidMount() {
-    this.addNotification('This one will not go away', -1);
-
-    setTimeout(() => {
-      this.addNotification('Foobar');
-      setTimeout(() => {
-        this.addNotification('Something else went wrong');
-      }, 1000);
-    }, 1000);
-
     Blockly.prompt = (a, b, c) => {
       const initState = a.split("'")[1];
       this.callback = c;
@@ -136,13 +144,28 @@ class Editor extends Component<EditorProps, State> {
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
 
-    const electron = (window as any).require('electron');
-    const ipcRenderer = electron.ipcRenderer;
-
-    // ipcRenderer.send('startDaemon');
-    ipcRenderer.send('ports', (event: any, args: any) => {
-      console.log(event, args);
+    ipcRenderer.on('ports', (event: any, args: any) => {
+      if (!args.error) {
+        if (this.state.makerPhoneConnected !== args.data.length) {
+          this.addNotification('Makerphone connected');
+        }
+        this.setState({ makerPhoneConnected: args.data.length });
+      } else if (args.error.type === 'NO_DEVICES' && this.state.makerPhoneConnected !== 0) {
+        this.addNotification(`Makerphone disconnected`);
+        this.setState({ makerPhoneConnected: 0 });
+      }
     });
+
+    ipcRenderer.on('upload', (event: any, args: any) => {
+      this.setState({ running: false });
+      console.log(args);
+    });
+
+    setInterval(() => {
+      if (!this.state.running) {
+        ipcRenderer.send('ports');
+      }
+    }, 2000);
 
     // ipcRenderer.once('listFiles', (event, arg) => {
     //   if (arg.error) {
@@ -179,7 +202,7 @@ class Editor extends Component<EditorProps, State> {
   run = () => {
     console.log('RUN');
     this.setState({ running: true });
-    setTimeout(() => this.setState({ running: false }), 2000);
+    ipcRenderer.send('upload', { code: this.state.code });
   };
 
   openLoadModal = () => {
@@ -197,7 +220,7 @@ class Editor extends Component<EditorProps, State> {
           const removeNotifications = oldState.notifications.filter((item) => item.id !== id);
           return { notifications: removeNotifications };
         });
-      }, 300);
+      }, 500);
 
       return { notifications: newNotifications };
     });
@@ -221,16 +244,47 @@ class Editor extends Component<EditorProps, State> {
     Blockly.Xml.domToWorkspace(xml, this.workspace);
   };
 
-  save = () => {
-    console.log('Save');
+  openSaveModal = () => {
+    const fileSaved = false;
+
+    if (this.workspace.getAllBlocks().length === 0) {
+      this.addNotification('You cant save an empty file');
+      return;
+    }
+
+    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
+    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+
+    this.setState({ xml: xmlText });
+
+    ipcRenderer.once('listFiles', (event, arg) => {
+      if (!arg.error) {
+        const filenames = arg.data.map((item: string) => item.split('.xml')[0]);
+
+        console.log(arg.data);
+        console.log(filenames);
+
+        this.setState({ filenames });
+      }
+    });
+
+    ipcRenderer.send('listFiles');
+
+    if (fileSaved) {
+    } else {
+      this.setState({
+        isModalOpen: true,
+        modal: {
+          type: 'save'
+        },
+        filename: '',
+        filenameError: 'EMPTY'
+      });
+    }
   };
 
   toggle = () => {
     this.setState({ isCodeOpen: !this.state.isCodeOpen });
-  };
-
-  saveExternal = () => {
-    console.log('save external');
   };
 
   closeModal = () => {
@@ -257,9 +311,65 @@ class Editor extends Component<EditorProps, State> {
     this.setState({ isPromptOpen: false });
   };
 
+  save = () => {
+    console.log('save this data');
+  };
+
+  onChangeSaveModal = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filename = e.target.value;
+    const newState: { filename: string; filenameError: string | undefined } = {
+      filename,
+      filenameError: undefined
+    };
+
+    if (filename.length === 0) {
+      newState['filenameError'] = 'EMPTY';
+    } else if (this.state.filenames && this.state.filenames.includes(filename)) {
+      newState['filenameError'] = 'EXISTS';
+    }
+
+    console.log(newState);
+
+    this.setState(newState);
+  };
+
+  saveExternal = () => {
+    if (this.state.xml) {
+      const blob = new Blob([this.state.xml], {
+        type: 'application/xml;charset=utf-8'
+      });
+      saveAs(blob, 'filename.xml');
+    }
+    this.finishSaveModal();
+  };
+
+  onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
+    const filename = sanitizeName(this.state.filename);
+    e && e.preventDefault();
+
+    ipcRenderer.once('save', (event, arg) => {
+      if (arg.error) {
+        alert(arg.error);
+      } else {
+        this.finishSaveModal();
+      }
+    });
+
+    ipcRenderer.send('save', { filename: `${filename}.xml`, data: this.state.xml });
+  };
+
+  finishSaveModal = () => {
+    this.setState({
+      isModalOpen: false,
+      filename: '',
+      filenameError: undefined
+    });
+  };
+
   render() {
     const {
       isModalOpen,
+      modal,
       isCodeOpen,
       isCodeFull,
       height,
@@ -269,7 +379,10 @@ class Editor extends Component<EditorProps, State> {
       initState,
       promptText,
       running,
-      notifications
+      notifications,
+      makerPhoneConnected,
+      filename,
+      filenameError
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -282,14 +395,39 @@ class Editor extends Component<EditorProps, State> {
       ]
     };
 
+    const saveFooter = {
+      left: [{ text: 'Save externally', onClick: this.saveExternal }],
+      right: [
+        { text: 'Cancel', onClick: this.closeModal },
+        {
+          text: 'Save',
+          onClick: this.onSubmitSaveModal,
+          color: 'blue',
+          disabled: this.state.filenameError !== undefined
+        }
+      ]
+    };
+
+    const modalProps = {
+      footer: modal.type === 'save' ? saveFooter : footer,
+      title: 'Modal title',
+      close: this.closeModal
+    };
+
     return (
       <div className={isEditorOpen ? '' : 'd-none'}>
-        {isModalOpen && (
-          <Modal.Modal footer={footer} title="Modal title" close={this.closeModal}>
-            <h1>Foobar</h1>
-            <h1>Foobar</h1>
-          </Modal.Modal>
-        )}
+        {isModalOpen &&
+          (modal.type === 'save' ? (
+            <Modal.SaveModal
+              {...modalProps}
+              filename={filename}
+              filenameError={filenameError}
+              onChange={this.onChangeSaveModal}
+              onSubmit={this.onSubmitSaveModal}
+            />
+          ) : (
+            <Modal.LoadModal {...modalProps} />
+          ))}
 
         {isPromptOpen && (
           <Prompt
@@ -304,11 +442,12 @@ class Editor extends Component<EditorProps, State> {
           home={openHome}
           load={this.openLoadModal}
           run={this.run}
-          save={this.save}
+          save={this.openSaveModal}
           toggle={this.toggle}
           title={title}
           isCodeOpen={isCodeOpen}
           running={running}
+          connected={makerPhoneConnected > 0}
         />
 
         {notifications && (

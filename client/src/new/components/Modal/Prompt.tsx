@@ -79,7 +79,9 @@ const Prompt: React.FC<Props> = (props) => {
             <Button onClick={close} color="danger">
               Close
             </Button>
-            <Button color="success">Save</Button>
+            <Button color="success" type="submit">
+              Save
+            </Button>
           </Footer>
         </form>
       </AlertDiv>
