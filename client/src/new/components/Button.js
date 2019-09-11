@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-const Button = styled.div`
+const Button = styled.button`
+  border: none;
   -moz-user-select: none;
   user-select: none;
   display: inline-block;
@@ -11,6 +12,7 @@ const Button = styled.div`
   cursor: pointer;
   padding: 6px;
   transition-duration: 0.3s;
+  color: white;
 
   &.long {
     width: 100%;
@@ -36,6 +38,7 @@ const Button = styled.div`
 
   &.disabled {
     opacity: 0.25;
+    cursor: no-drop;
   }
 
   &:last-child {
@@ -44,12 +47,14 @@ const Button = styled.div`
 
   i.material-icons,
   .text {
+    color: white;
     display: inline-block;
     line-height: 24px;
     vertical-align: middle;
   }
 
   .text {
+    color: white;
     font-style: normal;
     font-weight: 600;
     font-size: 10px;

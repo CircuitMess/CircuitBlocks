@@ -1,20 +1,35 @@
 import React from 'react';
-import styled from 'styled-components';
 
 import Modal, { Props } from './Modal';
 
-const ScrollArea = styled.div``;
+interface SaveModalProps extends Props {
+  filename: string;
+  filenameError?: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+}
 
-interface SaveModalProps extends Props {}
-
-const SaveModal: React.FC<SaveModalProps> = (props) => (
-  <Modal {...props}>
-    <h4> Save sketch </h4>
-    <ScrollArea>
-      <div className="button long blue"> Untitled Sketch 1 </div>
-    </ScrollArea>
-    <input type="text" placeholder="Untitled Project"></input>
-  </Modal>
-);
+const SaveModal: React.FC<SaveModalProps> = ({
+  filename,
+  filenameError,
+  onChange,
+  onSubmit,
+  ...props
+}) => {
+  return (
+    <Modal {...props}>
+      <h4> Save sketch </h4>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          placeholder="Untitled Project"
+          value={filename}
+          onChange={onChange}
+        ></input>
+        <label>{filenameError}</label>
+      </form>
+    </Modal>
+  );
+};
 
 export default SaveModal;

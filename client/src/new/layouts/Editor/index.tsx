@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Blockly from '../../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
+import { saveAs } from 'file-saver';
 
 import { toolbox } from '../../../assets/xmls.js';
 import EditorHeader from './components/EditorHeader';
@@ -35,6 +36,8 @@ const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   </block>
 </xml>`;
 
+const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
+
 interface EditorProps {
   isEditorOpen: boolean;
   openHome: () => void;
@@ -60,6 +63,10 @@ interface State {
   running: boolean;
   notifications: Notification[];
   makerPhoneConnected: number;
+  filename: string;
+  filenames?: string[];
+  filenameError?: string;
+  xml?: string;
 }
 
 const CODE = `// Code goes here\n`;
@@ -84,7 +91,8 @@ const INIT_STATE: State = {
   theme: 'vs-dark',
   running: false,
   notifications: [],
-  makerPhoneConnected: 0
+  makerPhoneConnected: 0,
+  filename: ''
 };
 
 const electron: AllElectron = (window as any).require('electron');
@@ -195,10 +203,6 @@ class Editor extends Component<EditorProps, State> {
     console.log('RUN');
     this.setState({ running: true });
     ipcRenderer.send('upload', { code: this.state.code });
-    // ipcRenderer.send('upload', {
-    //   code: `void setup(){Serial.begin(9600);}void loop(){Serial.println("Hello foobar");delay(1000);}`
-    // });
-    // setTimeout(() => this.setState({ running: false }), 2000);
   };
 
   openLoadModal = () => {
@@ -243,23 +247,44 @@ class Editor extends Component<EditorProps, State> {
   openSaveModal = () => {
     const fileSaved = false;
 
+    if (this.workspace.getAllBlocks().length === 0) {
+      this.addNotification('You cant save an empty file');
+      return;
+    }
+
+    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
+    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+
+    this.setState({ xml: xmlText });
+
+    ipcRenderer.once('listFiles', (event, arg) => {
+      if (!arg.error) {
+        const filenames = arg.data.map((item: string) => item.split('.xml')[0]);
+
+        console.log(arg.data);
+        console.log(filenames);
+
+        this.setState({ filenames });
+      }
+    });
+
+    ipcRenderer.send('listFiles');
+
     if (fileSaved) {
     } else {
       this.setState({
         isModalOpen: true,
         modal: {
           type: 'save'
-        }
+        },
+        filename: '',
+        filenameError: 'EMPTY'
       });
     }
   };
 
   toggle = () => {
     this.setState({ isCodeOpen: !this.state.isCodeOpen });
-  };
-
-  saveExternal = () => {
-    console.log('save external');
   };
 
   closeModal = () => {
@@ -290,6 +315,57 @@ class Editor extends Component<EditorProps, State> {
     console.log('save this data');
   };
 
+  onChangeSaveModal = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const filename = e.target.value;
+    const newState: { filename: string; filenameError: string | undefined } = {
+      filename,
+      filenameError: undefined
+    };
+
+    if (filename.length === 0) {
+      newState['filenameError'] = 'EMPTY';
+    } else if (this.state.filenames && this.state.filenames.includes(filename)) {
+      newState['filenameError'] = 'EXISTS';
+    }
+
+    console.log(newState);
+
+    this.setState(newState);
+  };
+
+  saveExternal = () => {
+    if (this.state.xml) {
+      const blob = new Blob([this.state.xml], {
+        type: 'application/xml;charset=utf-8'
+      });
+      saveAs(blob, 'filename.xml');
+    }
+    this.finishSaveModal();
+  };
+
+  onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
+    const filename = sanitizeName(this.state.filename);
+    e && e.preventDefault();
+
+    ipcRenderer.once('save', (event, arg) => {
+      if (arg.error) {
+        alert(arg.error);
+      } else {
+        this.finishSaveModal();
+      }
+    });
+
+    ipcRenderer.send('save', { filename: `${filename}.xml`, data: this.state.xml });
+  };
+
+  finishSaveModal = () => {
+    this.setState({
+      isModalOpen: false,
+      filename: '',
+      filenameError: undefined
+    });
+  };
+
   render() {
     const {
       isModalOpen,
@@ -304,7 +380,9 @@ class Editor extends Component<EditorProps, State> {
       promptText,
       running,
       notifications,
-      makerPhoneConnected
+      makerPhoneConnected,
+      filename,
+      filenameError
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -317,13 +395,36 @@ class Editor extends Component<EditorProps, State> {
       ]
     };
 
-    const modalProps = { footer: footer, title: 'Modal title', close: this.closeModal };
+    const saveFooter = {
+      left: [{ text: 'Save externally', onClick: this.saveExternal }],
+      right: [
+        { text: 'Cancel', onClick: this.closeModal },
+        {
+          text: 'Save',
+          onClick: this.onSubmitSaveModal,
+          color: 'blue',
+          disabled: this.state.filenameError !== undefined
+        }
+      ]
+    };
+
+    const modalProps = {
+      footer: modal.type === 'save' ? saveFooter : footer,
+      title: 'Modal title',
+      close: this.closeModal
+    };
 
     return (
       <div className={isEditorOpen ? '' : 'd-none'}>
         {isModalOpen &&
           (modal.type === 'save' ? (
-            <Modal.SaveModal {...modalProps} />
+            <Modal.SaveModal
+              {...modalProps}
+              filename={filename}
+              filenameError={filenameError}
+              onChange={this.onChangeSaveModal}
+              onSubmit={this.onSubmitSaveModal}
+            />
           ) : (
             <Modal.LoadModal {...modalProps} />
           ))}

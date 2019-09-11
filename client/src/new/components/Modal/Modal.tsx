@@ -30,6 +30,7 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
             key={`ButtonFooterLeft${index}`}
             color={color || 'white'}
             onClick={onClick}
+            disabled={disabled}
             className={disabled ? 'disabled' : ''}
           >
             <div className="text">{text}</div>
@@ -42,6 +43,7 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
             key={`ButtonFooterLeft${index}`}
             color={color || 'white'}
             onClick={onClick}
+            disabled={disabled}
             className={disabled ? 'disabled' : ''}
           >
             <div className="text">{text}</div>
