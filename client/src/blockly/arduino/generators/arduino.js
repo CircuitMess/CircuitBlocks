@@ -107,6 +107,8 @@ Blockly.Arduino.init = function(workspace) {
   Blockly.Arduino.functionNames_ = Object.create(null);
   // Create a dictionary of setups to be printed in the setup() function
   Blockly.Arduino.setups_ = Object.create(null);
+  // Create a dictionary of code to be appended to the loop() function
+  Blockly.Arduino.wraps_ = Object.create(null);
   // Create a dictionary of pins to check if their use conflicts
   Blockly.Arduino.pins_ = Object.create(null);
 
@@ -187,6 +189,11 @@ Blockly.Arduino.finish = function(code) {
     setups.push(userSetupCode);
   }
 
+  var wraps = [];
+  for (var name in Blockly.Arduino.wraps_) {
+    wraps.push(Blockly.Arduino.wraps_[name]);
+  }
+
   // Clean up temporary data
   delete Blockly.Arduino.includes_;
   delete Blockly.Arduino.definitions_;
@@ -194,13 +201,14 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.userFunctions_;
   delete Blockly.Arduino.functionNames_;
   delete Blockly.Arduino.setups_;
+  delete Blockly.Arduino.wraps_;
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
   var allDefs = includes.join('\n') + variables.join('\n') +
     definitions.join('\n') + functions.join('\n\n');
   var setup = 'void setup() {' + setups.join('\n  ') + '\n}\n\n';
-  var loop = 'void loop() {\n  ' + code.replace(/\n/g, '\n  ') + '\n}';
+  var loop = 'void loop() {\n  ' + wraps.join('\n  ') + "\n\n  " + code.replace(/\n/g, '\n  ') + '\n}';
   return allDefs + setup + loop;
 };
 
@@ -260,6 +268,25 @@ Blockly.Arduino.addSetup = function(setupTag, code, overwrite) {
   var overwritten = false;
   if (overwrite || (Blockly.Arduino.setups_[setupTag] === undefined)) {
     Blockly.Arduino.setups_[setupTag] = code;
+    overwritten = true;
+  }
+  return overwritten;
+};
+
+/**
+ * Adds a string of code at the end of the loop() function. It takes an
+ * identifier to not repeat the same kind of initialisation code from several
+ * blocks. If overwrite option is set to true it will overwrite whatever
+ * value the identifier held before.
+ * @param {!string} wrapTag Identifier for the type of set up code.
+ * @param {!string} code Code to be appended to the loop() function.
+ * @param {boolean=} overwrite Flag to ignore previously set value.
+ * @return {!boolean} Indicates if the new setup code overwrote a previous one.
+ */
+Blockly.Arduino.addWrap = function(wrapTag, code, overwrite) {
+  var overwritten = false;
+  if (overwrite || (Blockly.Arduino.wraps_[wrapTag] === undefined)) {
+    Blockly.Arduino.wraps_[wrapTag] = code;
     overwritten = true;
   }
   return overwritten;
