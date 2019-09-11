@@ -61,8 +61,8 @@ Blockly.Arduino["function_call"] = function(block){
     var funcName = Blockly.Arduino.variableDB_.getName(
         block.getFieldValue('function_name'), Blockly.Procedures.NAME_TYPE);
     var args = [];
-    for (var x = 0; x < block.arguments_.length; x++) {
-        args[x] = Blockly.Arduino.valueToCode(block, 'ARG' + x,
+    for (var i = 0; i < block.arguments_.length; i++) {
+        args[i] = Blockly.Arduino.valueToCode(block, block.arguments_[i].id,
             Blockly.Arduino.ORDER_NONE) || 'null';
     }
     var code = funcName + '(' + args.join(', ') + ');\n';
