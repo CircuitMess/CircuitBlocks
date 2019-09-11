@@ -99,7 +99,7 @@ ipcMain.on('listFiles', (event, _args) => {
 });
 
 // TODO: Add env variables
-const username = process.env.user;
+const username = process.env.USER;
 
 ArduinoCompiler.setup(
   `/home/${username}/installs/arduino-1.8.9`,
@@ -111,19 +111,24 @@ ArduinoCompiler.startDaemon();
 
 let port: any;
 
-ipcMain.on('ports', (event, args) => {
-  console.log(event, args);
-
-  ArduinoCompiler.identifyPort()
+ipcMain.on('ports', (event, _args) => {
+  ArduinoCompiler.identifyPort(true)
     .then((data) => {
       if (data.length === 0) {
-        event.reply('ports', { error: { type: 'NO_DEVICES' } });
+        const res = { error: { type: 'NO_DEVICES' } };
+
+        console.log(res);
+        event.reply('ports', res);
       } else {
+        const res = { error: null, data };
         port = data[0].comName;
-        event.reply('ports', { error: null, data });
+
+        console.log(res.data.map((item) => item.comName));
+        event.reply('ports', res);
       }
     })
     .catch((error) => {
+      console.error(error);
       event.reply('ports', { error });
     });
 });
@@ -131,11 +136,18 @@ ipcMain.on('ports', (event, args) => {
 ipcMain.on('upload', (event, args) => {
   const { code } = args;
 
-  console.log(code);
+  console.log('Compiling code');
 
   ArduinoCompiler.compile(code)
     .then(({ binary }) => {
-      ArduinoCompiler.upload(binary, port);
+      console.log(`Uploading to ${port}`);
+      try {
+        ArduinoCompiler.upload(binary, port);
+        event.reply('upload', { error: null, data: { type: 'DONE' } });
+      } catch (error) {
+        console.error(error);
+        event.reply({ error });
+      }
     })
     .catch((error) => console.error(error));
 });

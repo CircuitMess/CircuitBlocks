@@ -3,7 +3,7 @@ import Blockly from '../../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
 
 import { toolbox } from '../../../assets/xmls.js';
-import EditorHeader from '../../components/EditorHeader';
+import EditorHeader from './components/EditorHeader';
 import * as Modal from '../../components/Modal';
 import EditorPopup from './components/EditorPopup';
 import EditorPopupHeader from './components/EditorPopupHeader';
@@ -44,6 +44,10 @@ interface EditorProps {
 
 interface State {
   isModalOpen: boolean;
+  modal: {
+    type: 'save' | 'load';
+    data?: any;
+  };
   isCodeOpen: boolean;
   isCodeFull: boolean;
   width?: number;
@@ -55,6 +59,7 @@ interface State {
   promptText?: string;
   running: boolean;
   notifications: Notification[];
+  makerPhoneConnected: number;
 }
 
 const CODE = `// Code goes here\n`;
@@ -69,13 +74,17 @@ interface Notification {
 
 const INIT_STATE: State = {
   isModalOpen: false,
+  modal: {
+    type: 'save'
+  },
   isCodeOpen: true,
   isCodeFull: false,
   code: CODE,
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
   running: false,
-  notifications: []
+  notifications: [],
+  makerPhoneConnected: 0
 };
 
 const electron: AllElectron = (window as any).require('electron');
@@ -128,12 +137,27 @@ class Editor extends Component<EditorProps, State> {
     window.addEventListener('resize', this.updateDimensions);
 
     ipcRenderer.on('ports', (event: any, args: any) => {
+      if (!args.error) {
+        if (this.state.makerPhoneConnected !== args.data.length) {
+          this.addNotification('Makerphone connected');
+        }
+        this.setState({ makerPhoneConnected: args.data.length });
+      } else if (args.error.type === 'NO_DEVICES' && this.state.makerPhoneConnected !== 0) {
+        this.addNotification(`Makerphone disconnected`);
+        this.setState({ makerPhoneConnected: 0 });
+      }
+    });
+
+    ipcRenderer.on('upload', (event: any, args: any) => {
+      this.setState({ running: false });
       console.log(args);
     });
 
     setInterval(() => {
-      ipcRenderer.send('ports');
-    }, 500);
+      if (!this.state.running) {
+        ipcRenderer.send('ports');
+      }
+    }, 2000);
 
     // ipcRenderer.once('listFiles', (event, arg) => {
     //   if (arg.error) {
@@ -171,6 +195,9 @@ class Editor extends Component<EditorProps, State> {
     console.log('RUN');
     this.setState({ running: true });
     ipcRenderer.send('upload', { code: this.state.code });
+    // ipcRenderer.send('upload', {
+    //   code: `void setup(){Serial.begin(9600);}void loop(){Serial.println("Hello foobar");delay(1000);}`
+    // });
     // setTimeout(() => this.setState({ running: false }), 2000);
   };
 
@@ -189,7 +216,7 @@ class Editor extends Component<EditorProps, State> {
           const removeNotifications = oldState.notifications.filter((item) => item.id !== id);
           return { notifications: removeNotifications };
         });
-      }, 300);
+      }, 500);
 
       return { notifications: newNotifications };
     });
@@ -213,8 +240,18 @@ class Editor extends Component<EditorProps, State> {
     Blockly.Xml.domToWorkspace(xml, this.workspace);
   };
 
-  save = () => {
-    console.log('Save');
+  openSaveModal = () => {
+    const fileSaved = false;
+
+    if (fileSaved) {
+    } else {
+      this.setState({
+        isModalOpen: true,
+        modal: {
+          type: 'save'
+        }
+      });
+    }
   };
 
   toggle = () => {
@@ -249,9 +286,14 @@ class Editor extends Component<EditorProps, State> {
     this.setState({ isPromptOpen: false });
   };
 
+  save = () => {
+    console.log('save this data');
+  };
+
   render() {
     const {
       isModalOpen,
+      modal,
       isCodeOpen,
       isCodeFull,
       height,
@@ -261,7 +303,8 @@ class Editor extends Component<EditorProps, State> {
       initState,
       promptText,
       running,
-      notifications
+      notifications,
+      makerPhoneConnected
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -274,14 +317,16 @@ class Editor extends Component<EditorProps, State> {
       ]
     };
 
+    const modalProps = { footer: footer, title: 'Modal title', close: this.closeModal };
+
     return (
       <div className={isEditorOpen ? '' : 'd-none'}>
-        {isModalOpen && (
-          <Modal.Modal footer={footer} title="Modal title" close={this.closeModal}>
-            <h1>Foobar</h1>
-            <h1>Foobar</h1>
-          </Modal.Modal>
-        )}
+        {isModalOpen &&
+          (modal.type === 'save' ? (
+            <Modal.SaveModal {...modalProps} />
+          ) : (
+            <Modal.LoadModal {...modalProps} />
+          ))}
 
         {isPromptOpen && (
           <Prompt
@@ -296,11 +341,12 @@ class Editor extends Component<EditorProps, State> {
           home={openHome}
           load={this.openLoadModal}
           run={this.run}
-          save={this.save}
+          save={this.openSaveModal}
           toggle={this.toggle}
           title={title}
           isCodeOpen={isCodeOpen}
           running={running}
+          connected={makerPhoneConnected > 0}
         />
 
         {notifications && (

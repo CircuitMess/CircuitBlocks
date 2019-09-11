@@ -26,14 +26,24 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
     <>
       <div className="buttons left">
         {left.map(({ color, onClick, text, disabled }, index) => (
-          <Button color={color || 'white'} onClick={onClick} className={disabled ? 'disabled' : ''}>
+          <Button
+            key={`ButtonFooterLeft${index}`}
+            color={color || 'white'}
+            onClick={onClick}
+            className={disabled ? 'disabled' : ''}
+          >
             <div className="text">{text}</div>
           </Button>
         ))}
       </div>
       <div className="buttons right">
         {right.map(({ color, onClick, text, disabled }, index) => (
-          <Button color={color || 'white'} onClick={onClick} className={disabled ? 'disabled' : ''}>
+          <Button
+            key={`ButtonFooterLeft${index}`}
+            color={color || 'white'}
+            onClick={onClick}
+            className={disabled ? 'disabled' : ''}
+          >
             <div className="text">{text}</div>
           </Button>
         ))}

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Button from './Button';
+import Button from '../../../components/Button';
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -48,10 +48,11 @@ interface Props {
   run: () => void;
   isCodeOpen: boolean;
   running: boolean;
+  connected: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
-  const { home, title, load, save, toggle, run, isCodeOpen, running } = props;
+  const { home, title, load, save, toggle, run, isCodeOpen, running, connected } = props;
 
   return (
     <StyledHeader>
@@ -62,11 +63,15 @@ const EditorHeader: React.FC<Props> = (props) => {
         <div className="title">{title}</div>
       </div>
 
+      <div className="center">
+        <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+      </div>
+
       <div className="right">
         <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
         </Button>
-        <Button className="icon disabled mr-2" onClick={save}>
+        <Button className="icon mr-2" onClick={save}>
           <i className="material-icons"> save </i>
         </Button>
         <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
