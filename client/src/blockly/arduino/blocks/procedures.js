@@ -28,9 +28,11 @@ Blockly.Blocks['arduino_functions'] = {
         .appendField(Blockly.Msg.ARD_FUN_RUN_SETUP);
     this.appendStatementInput('SETUP_FUNC');
     this.appendDummyInput()
+        .appendField("");
+    this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_FUN_RUN_LOOP);
     this.appendStatementInput('LOOP_FUNC');
-    this.setInputsInline(false);
+    this.setInputsInline(true);
     this.setColour(Blockly.Blocks.Procedures.HUE);
     this.setTooltip(Blockly.Msg.ARD_FUN_RUN_TIP);
     this.setHelpUrl('https://arduino.cc/en/Reference/Loop');
@@ -39,5 +41,10 @@ Blockly.Blocks['arduino_functions'] = {
   /** @return {!boolean} True if the block instance is in the workspace. */
   getArduinoLoopsInstance: function() {
     return true;
+  },
+
+  isDuplicatable: function(){
+    return false;
   }
+
 };
