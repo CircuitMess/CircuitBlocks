@@ -123,6 +123,7 @@ Blockly.Arduino.init = function(workspace) {
   // Iterate through to capture all blocks types and set the function arguments
   var varsWithTypes = Blockly.Arduino.StaticTyping.collectVarsWithTypes(workspace);
   Blockly.Arduino.StaticTyping.setProcedureArgs(workspace, varsWithTypes);
+  Blockly.Arduino.varsWithTypes = varsWithTypes;
 
   // Set variable declarations with their Arduino type in the defines dictionary
   for (var varName in varsWithTypes) {
@@ -401,7 +402,7 @@ Blockly.Arduino.getArduinoType_ = function(typeBlockly) {
       //return 'ChildBlockMissing';
       return 'void';
     default:
-      return 'Invalid Blockly Type';
+      return 'Invalid Blockly Type: ' + typeBlockly.typeId;
   }
 };
 

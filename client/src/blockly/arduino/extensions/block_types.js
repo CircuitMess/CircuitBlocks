@@ -105,7 +105,13 @@ Blockly.Blocks['text_prompt'].getBlockType = function(){
 // Variables
 
 Blockly.Blocks['variables_get'].getBlockType = function(){
-  return [Blockly.Types.UNDEF, this.getFieldValue('VAR')];
+  var type = Blockly.Arduino.varsWithTypes[this.getFieldValue("VAR")];
+
+  if(type === undefined || (Array.isArray(type) && type[0] == Blockly.Types.UNDEF)){
+    return [Blockly.Types.UNDEF, this.getFieldValue('VAR')];
+  }else{
+    return type;
+  }
 };
 
 // Procedures
