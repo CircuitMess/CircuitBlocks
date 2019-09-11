@@ -90,6 +90,7 @@ export class Blocks {
     };
 
     public static functions: any = {
+        arduino: '<block type="arduino_functions"></block>'
     };
 
     public static input_output: any = {
