@@ -1,4 +1,4 @@
-import * as serialPort from 'serialport';
+import * as SerialPort from 'serialport';
 import * as childProcess from 'child_process';
 import * as grpc from 'grpc';
 import * as path from 'path';
@@ -7,6 +7,7 @@ import * as fs from 'fs';
 
 import { BuilderClient } from '../proto/builder_grpc_pb';
 import { BuildParams } from '../proto/builder_pb';
+import Serial from './serial';
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -26,6 +27,21 @@ export default class ArduinoCompiler {
   private static ARDUINO_INSTALL: string = '';
   private static ARDUINO_HOME: string = '';
   private static ARDUINO_LOCAL: string = '';
+
+  private static serial: Serial | undefined;
+  private static uploading: boolean = false;
+
+  public static getSerial(): Serial {
+    if (this.serial === undefined) {
+      this.serial = new Serial();
+    }
+
+    return this.serial;
+  }
+
+  public static canSerialCom(): boolean {
+    return !this.uploading;
+  }
 
   /**
    * Sets the relevant Arduino directories.
@@ -76,7 +92,7 @@ export default class ArduinoCompiler {
    */
   public static identifyPort(thirdParty: boolean = false): Promise<PortDescriptor[]> {
     return new Promise<any>((resolve, _reject) => {
-      serialPort.list((err, ports) => {
+      SerialPort.list((err, ports) => {
         resolve(
           ports.filter((port) =>
             thirdParty
@@ -94,6 +110,9 @@ export default class ArduinoCompiler {
    * @param port MAKERphone port
    */
   public static upload(binary: string, port: string) {
+    if(this.serial) this.serial.stop();
+    this.uploading = true;
+
     const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
 
     const win = os.type() === 'Windows_NT';
@@ -138,6 +157,9 @@ export default class ArduinoCompiler {
 
     if (!win) options.unshift('python');
     childProcess.execSync(options.join(' '));
+
+    this.uploading = false;
+    if(this.serial) this.serial.start();
   }
 
   /**
