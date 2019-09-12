@@ -24,3 +24,18 @@ Blockly.Arduino['joystick'] = function(block) {
     var code = 'mp.buttons.getJoystick' + axis + '()';
     return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 };
+
+Blockly.Arduino['led_colour'] = function(block) {
+    var led = block.getFieldValue('LED');
+    var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = 'mp.leds[' + led + '] = ' + colour + ";\n";
+    return code;
+};
+
+Blockly.Arduino['led_off'] = function(block) {
+    var led = block.getFieldValue('LED');
+
+    var code = 'mp.leds[' + led + '] = 0;\n';
+    return code;
+};

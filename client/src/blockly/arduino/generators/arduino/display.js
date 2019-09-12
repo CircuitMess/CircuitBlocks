@@ -22,35 +22,35 @@ Blockly.Arduino['display_popup'] = function(block) {
 Blockly.Arduino['display_clear'] = function(block) {
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.tft.fillScreen(" + colour + ");\n";
+    var code = "mp.display.fillScreen(" + colour + ");\n";
     return code;
 };
 
 Blockly.Arduino['display_invert'] = function(block) {
     var invert = Blockly.Arduino.valueToCode(block, 'INVERT', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.tft.invertDisplay(" + invert + ");\n";
+    var code = "mp.display.invertDisplay(" + invert + ");\n";
     return code;
 };
 
 Blockly.Arduino['display_fontsize'] = function(block) {
     var size = Blockly.Arduino.valueToCode(block, 'SIZE', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.tft.setTextFont(" + size + ");\n";
+    var code = "mp.display.setTextFont(" + size + ");\n";
     return code;
 };
 
 Blockly.Arduino['display_fontcolour'] = function(block) {
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.tft.setTextColor(" + colour + ");\n";
+    var code = "mp.display.setTextColor(" + colour + ");\n";
     return code;
 };
 
 Blockly.Arduino['display_println'] = function(block) {
     var text = Blockly.Arduino.valueToCode(block, 'TEXT', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.tft.println(" + text + ");\n";
+    var code = "mp.display.println(" + text + ");\n";
     return code;
 };
 
@@ -59,7 +59,7 @@ Blockly.Arduino['draw_text'] = function(block) {
     var x = Blockly.Arduino.valueToCode(block, 'X', Blockly.Arduino.ORDER_ATOMIC);
     var y = Blockly.Arduino.valueToCode(block, 'Y', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.tft.drawString(${text}, ${x}, ${y});\n`;
+    var code = `mp.display.drawString(${text}, ${x}, ${y});\n`;
     return code;
 };
 
@@ -70,7 +70,7 @@ Blockly.Arduino['draw_rect'] = function(block) {
     var h = Blockly.Arduino.valueToCode(block, 'H', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.tft.drawRect(${x}, ${y}, ${w}, ${h}, ${colour});\n`;
+    var code = `mp.display.drawRect(${x}, ${y}, ${w}, ${h}, ${colour});\n`;
     return code;
 };
 
@@ -80,7 +80,18 @@ Blockly.Arduino['draw_circle'] = function(block) {
     var r = Blockly.Arduino.valueToCode(block, 'R', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.tft.drawCircle(${x}, ${y}, ${r}, ${colour});\n`;
+    var code = `mp.display.drawCircle(${x}, ${y}, ${r}, ${colour});\n`;
+    return code;
+};
+
+Blockly.Arduino['draw_ellipse'] = function(block) {
+    var x = Blockly.Arduino.valueToCode(block, 'X', Blockly.Arduino.ORDER_ATOMIC);
+    var y = Blockly.Arduino.valueToCode(block, 'Y', Blockly.Arduino.ORDER_ATOMIC);
+    var rx = Blockly.Arduino.valueToCode(block, 'RX', Blockly.Arduino.ORDER_ATOMIC);
+    var ry = Blockly.Arduino.valueToCode(block, 'RY', Blockly.Arduino.ORDER_ATOMIC);
+    var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = `mp.display.drawCircle(${x}, ${y}, ${rx}, ${ry}, ${colour});\n`;
     return code;
 };
 
@@ -94,6 +105,6 @@ Blockly.Arduino['draw_triangle'] = function(block) {
 
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.tft.drawTriangle(${x0}, ${y0}, ${x1}, ${y1}, ${x2}, ${y2}, ${colour});\n`;
+    var code = `mp.display.drawTriangle(${x0}, ${y0}, ${x1}, ${y1}, ${x2}, ${y2}, ${colour});\n`;
     return code;
 };

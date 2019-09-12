@@ -175,7 +175,7 @@ Blockly.Arduino['text_print'] = function(block) {
   } else {
     argument0 = 'String(' + argument0 + ')';
   }
-  return serialId + '.print(' + argument0 + ');\n';
+  return serialId + '.println(' + argument0 + ');\n';
 };
 
 /**
@@ -249,21 +249,160 @@ Blockly.Arduino['text_endString'] = function(block) {
 };
 
 Blockly.Arduino['text_indexOf'] = function(block) {
-  return ['', Blockly.Arduino.ORDER_UNARY_POSTFIX];
+  var operator = block.getFieldValue('END') === 'FIRST' ? 'indexOf' : 'lastIndexOf';
+  var substring = Blockly.Arduino.valueToCode(block, 'FIND', Blockly.Arduino.ORDER_NONE) || '\'\'';
+  var text = Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_NONE) || '\'\'';
+
+  var code = 'String(' + text + ').' + operator + '(' + substring + ')';
+  return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
 };
 
 Blockly.Arduino['text_charAt'] = function(block) {
-  return ['', Blockly.Arduino.ORDER_UNARY_POSTFIX];
+  // Get letter at index.
+  // Note: Until January 2013 this block did not have the WHERE input.
+  var where = block.getFieldValue('WHERE') || 'FROM_START';
+  var text = "String(" + (Blockly.Arduino.valueToCode(block, 'VALUE', Blockly.Arduino.ORDER_NONE) || '""') + ")";
+  var at = Blockly.Arduino.valueToCode(block, 'AT', Blockly.Arduino.ORDER_NONE) || '0';
+  switch (where) {
+    case 'FIRST':
+      var code = text + '.charAt(0)';
+      return [code, Blockly.Arduino.ORDER_NONE];
+    case 'LAST':
+      var code = text + '.charAt(' + text + '.length() - 1)';
+      return [code, Blockly.Arduino.ORDER_NONE];
+    case 'FROM_START':
+      // Adjust index if using one-based indices.
+      var code = text + '.charAt(' + at + ')';
+      return [code, Blockly.Arduino.ORDER_NONE];
+    case 'FROM_END':
+      var code = text + '.charAt(' + text + '.length() - 1 - ' + at + ')';
+      return [code, Blockly.Arduino.ORDER_NONE];
+    case 'RANDOM':
+      var func = [
+        'int ' + Blockly.Arduino.DEF_FUNC_NAME + '(String text) {',
+        '  return text.charAt(rand() % text.length());',
+        '}'];
+      var funcName = Blockly.Arduino.addFunction('textRandomLetter', func.join('\n'));
+      var code = funcName + '(' + text + ')';
+      return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
+  }
+  throw Error('Unhandled option (text_charAt).');
+};
+
+/**
+ * Returns an expression calculating the index into a string.
+ * @param {string} stringName Name of the string, used to calculate length.
+ * @param {string} where The method of indexing, selected by dropdown in Blockly
+ * @param {string=} opt_at The optional offset when indexing from start/end.
+ * @return {string} Index expression.
+ * @private
+ */
+Blockly.Arduino.text.getIndex_ = function(stringName, where, opt_at) {
+  if (where == 'FIRST') {
+    return '0';
+  } else if (where == 'FROM_END') {
+    return stringName + '.length - 1 - ' + opt_at;
+  } else if (where == 'LAST') {
+    return stringName + '.length - 1';
+  } else {
+    return opt_at;
+  }
 };
 
 Blockly.Arduino['text_getSubstring'] = function(block) {
-  return ['', Blockly.Arduino.ORDER_UNARY_POSTFIX];
+  // Get substring.
+  var text = "String(" + (Blockly.Arduino.valueToCode(block, 'STRING', Blockly.Arduino.ORDER_NONE) || '""') + ")";
+  var where1 = block.getFieldValue('WHERE1');
+  var where2 = block.getFieldValue('WHERE2');
+  if (where1 === 'FIRST' && where2 === 'LAST') {
+    var code = text;
+  } else if (text.match(/^'?\w+'?$/) ||
+      (where1 != 'FROM_END' && where1 != 'LAST' &&
+          where2 != 'FROM_END' && where2 != 'LAST')) {
+    // If the text is a variable or literal or doesn't require a call for
+    // length, don't generate a helper function.
+    switch (where1) {
+      case 'FROM_START':
+        var at1 = Blockly.Arduino.valueToCode(block, 'AT1') || '0';
+        break;
+      case 'FROM_END':
+        var at1 = Blockly.Arduino.valueToCode(block, 'AT1') || '0';
+        at1 = text + '.length() - ' + at1;
+        break;
+      case 'FIRST':
+        var at1 = '0';
+        break;
+      default:
+        throw Error('Unhandled option (text_getSubstring).');
+    }
+    switch (where2) {
+      case 'FROM_START':
+        var at2 = Blockly.Arduino.valueToCode(block, 'AT2') || '1';
+        break;
+      case 'FROM_END':
+        var at2 = Blockly.Arduino.valueToCode(block, 'AT2') || '0';
+        at2 = text + '.length() - ' + at2;
+        break;
+      case 'LAST':
+        var at2 = text + '.length()';
+        break;
+      default:
+        throw Error('Unhandled option (text_getSubstring).');
+    }
+    code = text + '.substring(' + at1 + ', ' + at2 + ')';
+  } else {
+    var at1 = Blockly.Arduino.valueToCode(block, 'AT1') || '0';
+    var at2 = Blockly.Arduino.valueToCode(block, 'AT2') || '0';
+    var getIndex_ = Blockly.Arduino.text.getIndex_;
+    var wherePascalCase = {'FIRST': 'First', 'LAST': 'Last',
+      'FROM_START': 'FromStart', 'FROM_END': 'FromEnd'};
+    var functionName = Blockly.Arduino.addFunction(
+        'subsequence' + wherePascalCase[where1] + wherePascalCase[where2],
+        ['function ' + Blockly.Arduino.FUNCTION_NAME_PLACEHOLDER_ +
+        '(String sequence' +
+        // The value for 'FROM_END' and'FROM_START' depends on `at` so
+        // we add it as a parameter.
+        ((where1 == 'FROM_END' || where1 == 'FROM_START') ? ', int at1' : '') +
+        ((where2 == 'FROM_END' || where2 == 'FROM_START') ? ', int at2' : '') +
+        ') {',
+          '  var start = ' + getIndex_('sequence', where1, 'at1') + ';',
+          '  var end = ' + getIndex_('sequence', where2, 'at2') + ' + 1;',
+          '  return sequence.substring(start, end);',
+          '}'].join("\n"));
+    var code = functionName + '(' + text +
+        // The value for 'FROM_END' and 'FROM_START' depends on `at` so we
+        // pass it.
+        ((where1 == 'FROM_END' || where1 == 'FROM_START') ? ', ' + at1 : '') +
+        ((where2 == 'FROM_END' || where2 == 'FROM_START') ? ', ' + at2 : '') +
+        ')';
+  }
+
+  return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
 };
 
 Blockly.Arduino['text_changeCase'] = function(block) {
-  return ['', Blockly.Arduino.ORDER_UNARY_POSTFIX];
+  // Change capitalization.
+  var OPERATORS = {
+    'UPPERCASE': '.toUpperCase()',
+    'LOWERCASE': '.toLowerCase()'
+  };
+  var operator = OPERATORS[block.getFieldValue('CASE')];
+  var text = Blockly.Arduino.valueToCode(block, 'TEXT', Blockly.Arduino.ORDER_NONE) || '""';
+  var code = "String(" + text + ")" + operator;
+
+  return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
 };
 
 Blockly.Arduino['text_prompt'] = function(block) {
   return ['', Blockly.Arduino.ORDER_UNARY_POSTFIX];
+};
+
+Blockly.Arduino['text_replace'] = function(block) {
+  var text = "String(" + (Blockly.Arduino.valueToCode(block, 'TEXT', Blockly.Arduino.ORDER_NONE) || '""') + ")";
+  var from = Blockly.Arduino.valueToCode(block, 'FROM', Blockly.Arduino.ORDER_NONE) || '""';
+  var to = Blockly.Arduino.valueToCode(block, 'TO', Blockly.Arduino.ORDER_NONE) || '""';
+
+  var code = text + ".replace(" + from + ", " + to + ")";
+
+  return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
 };

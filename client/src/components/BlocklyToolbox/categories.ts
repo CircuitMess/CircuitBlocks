@@ -954,10 +954,6 @@ categories.push({
         {
             name: "text_case_lower",
             xml: Blocks.text.text_case_lower
-        },
-        {
-            name: "text_case_title",
-            xml: Blocks.text.text_case_title
         }
     ],
 
@@ -969,22 +965,22 @@ categories.push({
                 name: "text_substring",
                 xml: Blocks.text.text_getsubstring
             },
-            {
+            /*{
                 name: "text_trim",
                 xml: Blocks.text.text_trim
             },
             {
                 name: "text_count",
                 xml: Blocks.text.text_count
-            },
+            },*/
             {
                 name: "text_replace",
                 xml: Blocks.text.text_replace
             },
-            {
+            /*{
                 name: "text_reverse",
                 xml: Blocks.text.text_reverse
-            },
+            },*/
 
             {
                 name: "text_print",
@@ -1044,6 +1040,18 @@ categories.push({
         {
             name: "joystick",
             xml: Blocks.phone.joystick
+        },
+        {
+            name: "led_colour",
+            xml: Blocks.display.colour
+        },
+        {
+            name: "led_colour",
+            xml: Blocks.phone.led_colour
+        },
+        {
+            name: "led_off",
+            xml: Blocks.phone.led_off
         }
     ],
     subcategories: []
