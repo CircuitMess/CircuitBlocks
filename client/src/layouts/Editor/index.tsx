@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import Blockly from '../../../blockly/blockly';
+import Blockly from '../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
 import { saveAs } from 'file-saver';
 
-import { toolbox } from '../../../assets/xmls.js';
+import { toolbox } from '../../assets/xmls.js';
 import EditorHeader from './components/EditorHeader';
 import * as Modal from '../../components/Modal';
 import EditorPopup from './components/EditorPopup';
 import EditorPopupHeader from './components/EditorPopupHeader';
 import Monaco from './components/Monaco';
-import BlocklyEditor from '../../../components/BlocklyEditor';
+import BlocklyEditor from '../../components/BlocklyEditor';
 import ReactDOM from 'react-dom';
-import Toolbox from '../../../components/Toolbox';
+import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
 
@@ -271,6 +271,7 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.send('listFiles');
 
     if (fileSaved) {
+      // rewrite file
     } else {
       this.setState({
         isModalOpen: true,

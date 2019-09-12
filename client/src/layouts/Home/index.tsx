@@ -60,7 +60,7 @@ const Home: React.FC<HomeProps> = (props) => {
         </>
       ) : (
         <Login className={animation ? 'log-in' : ''}>
-          <img src={require('../../../assets/SVG/login.svg')} height="80px" alt="Login" />
+          <img src={require('../../assets/SVG/login.svg')} height="80px" alt="Login" />
           <div className="form">
             <h2>Log In</h2>
             <p>Connect with your CircuitMess ID</p>

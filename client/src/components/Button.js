@@ -1,65 +1,100 @@
 import styled from 'styled-components';
 
+const Button = styled.button`
+  border: none;
+  -moz-user-select: none;
+  user-select: none;
+  display: inline-block;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.25);
+  margin-right: 12px;
+  cursor: pointer;
+  padding: 6px;
+  transition-duration: 0.3s;
+  color: white;
+
+  &.long {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  &.mid {
+    min-width: 50%;
+  }
+
+  &:hover {
+    opacity: 0.8;
+    transition-duration: 0.1s;
+  }
+  &:active,
+  &.selected {
+    opacity: 0.5;
+    transition-duration: 0.1s;
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(2px);
+  }
+
+  &.disabled {
+    opacity: 0.25;
+    cursor: no-drop;
+  }
+
+  &:last-child {
+    margin-right: 0px !important;
+  }
+
+  i.material-icons,
+  .text {
+    color: white;
+    display: inline-block;
+    line-height: 24px;
+    vertical-align: middle;
+  }
+
+  .text {
+    color: white;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 10px;
+    height: 24px;
+    margin-right: 4px;
+    margin-left: 4px;
+  }
+
+  &.active {
+    background-color: #2f2fb5;
+  }
+
+  &.running {
+    background-color: #e3384d80;
+  }
+
+  ${(props) => props.color && colors[props.color]}
+`;
+
 const colors = {
-  primary: {
-    main: '#ddd',
-    pressed: '#ccc'
+  red: {
+    background: '#E3384D',
+    color: 'white'
   },
-  secondary: {
-    main: '#aaa',
-    pressed: '#999'
+  blue: {
+    background: '#1045BA',
+    color: 'white'
   },
-  success: {
-    main: '#6d6',
-    pressed: '#2c2'
+  teal: {
+    background: '#00BED6',
+    color: 'white'
   },
-  danger: {
-    main: '#d66',
-    pressed: '#c22'
+  white: {
+    background: '#ffffff',
+    color: '#595959'
+  },
+  noFill: {
+    backgroundColor: ' none',
+    boxShadow: 'none'
   }
 };
 
-const Button = styled.div`
-  border-radius: 4px;
-  min-width: 40px;
-  width: 100px;
-  padding: 4px;
-  cursor: pointer;
-  text-align: center;
-
-  font-size: 12px;
-
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  background-color: ${(props) =>
-    (colors[props.color] && colors[props.color].main) || colors.primary.main};
-
-  :hover {
-    background-color: ${(props) =>
-      (colors[props.color] && colors[props.color].pressed) || colors.primary.pressed};
-  }
-`;
-
-const SubmitButton = styled.button`
-  border-radius: 4px;
-  min-width: 40px;
-  width: 100px;
-  padding: 4px;
-  cursor: pointer;
-  text-align: center;
-
-  font-size: 12px;
-
-  border: none;
-
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-  background-color: ${(props) =>
-    (colors[props.color] && colors[props.color].main) || colors.primary.main};
-
-  :hover {
-    background-color: ${(props) =>
-      (colors[props.color] && colors[props.color].pressed) || colors.primary.pressed};
-  }
-`;
-
 export default Button;
-export { SubmitButton };

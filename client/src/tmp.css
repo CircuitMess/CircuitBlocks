@@ -7,7 +7,7 @@ body {
   overflow-y: scroll;
   overflow-x: hidden;
   color: #595959;
-  background-image: url('../assets/images/bg/bg-02.png');
+  background-image: url('./assets/images/bg/bg-02.png');
   background-size: cover;
 }
 

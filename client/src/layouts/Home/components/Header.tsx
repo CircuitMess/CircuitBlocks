@@ -45,17 +45,10 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn }) => {
     <Section className="bg-image">
       <Header loggedIn={loggedIn}>
         <div className="left">
-          <img
-            className="logo"
-            src={require('../../../../assets/images/logo.png')}
-            alt={username}
-          />
+          <img className="logo" src={require('../../../assets/images/logo.png')} alt={username} />
         </div>
         <div className="right">
-          <Profile
-            username={username}
-            image_url={require('../../../../assets/images/profile.png')}
-          />
+          <Profile username={username} image_url={require('../../../assets/images/profile.png')} />
         </div>
       </Header>
     </Section>
@@ -68,7 +61,7 @@ export const HeaderImage = styled.div<StyledHeaderProps>`
   position: absolute;
   top: 0;
   left: 0;
-  background-image: url(${require('../../../../assets/images/bg/bg-01.png')});
+  background-image: url(${require('../../../assets/images/bg/bg-01.png')});
   background-size: cover;
   background-position: center;
   opacity: 0;
