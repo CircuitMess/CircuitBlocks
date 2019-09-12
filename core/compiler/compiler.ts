@@ -8,6 +8,16 @@ import * as fs from 'fs';
 import { BuilderClient } from '../proto/builder_grpc_pb';
 import { BuildParams } from '../proto/builder_pb';
 
+export interface PortDescriptor {
+  manufacturer: string;
+  serialNumber: string;
+  pnpId: string;
+  locationId: string;
+  vendorId: string;
+  productId: string;
+  comName: string;
+}
+
 export default class ArduinoCompiler {
   private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
   private static process: childProcess.ChildProcess;
@@ -30,12 +40,32 @@ export default class ArduinoCompiler {
     this.ARDUINO_LOCAL = local;
   }
 
-  public static startDaemon() {
-    this.process = childProcess.execFile(path.join(this.ARDUINO_INSTALL, 'arduino-builder'), [
-      '--daemon'
-    ]);
+  /**
+   * Starts the builder daemon. Rejects if the builder couldn't be found or paths haven't been set up.
+   */
+  public static startDaemon(): Promise<null> {
+    return new Promise<null>((resolve, reject) => {
+      if (this.ARDUINO_LOCAL === '') {
+        reject(new Error('Pahts not set up'));
+        return;
+      }
+
+      const builderPath = path.join(this.ARDUINO_INSTALL, 'arduino-builder');
+
+      if (!fs.existsSync(builderPath)) {
+        reject(new Error('Builder not found'));
+        return;
+      }
+
+      this.process = childProcess.execFile(builderPath, ['--daemon']);
+
+      resolve();
+    });
   }
 
+  /**
+   * Stops the builder daemon.
+   */
   public static stopDaemon() {
     this.process.kill();
   }
@@ -44,7 +74,7 @@ export default class ArduinoCompiler {
    * Retrieves the possible MAKERphone ports.
    * @param thirdParty accept any usb to serial
    */
-  public static identifyPort(thirdParty: boolean = false): Promise<any[]> {
+  public static identifyPort(thirdParty: boolean = false): Promise<PortDescriptor[]> {
     return new Promise<any>((resolve, _reject) => {
       serialPort.list((err, ports) => {
         resolve(
@@ -118,7 +148,7 @@ export default class ArduinoCompiler {
   public static compile(code: string): Promise<{ binary: string; status: string[] }> {
     const sketchDir = path.join(this.CB_TMP, 'sketch');
     const sketchPath = path.join(sketchDir, 'sketch.ino');
-    fs.mkdirSync(sketchDir, { recursive: true });
+    if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
     fs.writeFileSync(sketchPath, code);
 
     return this.compileSketch(sketchPath);
@@ -133,23 +163,31 @@ export default class ArduinoCompiler {
    * On error rejects with the following object:
    * { message: a short error message, error: the error object returned by the compiler }
    *
+   * On compilation error, the rejected object will have code 2. On resolution and rejection due to compiler errors,
+   * the returned object will have the property 'output' which is an array of strings outputted by the copiler.
+   *
    * @param sketchPath Absolute path to the sketch to be compiled.
    */
-  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[] }> {
+  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[], output: string[] }> {
     const sketchName = path.parse(sketchPath).base;
     const compiledPath: string = path.join(this.CB_TMP, 'build', sketchName + '.bin');
 
     return new Promise((resolve, reject) => {
-      if (this.ARDUINO_INSTALL === '' || this.ARDUINO_HOME === '')
-        throw new Error('Arduino directories not set up. Run the setup method first');
+      if (this.ARDUINO_LOCAL === '')
+        reject(new Error('Arduino directories not set up. Run the setup method first'));
 
       const stream = this.client.build(this.buildParams(sketchPath), (err, _response) => {
-        if (err) throw new Error(err);
+        if (err) reject(err);
       });
 
       const status: string[] = [];
+      const output: string[] = [];
       let fulfilled = false;
       let error: any;
+
+      this.process.stderr.on('data', (data) => {
+        output.push(data);
+      });
 
       stream.on('error', (data) => {
         error = data;
@@ -163,6 +201,7 @@ export default class ArduinoCompiler {
         if (fulfilled) return;
         fulfilled = true;
 
+        error.output = output;
         reject(error);
       });
 
@@ -170,9 +209,10 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve({ binary: compiledPath, status });
+          resolve({ binary: compiledPath, status, output });
         } else {
-          throw new Error(error);
+          error.output = output;
+          reject(error);
         }
       });
     });
