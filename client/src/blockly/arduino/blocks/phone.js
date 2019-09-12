@@ -82,5 +82,60 @@ Blockly.defineBlocksWithJsonArray([
         outputShape: Blockly.OUTPUT_SHAPE_ROUND,
         colour: Blockly.Blocks.io.HUE,
         tooltip: "Returns the joystick offset on the selected axis."
-    }
+    },
+    {
+        type: "led_colour",
+        message0: "set led %1 to colour %2",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "LED",
+                options: [
+                    [ "1", "0" ],
+                    [ "2", "1" ],
+                    [ "3", "2" ],
+                    [ "4", "3" ],
+                    [ "5", "4" ],
+                    [ "6", "5" ],
+                    [ "7", "6" ],
+                    [ "8", "7" ]
+                ]
+            },
+            {
+                type: "input_value",
+                name: "COLOUR",
+                check: "Colour"
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Blocks.io.HUE,
+        tooltip: "Lights the led"
+    },
+    {
+        type: "led_off",
+        message0: "turn off led %1",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "LED",
+                options: [
+                    [ "1", "0" ],
+                    [ "2", "1" ],
+                    [ "3", "2" ],
+                    [ "4", "3" ],
+                    [ "5", "4" ],
+                    [ "6", "5" ],
+                    [ "7", "6" ],
+                    [ "8", "7" ]
+                ]
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Blocks.io.HUE,
+        tooltip: "Lights the led"
+    },
 ]);

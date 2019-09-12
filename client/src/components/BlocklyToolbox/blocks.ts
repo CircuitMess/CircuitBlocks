@@ -129,7 +129,9 @@ export class Blocks {
     public static phone: any = {
         vibrate: '<block type="vibrate"></block>',
         button_action: '<block type="button_action"></block>',
-        joystick: '<block type="joystick"></block>'
+        joystick: '<block type="joystick"></block>',
+        led_colour: '<block type="led_colour"></block>',
+        led_off: '<block type="led_off"></block>'
     };
 
     public static display: any = {
