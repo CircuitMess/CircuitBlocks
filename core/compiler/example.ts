@@ -6,7 +6,13 @@ ArduinoCompiler.setup(
   '/home/fran/.arduino15'
 );
 
-// ArduinoCompiler.startDaemon();
+ArduinoCompiler.startDaemon();
+
+const serial = ArduinoCompiler.getSerial();
+serial.start();
+
+serial.registerListener(line => console.log(line));
+serial.write("foo");
 
 const code = `#include <MAKERphone.h>
 
