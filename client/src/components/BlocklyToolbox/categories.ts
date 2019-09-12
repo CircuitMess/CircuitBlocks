@@ -1040,6 +1040,18 @@ categories.push({
         {
             name: "joystick",
             xml: Blocks.phone.joystick
+        },
+        {
+            name: "led_colour",
+            xml: Blocks.display.colour
+        },
+        {
+            name: "led_colour",
+            xml: Blocks.phone.led_colour
+        },
+        {
+            name: "led_off",
+            xml: Blocks.phone.led_off
         }
     ],
     subcategories: []
