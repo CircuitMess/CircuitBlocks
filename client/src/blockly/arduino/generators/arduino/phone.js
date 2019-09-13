@@ -26,6 +26,12 @@ Blockly.Arduino['joystick'] = function(block) {
 };
 
 Blockly.Arduino['led_colour'] = function(block) {
+    var COLOUR = block.getFieldValue('COLOUR');
+
+    return [ COLOUR, Blockly.Arduino.ORDER_ATOMIC ];
+};
+
+Blockly.Arduino['led_on'] = function(block) {
     var led = block.getFieldValue('LED');
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
