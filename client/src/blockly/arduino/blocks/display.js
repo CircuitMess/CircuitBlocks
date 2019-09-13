@@ -6,7 +6,7 @@ goog.provide("Blockly.Blocks.display");
 Blockly.defineBlocksWithJsonArray([
     {
         type: "display_colour",
-        message0: "colour %1",
+        message0: "display colour %1",
         args0: [
             {
                 type: "field_dropdown",
@@ -34,7 +34,7 @@ Blockly.defineBlocksWithJsonArray([
                 ]
             }
         ],
-        output: "Colour",
+        output: "TFT_Colour",
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
         colour: Blockly.Blocks.io.HUE,
         tooltip: "Colour",
@@ -69,7 +69,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             }
         ],
         previousStatement: null,
@@ -123,7 +123,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             }
         ],
         previousStatement: null,
@@ -188,7 +188,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -226,7 +226,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -259,7 +259,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -297,7 +297,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",

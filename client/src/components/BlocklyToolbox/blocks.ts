@@ -130,7 +130,8 @@ export class Blocks {
         vibrate: '<block type="vibrate"></block>',
         button_action: '<block type="button_action"></block>',
         joystick: '<block type="joystick"></block>',
-        led_colour: '<block type="led_colour"></block>',
+        colour: '<block type="led_colour"></block>',
+        led_on: '<block type="led_on"></block>',
         led_off: '<block type="led_off"></block>'
     };
 
