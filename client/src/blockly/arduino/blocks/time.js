@@ -17,7 +17,7 @@ goog.provide('Blockly.Blocks.time');
 
 
 /** Common HSV hue for all blocks in this category. */
-Blockly.Blocks.time.HUE = 140;
+Blockly.Blocks.time.HUE = 17;
 
 Blockly.Blocks['time_delay'] = {
   /**

@@ -36,7 +36,7 @@ Blockly.defineBlocksWithJsonArray([
         ],
         output: "TFT_Colour",
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Colour",
         helpUrl: ""
     },
@@ -58,7 +58,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Displays a pop-up message",
         helpUrl: ""
     },
@@ -75,7 +75,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Clears the display",
         helpUrl: ""
     },
@@ -92,7 +92,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Inverts the display",
         helpUrl: ""
     }
@@ -112,7 +112,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Sets the display font size",
         helpUrl: ""
     },
@@ -129,7 +129,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Sets the display font colour",
         helpUrl: ""
     },
@@ -146,7 +146,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Prints a line of text onto the display",
         helpUrl: ""
     },
@@ -174,7 +174,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a line of text on the specified coordinates",
         helpUrl: ""
     }
@@ -215,7 +215,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a rectangle",
         helpUrl: ""
     },
@@ -248,7 +248,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a circle",
         helpUrl: ""
     },
@@ -286,7 +286,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw an ellipse",
         helpUrl: ""
     },
@@ -334,7 +334,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a triangle",
         helpUrl: ""
     }

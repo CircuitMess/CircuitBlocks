@@ -52,22 +52,22 @@ goog.provide('Blockly.Msg.en');
  * @const
  */
 /// {{Notranslate}} Hue value for all logic blocks.
-Blockly.Msg.LOGIC_HUE = '210';
+Blockly.Msg.LOGIC_HUE = '0';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for all loop blocks.
-Blockly.Msg.LOOPS_HUE = '120';
+Blockly.Msg.LOOPS_HUE = '230';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for all math blocks.
-Blockly.Msg.MATH_HUE = '230';
+Blockly.Msg.MATH_HUE = '89';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for all text blocks.
-Blockly.Msg.TEXTS_HUE = '160';
+Blockly.Msg.TEXTS_HUE = '212';
 /**
  * @const
  */
@@ -82,22 +82,26 @@ Blockly.Msg.COLOUR_HUE = '20';
  * @const
  */
 /// {{Notranslate}} Hue value for all variable blocks.
-Blockly.Msg.VARIABLES_HUE = '330';
+Blockly.Msg.VARIABLES_HUE = '205';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for all variable dynamic blocks.
-Blockly.Msg.VARIABLES_DYNAMIC_HUE = '310';
+Blockly.Msg.VARIABLES_DYNAMIC_HUE = '205';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for all procedure blocks.
-Blockly.Msg.PROCEDURES_HUE = '290';
+Blockly.Msg.PROCEDURES_HUE = '127';
 /**
  * @const
  */
 /// {{Notranslate}} Hue value for local reporter blocks.
 Blockly.Msg.REPORTERS_HUE = '290';
+
+Blockly.Msg.IO_HUE = '287';
+Blockly.Msg.DISPLAY_HUE = '34';
+Blockly.Msg.TIME_HUE = '17';
 
 /**
  * @const
