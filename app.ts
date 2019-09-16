@@ -6,7 +6,7 @@ import url from 'url';
 import { load, save, listFiles } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
 
-const reactUrl = 'http://localhost:3000';
+const reactUrl = (process.env.ELECTRON_ENV === "development") ? 'http://localhost:3000' : null;
 
 let win: BrowserWindow;
 
@@ -26,7 +26,7 @@ function createWindow() {
   const startUrl =
     reactUrl ||
     url.format({
-      pathname: path.join(__dirname, './build/index.html'),
+      pathname: path.join(__dirname, '../client/build/index.html'),
       protocol: 'file:',
       slashes: true
     });
