@@ -107,6 +107,8 @@ ArduinoCompiler.setup(
   `/home/${username}/.arduino15`
 );
 
+ArduinoCompiler.identifyDirectories();
+
 ArduinoCompiler.startDaemon();
 
 let port: any;

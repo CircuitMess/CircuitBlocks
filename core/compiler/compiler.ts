@@ -57,6 +57,89 @@ export default class ArduinoCompiler {
   }
 
   /**
+   * Attempts to identify relevant Arduino directories.
+   * @return True if successful, false otherwise
+   */
+  public static identifyDirectories(): boolean {
+    let local: string;
+
+    if(os.type() === "Windows_NT"){
+      local = path.join(os.homedir(), "AppData", "Local", "Arduino15");
+
+      if(!fs.existsSync(local)){
+        local = path.join(os.homedir(), "AppData", "Roaming", "Arduino15");
+      }
+    }else if(os.type() === "Linux"){
+      local = path.join(os.homedir(), ".arduino15");
+    }else if(os.type() === "Darwin"){
+      local = path.join(os.homedir(), "Library", "Arduino15");
+    }else{
+      return false;
+    }
+
+    if(!fs.existsSync(local) || !fs.existsSync(path.join(local, "preferences.txt"))) return false;
+
+    let home: string, install: string;
+
+    const preferences = fs.readFileSync(path.join(local, "preferences.txt")).toString().split(os.EOL);
+    const installs: any = {};
+    preferences.forEach(line => {
+      const parts = line.split("=");
+      const prop = parts[0];
+      const val = parts[1];
+
+      if(prop === "sketchbook.path"){
+        home = val;
+      }else if(prop.startsWith("last.ide") && prop.endsWith(".hardwarepath")){
+        let version = prop.substring(9, prop.length - 13);
+        installs[version] = val.substring(0, val.length - 9);
+      }
+    });
+
+    if(home === undefined || installs === {}) return false;
+    const versions = Object.keys(installs);
+    let newest = versions[0];
+    for(let i = 1; i < versions.length; i++){
+      if(this.isNewer(versions[i], newest)) newest = versions[i];
+    }
+
+    install = installs[newest];
+
+    // Tests
+
+    const required: string[] = [
+        path.join(local, "packages", "cm"),
+        home,
+        path.join(install, "hardware"),
+        path.join(install, "tools"),
+        path.join(install, "tools-builder"),
+    ];
+
+    for(let i = 0; i < required.length; i++){
+      if(!fs.existsSync(required[i])) return false;
+    }
+
+    this.ARDUINO_LOCAL = local;
+    this.ARDUINO_HOME = home;
+    this.ARDUINO_INSTALL = install;
+
+    console.log([ local, home, install ]);
+
+    return true;
+  }
+
+  private static isNewer(newer: string, older: string): boolean {
+    const partsNewer = newer.split(".");
+    const partsOlder = newer.split(".");
+
+    for(let i = 0; i < partsNewer.length; i++){
+      if(parseInt(partsNewer[i]) > parseInt(partsOlder[i])) return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Starts the builder daemon. Rejects if the builder couldn't be found or paths haven't been set up.
    */
   public static startDaemon(): Promise<null> {
