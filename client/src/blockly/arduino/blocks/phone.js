@@ -167,7 +167,7 @@ Blockly.defineBlocksWithJsonArray([
         ],
         output: "LED_Colour",
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Colour",
         helpUrl: ""
     },
@@ -184,7 +184,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Vibrate the MAKERphone.",
         helpUrl: ""
     },
@@ -228,7 +228,7 @@ Blockly.defineBlocksWithJsonArray([
         extensions: [ "return_boolean" ],
         output: "Boolean",
         outputShape: Blockly.OUTPUT_SHAPE_HEXAGONAL,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Returns TRUE if the selected button has been pressed."
     },
     {
@@ -247,7 +247,7 @@ Blockly.defineBlocksWithJsonArray([
         extensions: [ "return_decimal" ],
         output: "Number",
         outputShape: Blockly.OUTPUT_SHAPE_ROUND,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Returns the joystick offset on the selected axis."
     },
     {
@@ -277,7 +277,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Lights the led"
     },
     {
@@ -302,7 +302,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.IO_HUE,
         tooltip: "Lights the led"
     },
 ]);
