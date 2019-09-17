@@ -79,22 +79,6 @@ interface Notification {
   close?: boolean;
 }
 
-const INIT_STATE: State = {
-  isModalOpen: false,
-  modal: {
-    type: 'save'
-  },
-  isCodeOpen: true,
-  isCodeFull: false,
-  code: CODE,
-  height: window.innerHeight - NAV_BAR_HEIGHT,
-  theme: 'vs-dark',
-  running: false,
-  notifications: [],
-  makerPhoneConnected: 0,
-  filename: ''
-};
-
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
@@ -107,7 +91,19 @@ class Editor extends Component<EditorProps, State> {
     super(props);
 
     this.state = {
-      ...INIT_STATE
+      isModalOpen: false,
+      modal: {
+        type: 'save'
+      },
+      isCodeOpen: true,
+      isCodeFull: false,
+      code: CODE,
+      height: window.innerHeight - NAV_BAR_HEIGHT,
+      theme: 'vs-dark',
+      running: false,
+      notifications: [],
+      makerPhoneConnected: 0,
+      filename: ''
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -139,6 +135,7 @@ class Editor extends Component<EditorProps, State> {
         this.setState({ code });
       }
     });
+
     this.load(xml);
     this.updateDimensions();
     this.injectToolbox();
@@ -367,6 +364,10 @@ class Editor extends Component<EditorProps, State> {
     });
   };
 
+  cleanup = () => {
+    Blockly.hideChaff();
+  };
+
   render() {
     const {
       isModalOpen,
@@ -374,6 +375,7 @@ class Editor extends Component<EditorProps, State> {
       isCodeOpen,
       isCodeFull,
       height,
+      width,
       code,
       theme,
       isPromptOpen,
@@ -416,52 +418,56 @@ class Editor extends Component<EditorProps, State> {
     };
 
     return (
-      <div className={isEditorOpen ? '' : 'd-none'}>
-        {isModalOpen &&
-          (modal.type === 'save' ? (
-            <Modal.SaveModal
-              {...modalProps}
-              filename={filename}
-              filenameError={filenameError}
-              onChange={this.onChangeSaveModal}
-              onSubmit={this.onSubmitSaveModal}
+      <div className={isEditorOpen ? 'e-open' : 'e-close'}>
+        {isEditorOpen && (
+          <React.Fragment>
+            {isModalOpen &&
+              (modal.type === 'save' ? (
+                <Modal.SaveModal
+                  {...modalProps}
+                  filename={filename}
+                  filenameError={filenameError}
+                  onChange={this.onChangeSaveModal}
+                  onSubmit={this.onSubmitSaveModal}
+                />
+              ) : (
+                <Modal.LoadModal {...modalProps} />
+              ))}
+
+            {isPromptOpen && (
+              <Prompt
+                initValue={initState || ''}
+                callback={this.callback}
+                promptText={promptText || ''}
+                closePrompt={this.closePrompt}
+              />
+            )}
+
+            <EditorHeader
+              home={openHome}
+              load={this.openLoadModal}
+              run={this.run}
+              save={this.openSaveModal}
+              toggle={this.toggle}
+              title={title}
+              isCodeOpen={isCodeOpen}
+              running={running}
+              connected={makerPhoneConnected > 0}
             />
-          ) : (
-            <Modal.LoadModal {...modalProps} />
-          ))}
 
-        {isPromptOpen && (
-          <Prompt
-            initValue={initState || ''}
-            callback={this.callback}
-            promptText={promptText || ''}
-            closePrompt={this.closePrompt}
-          />
+            {notifications && (
+              <NotificationWrapper>
+                {notifications.map((item) => (
+                  <Notification key={item.id} {...item} onClick={this.closeNotification(item.id)} />
+                ))}
+              </NotificationWrapper>
+            )}
+          </React.Fragment>
         )}
 
-        <EditorHeader
-          home={openHome}
-          load={this.openLoadModal}
-          run={this.run}
-          save={this.openSaveModal}
-          toggle={this.toggle}
-          title={title}
-          isCodeOpen={isCodeOpen}
-          running={running}
-          connected={makerPhoneConnected > 0}
-        />
+        <BlocklyEditor height={height} width={width} isCodeOpen={false} setRef={this.setRef} />
 
-        {notifications && (
-          <NotificationWrapper>
-            {notifications.map((item) => (
-              <Notification key={item.id} {...item} onClick={this.closeNotification(item.id)} />
-            ))}
-          </NotificationWrapper>
-        )}
-
-        <BlocklyEditor height={height} isCodeOpen={false} setRef={this.setRef} />
-
-        {isCodeOpen && (
+        {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
             <EditorPopupHeader
               closeCode={this.closeCode}

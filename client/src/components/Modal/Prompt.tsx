@@ -37,7 +37,7 @@ const Footer = styled.div`
 
   button,
   div {
-    color: white;
+    color: black;
   }
 `;
 

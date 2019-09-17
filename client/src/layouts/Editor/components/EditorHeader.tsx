@@ -11,6 +11,9 @@ const StyledHeader = styled.div`
   width: 100%;
   height: 60px;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .left {
     display: inline-block;
@@ -36,6 +39,31 @@ const StyledHeader = styled.div`
     font-size: 12px;
     font-weight: normal;
     font-style: normal;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+  }
+
+  .row h3 {
+    margin: 0;
+  }
+
+  .circle {
+    margin-left: 12px;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .circle.red {
+    background-color: red;
+  }
+
+  .circle.green {
+    background-color: green;
   }
 `;
 
@@ -64,7 +92,10 @@ const EditorHeader: React.FC<Props> = (props) => {
       </div>
 
       <div className="center">
-        <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+        <div className="row">
+          <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+          <div className={`circle ${connected ? 'green' : 'red'}`}></div>
+        </div>
       </div>
 
       <div className="right">
@@ -78,7 +109,12 @@ const EditorHeader: React.FC<Props> = (props) => {
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
         </Button>
-        <Button className={`icon-text ${running ? 'running' : ''}`} color="red" onClick={run}>
+        <Button
+          className={`icon-text ${running ? 'running' : ''} ${!connected ? 'disabled' : ''}`}
+          color="red"
+          onClick={run}
+          disabled={!connected}
+        >
           <div className="text">Run{running ? 'ning' : ''}</div>
           <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>

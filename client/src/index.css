@@ -16,6 +16,7 @@ html {
   background: #00000020;
 }
 ::-webkit-scrollbar-thumb {
+  width: 0px;
   background: #00000080;
 }
 

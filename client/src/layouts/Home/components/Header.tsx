@@ -47,9 +47,9 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn }) => {
         <div className="left">
           <img className="logo" src={require('../../../assets/images/logo.png')} alt={username} />
         </div>
-        <div className="right">
+        {/* <div className="right">
           <Profile username={username} image_url={require('../../../assets/images/profile.png')} />
-        </div>
+        </div> */}
       </Header>
     </Section>
   );
