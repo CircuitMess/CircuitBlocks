@@ -3,10 +3,11 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import { load, save, listFiles } from './core/files';
+import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
 
 const reactUrl = 'http://localhost:3000';
+const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
 
@@ -96,6 +97,10 @@ ipcMain.on('save', (event, args) => {
 ipcMain.on('listFiles', (event, _args) => {
   console.count('listFiles');
   listFiles(callback('listFiles', event));
+});
+
+ipcMain.on('listExamples', (event, _args) => {
+  listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
 
 // TODO: Add env variables
