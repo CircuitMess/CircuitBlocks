@@ -110,7 +110,7 @@ export default class ArduinoCompiler {
    * @param port MAKERphone port
    */
   public static upload(binary: string, port: string) {
-    if(this.serial) this.serial.stop();
+    if (this.serial) this.serial.stop();
     this.uploading = true;
 
     const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
@@ -159,7 +159,7 @@ export default class ArduinoCompiler {
     childProcess.execSync(options.join(' '));
 
     this.uploading = false;
-    if(this.serial) this.serial.start();
+    if (this.serial) this.serial.start();
   }
 
   /**
@@ -190,7 +190,9 @@ export default class ArduinoCompiler {
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
    */
-  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[], output: string[] }> {
+  public static compileSketch(
+    sketchPath: string
+  ): Promise<{ binary: string; status: string[]; output: string[] }> {
     const sketchName = path.parse(sketchPath).base;
     const compiledPath: string = path.join(this.CB_TMP, 'build', sketchName + '.bin');
 
