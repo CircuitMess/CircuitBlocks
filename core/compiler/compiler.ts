@@ -28,19 +28,12 @@ export default class ArduinoCompiler {
   private static ARDUINO_HOME: string = '';
   private static ARDUINO_LOCAL: string = '';
 
-  private static serial: Serial | undefined;
-  private static uploading: boolean = false;
-
-  public static getSerial(): Serial {
-    if (this.serial === undefined) {
-      this.serial = new Serial();
-    }
-
-    return this.serial;
-  }
-
-  public static canSerialCom(): boolean {
-    return !this.uploading;
+  public static getDirectories(){
+    return {
+      install: this.ARDUINO_INSTALL,
+      home: this.ARDUINO_HOME,
+      local: this.ARDUINO_LOCAL
+    };
   }
 
   /**
@@ -185,64 +178,6 @@ export default class ArduinoCompiler {
         );
       });
     });
-  }
-
-  /**
-   * Uploads the specified binary to the MAKERphone
-   * @param binary Path to the binary
-   * @param port MAKERphone port
-   */
-  public static upload(binary: string, port: string) {
-    if(this.serial) this.serial.stop();
-    this.uploading = true;
-
-    const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
-
-    const win = os.type() === 'Windows_NT';
-    const TOOL = path.join(
-      CM_LOCAL,
-      'tools',
-      'esptool_py',
-      '2.6.1',
-      'esptool.' + (win ? 'exe' : 'py')
-    );
-
-    const binaryPath = path.parse(binary);
-
-    const options: string[] = [
-      TOOL,
-      '--chip esp32',
-      '--port ' + port,
-      '--baud 921600',
-      '--before default_reset',
-      '--after hard_reset',
-      'write_flash',
-      '-z',
-      '--flash_mode dio',
-      '--flash_freq 80m',
-      '--flash_size detect',
-      '0xe000 ' +
-        path.join(CM_LOCAL, 'hardware', 'esp32', '1.0.0', 'tools', 'partitions', 'boot_app0.bin'),
-      '0x1000 ' +
-        path.join(
-          CM_LOCAL,
-          'hardware',
-          'esp32',
-          '1.0.0',
-          'tools',
-          'sdk',
-          'bin',
-          'bootloader_dio_80m.bin'
-        ),
-      '0x10000 ' + binary,
-      '0x8000 ' + path.join(binaryPath.dir, binaryPath.name + '.partitions.bin')
-    ];
-
-    if (!win) options.unshift('python');
-    childProcess.execSync(options.join(' '));
-
-    this.uploading = false;
-    if(this.serial) this.serial.start();
   }
 
   /**
