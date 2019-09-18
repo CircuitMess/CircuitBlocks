@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import Blockly from '../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
 import { saveAs } from 'file-saver';
@@ -10,10 +11,10 @@ import EditorPopup from './components/EditorPopup';
 import EditorPopupHeader from './components/EditorPopupHeader';
 import Monaco from './components/Monaco';
 import BlocklyEditor from '../../components/BlocklyEditor';
-import ReactDOM from 'react-dom';
 import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
+import { capitalize } from '../../helpers/string';
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -61,6 +62,8 @@ interface State {
   isPromptOpen?: boolean;
   promptText?: string;
   running: boolean;
+  runningStage?: string;
+  runningPercentage?: number;
   notifications: Notification[];
   makerPhoneConnected: number;
   filename: string;
@@ -71,6 +74,23 @@ interface State {
 
 const CODE = `// Code goes here\n`;
 const NAV_BAR_HEIGHT = 64;
+
+const INIT_STATE: State = {
+  isModalOpen: false,
+  modal: {
+    type: 'save'
+  },
+  isCodeOpen: true,
+  isCodeFull: false,
+  code: CODE,
+  height: window.innerHeight - NAV_BAR_HEIGHT,
+  theme: 'vs-dark',
+  running: false,
+  notifications: [],
+  makerPhoneConnected: 0,
+  filename: '',
+  runningPercentage: 0
+};
 
 interface Notification {
   id: string;
@@ -91,19 +111,7 @@ class Editor extends Component<EditorProps, State> {
     super(props);
 
     this.state = {
-      isModalOpen: false,
-      modal: {
-        type: 'save'
-      },
-      isCodeOpen: true,
-      isCodeFull: false,
-      code: CODE,
-      height: window.innerHeight - NAV_BAR_HEIGHT,
-      theme: 'vs-dark',
-      running: false,
-      notifications: [],
-      makerPhoneConnected: 0,
-      filename: ''
+      ...INIT_STATE
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
@@ -154,8 +162,23 @@ class Editor extends Component<EditorProps, State> {
     });
 
     ipcRenderer.on('upload', (event: any, args: any) => {
-      this.setState({ running: false });
-      console.log(args);
+      const { error, stage, percentage } = args;
+
+      if (error) {
+        this.addNotification('Upload error');
+        this.setState({ running: false, runningPercentage: undefined });
+        return;
+      }
+
+      if (stage) {
+        if (stage === 'DONE') {
+          this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
+        } else {
+          this.setState({ runningStage: capitalize(stage) });
+        }
+      } else if (percentage) {
+        this.setState({ runningPercentage: percentage });
+      }
     });
 
     setInterval(() => {
@@ -163,20 +186,6 @@ class Editor extends Component<EditorProps, State> {
         ipcRenderer.send('ports');
       }
     }, 2000);
-
-    // ipcRenderer.once('listFiles', (event, arg) => {
-    //   if (arg.error) {
-    //     setItems({ error: true });
-    //   } else {
-    //     setItems({ error: false, data: arg.data });
-    //   }
-
-    //   setLoading(false);
-    // });
-
-    // React.useEffect(() => {
-    //   ipcRenderer.send('listFiles');
-    // }, []);
   }
 
   injectToolbox() {
@@ -197,8 +206,13 @@ class Editor extends Component<EditorProps, State> {
   }
 
   run = () => {
-    console.log('RUN');
     this.setState({ running: true });
+    setInterval(() => {
+      this.setState({
+        runningPercentage:
+          this.state.runningPercentage === undefined ? 0 : this.state.runningPercentage + 1
+      });
+    }, 100);
     ipcRenderer.send('upload', { code: this.state.code });
   };
 
@@ -382,6 +396,8 @@ class Editor extends Component<EditorProps, State> {
       initState,
       promptText,
       running,
+      runningStage,
+      runningPercentage,
       notifications,
       makerPhoneConnected,
       filename,
@@ -452,6 +468,8 @@ class Editor extends Component<EditorProps, State> {
               title={title}
               isCodeOpen={isCodeOpen}
               running={running}
+              runningStage={runningStage}
+              runningPercentage={runningPercentage}
               connected={makerPhoneConnected > 0}
             />
 

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../../../components/Button';
+import Progressbar from './ProgressBar';
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -76,14 +77,30 @@ interface Props {
   run: () => void;
   isCodeOpen: boolean;
   running: boolean;
+  runningStage?: string;
+  runningPercentage?: number;
   connected: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
-  const { home, title, load, save, toggle, run, isCodeOpen, running, connected } = props;
+  const {
+    home,
+    title,
+    load,
+    save,
+    toggle,
+    run,
+    isCodeOpen,
+    connected,
+    running,
+    runningStage,
+    runningPercentage
+  } = props;
 
   return (
     <StyledHeader>
+      {running && runningPercentage && <Progressbar percentage={runningPercentage} />}
+
       <div className="left">
         <Button className="icon" color="no-fill" onClick={home}>
           <i className="material-icons"> arrow_back </i>
@@ -115,7 +132,7 @@ const EditorHeader: React.FC<Props> = (props) => {
           onClick={run}
           disabled={!connected}
         >
-          <div className="text">Run{running ? 'ning' : ''}</div>
+          <div className="text">{running ? runningStage : 'Run'}</div>
           <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>
       </div>
