@@ -33,7 +33,9 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
             disabled={disabled}
             className={disabled ? 'disabled' : ''}
           >
-            <div className="text">{text}</div>
+            <div className="text" style={{ color: 'black' }}>
+              {text}
+            </div>
           </Button>
         ))}
       </div>
@@ -46,7 +48,9 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
             disabled={disabled}
             className={disabled ? 'disabled' : ''}
           >
-            <div className="text">{text}</div>
+            <div className="text" style={{ color: 'black' }}>
+              {text}
+            </div>
           </Button>
         ))}
       </div>

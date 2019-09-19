@@ -6,7 +6,7 @@ import url from 'url';
 import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
 
-const reactUrl = (process.env.ELECTRON_ENV === "development") ? 'http://localhost:3000' : null;
+const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
@@ -34,7 +34,9 @@ function createWindow() {
   win.loadURL(startUrl);
 
   // Open the DevTools.
-  win.webContents.openDevTools();
+  if (process.env.ELECTRON_ENV === 'development') {
+    win.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   win.on('closed', () => {
@@ -139,17 +141,17 @@ ipcMain.on('ports', (event, _args) => {
 });
 
 ipcMain.on('upload', (event, args) => {
-  // const { code } = args;
-  const code = `
-  void setup() {
-    Serial.begin(9600);
-  }
+  const { code } = args;
+  // const code = `
+  // void setup() {
+  //   Serial.begin(9600);
+  // }
 
-  void loop() {
-    Serial.println("Hello world");
-    delay(100);
-  }
-  `;
+  // void loop() {
+  //   Serial.println("Hello world");
+  //   delay(100);
+  // }
+  // `;
   event.reply('upload', { error: null, stage: 'COMPILING' });
 
   ArduinoCompiler.compile(code)
