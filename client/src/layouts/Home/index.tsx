@@ -28,7 +28,7 @@ const Main = styled.div`
 
 interface HomeProps {
   isEditorOpen: boolean;
-  openEditor: (data: string) => void;
+  openEditor: (data: string, filename?: string) => void;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -108,18 +108,22 @@ const Home: React.FC<HomeProps> = (props) => {
     });
 
     ipcRenderer.send('listFiles');
-  }, []);
+  }, [isEditorOpen]);
 
-  const openFile = (filename: string) => {
-    ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
-      if (args.error) {
-        console.error('ERROR');
-      } else {
-        openEditor(args.data);
-      }
-    });
+  const openFile = ({ type, filename }: { type: 'OPEN' | 'NEW'; filename?: string }) => {
+    if (type === 'NEW') {
+      openEditor('', undefined);
+    } else {
+      ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
+        if (args.error) {
+          console.error('ERROR');
+        } else {
+          openEditor(args.data, filename && filename.slice(0, filename.length - 4));
+        }
+      });
 
-    ipcRenderer.send('load', { filename });
+      ipcRenderer.send('load', { filename });
+    }
   };
 
   return (
@@ -140,7 +144,12 @@ const Home: React.FC<HomeProps> = (props) => {
             {areProjectLoading ? (
               <h3>Loading...</h3>
             ) : (
-              <ProjectSection title={'Your projects'} projects={projects} onPress={openFile} />
+              <ProjectSection
+                title={'Your projects'}
+                projects={projects}
+                onPress={openFile}
+                createNew
+              />
             )}
             {areExamplesLoading ? (
               <h3>Loading...</h3>
