@@ -203,3 +203,7 @@ input.error {
   left: 0;
   right: 0;
 }
+
+.blocklyMainBackground {
+  stroke: #F9F9F9;
+}
