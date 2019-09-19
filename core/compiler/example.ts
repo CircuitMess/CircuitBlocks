@@ -43,7 +43,7 @@ ArduinoCompiler.compile(code).then(
           return;
         }
 
-        ArduinoCompiler.upload(data.binary, ports[0].comName);
+        ArduinoCompiler.getSerial().upload(data.binary, ports[0].comName);
       })
       .catch((_reason) => {
         console.log('Upload failed');

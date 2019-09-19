@@ -28,12 +28,22 @@ export default class ArduinoCompiler {
   private static ARDUINO_HOME: string = '';
   private static ARDUINO_LOCAL: string = '';
 
+  private static serial: Serial;
+
   public static getDirectories(){
     return {
       install: this.ARDUINO_INSTALL,
       home: this.ARDUINO_HOME,
       local: this.ARDUINO_LOCAL
     };
+  }
+
+  public static getSerial(){
+    if(this.serial == undefined){
+      this.serial = new Serial();
+    }
+
+    return this.serial;
   }
 
   /**
@@ -100,7 +110,7 @@ export default class ArduinoCompiler {
 
     // Tests
 
-    const required: string[] = [
+    /*const required: string[] = [
         path.join(local, "packages", "cm"),
         home,
         path.join(install, "hardware"),
@@ -110,7 +120,7 @@ export default class ArduinoCompiler {
 
     for(let i = 0; i < required.length; i++){
       if(!fs.existsSync(required[i])) return false;
-    }
+    }*/
 
     this.ARDUINO_LOCAL = local;
     this.ARDUINO_HOME = home;

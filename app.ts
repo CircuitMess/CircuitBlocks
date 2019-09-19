@@ -5,6 +5,7 @@ import url from 'url';
 
 import { load, save, listFiles } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
+import Installer from "./core/compiler/installer";
 
 const reactUrl = 'http://localhost:3000';
 
@@ -109,7 +110,10 @@ ArduinoCompiler.setup(
 
 ArduinoCompiler.identifyDirectories();
 
-ArduinoCompiler.startDaemon();
+//ArduinoCompiler.startDaemon();
+
+const installer = new Installer();
+installer.install(console.log, console.log);
 
 let port: any;
 
@@ -144,7 +148,7 @@ ipcMain.on('upload', (event, args) => {
     .then(({ binary }) => {
       console.log(`Uploading to ${port}`);
       try {
-        ArduinoCompiler.upload(binary, port);
+        ArduinoCompiler.getSerial().upload(binary, port);
         event.reply('upload', { error: null, data: { type: 'DONE' } });
       } catch (error) {
         console.error(error);
