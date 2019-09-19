@@ -3,8 +3,8 @@ import * as util from "./util";
 import * as fs from "fs-extra";
 import * as os from "os";
 import * as path from "path";
-import * as http from "http";
 import * as child_process from "child_process";
+import * as sudo_prompt from "sudo-prompt";
 
 export default class Installer {
     private readonly PLATFORM: string;
@@ -112,9 +112,45 @@ export default class Installer {
             fs.chmodSync(path.join(installPath, "arduino"), "755");
             fs.chmodSync(path.join(installPath, "arduino-linux-setup.sh"), "755");
 
-            child_process.execSync(path.join(installPath, "arduino-linux-setup.sh"));
+            const user = os.userInfo().username;
+            const rules = util.tmpdir("cm-ard-rules");
+            const setup: string[] = [
+                `groupadd -f plugdev`,
+                `groupadd -f dialout`,
+                `usermod -a -G tty ${user}`,
+                `usermod -a -G dialout ${user}`,
+                `usermod -a -G uucp ${user}`,
+                `usermod -a -G plugdev ${user}`,
+                `usermod -a -G plugdev ${user}`,
 
-            callback(null);
+                `mkdir -p ${rules}`,
+
+                `echo 'KERNEL=="ttyUSB[0-9]*", TAG+="udev-acl", TAG+="uaccess", OWNER="${user}"' >> ${rules}/90-extraacl.rules`,
+                `echo 'KERNEL=="ttyACM[0-9]*", TAG+="udev-acl", TAG+="uaccess", OWNER="${user}"' >> ${rules}/90-extraacl.rules`,
+
+                `echo 'SUBSYSTEM=="tty", ENV{ID_REVISION}=="8087", ENV{ID_MODEL_ID}=="0ab6", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_CANDIDATE}="0"' >> ${rules}/99-arduino-101.rules`,
+                `echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="8087", ATTR{idProduct}=="0aba", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"' >> ${rules}/99-arduino-101.rules`,
+
+                `mv ${rules}/*.rules /etc/udev/rules.d/`,
+
+                `udevadm control --reload-rules`,
+                `udevadm trigger`,
+
+                `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`
+            ];
+
+            sudo_prompt.exec(setup.join(" && "),
+                { name: "Arduino installer", stdio: "inherit" },
+                (error, stderr, stdout) => {
+                    console.log(stderr);
+                    console.log(stdout);
+                    if(error){
+                        callback(error);
+                        return;
+                    }
+
+                    callback(null);
+                });
         }).catch(err => {
             callback(err);
         });

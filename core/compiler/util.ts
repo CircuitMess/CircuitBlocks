@@ -8,7 +8,7 @@ import * as os from "os";
 import * as request from "request";
 
 export function tmpdir(prefix: string){
-    return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+    return fs.mkdtempSync(path.join(os.tmpdir(), prefix + "-"));
 }
 
 export function download(download: string, directory: string): Promise<string> {
