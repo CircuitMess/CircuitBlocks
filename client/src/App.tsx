@@ -9,7 +9,8 @@ import './assets/poppins.css';
 import './assets/source_code_pro.css';
 
 const App = () => {
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(true);
+  const [filename, setFilename] = useState('');
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const monacoRef = React.createRef();
@@ -20,8 +21,9 @@ const App = () => {
     setIsEditorOpen(false);
   };
 
-  const openEditor = (data: string) => {
+  const openEditor = (data: string, filename?: string) => {
     (blocklyRef.current as any).load(data);
+    setFilename(filename || '');
     setIsEditorOpen(true);
     // setTimeout(() => {
     //   (blocklyRef.current as any).updateDimensions();
@@ -46,7 +48,8 @@ const App = () => {
       <Home isEditorOpen={isEditorOpen} openEditor={openEditor} />
       <Editor
         isEditorOpen={isEditorOpen}
-        title={'Foobar'}
+        title={filename}
+        setFilename={setFilename}
         openHome={openHome}
         monacoRef={monacoRef}
         ref={blocklyRef}

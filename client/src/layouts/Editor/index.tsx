@@ -43,6 +43,7 @@ interface EditorProps {
   isEditorOpen: boolean;
   openHome: () => void;
   title: string;
+  setFilename: (filename: string) => void;
   monacoRef: React.RefObject<any>;
 }
 
@@ -297,6 +298,7 @@ class Editor extends Component<EditorProps, State> {
 
   toggle = () => {
     this.setState({ isCodeOpen: !this.state.isCodeOpen });
+    this.updateDimensions();
   };
 
   closeModal = () => {
@@ -324,7 +326,19 @@ class Editor extends Component<EditorProps, State> {
   };
 
   save = () => {
-    console.log('save this data');
+    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
+    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+
+    ipcRenderer.once('save', (event, arg) => {
+      if (arg.error) {
+        console.error(arg.error);
+        alert('error');
+      } else {
+        this.addNotification('Saved');
+      }
+    });
+
+    ipcRenderer.send('save', { filename: `${this.props.title}.xml`, data: xmlText });
   };
 
   onChangeSaveModal = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -363,6 +377,7 @@ class Editor extends Component<EditorProps, State> {
       if (arg.error) {
         alert(arg.error);
       } else {
+        this.props.setFilename(filename);
         this.finishSaveModal();
       }
     });
@@ -434,7 +449,7 @@ class Editor extends Component<EditorProps, State> {
     };
 
     return (
-      <div className={isEditorOpen ? 'e-open' : 'e-close'}>
+      <div className={isEditorOpen ? 'e-open' : 'e-close'} style={{ backgroundColor: '#F9F9F9' }}>
         {isEditorOpen && (
           <React.Fragment>
             {isModalOpen &&
@@ -463,7 +478,7 @@ class Editor extends Component<EditorProps, State> {
               home={openHome}
               load={this.openLoadModal}
               run={this.run}
-              save={this.openSaveModal}
+              save={this.props.title.length > 0 ? this.save : this.openSaveModal}
               toggle={this.toggle}
               title={title}
               isCodeOpen={isCodeOpen}
@@ -483,7 +498,13 @@ class Editor extends Component<EditorProps, State> {
           </React.Fragment>
         )}
 
-        <BlocklyEditor height={height} width={width} isCodeOpen={false} setRef={this.setRef} />
+        <BlocklyEditor
+          height={height}
+          width={width}
+          isCodeOpen={isCodeOpen}
+          setRef={this.setRef}
+          ws={this.workspace}
+        />
 
         {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
