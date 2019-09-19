@@ -114,6 +114,8 @@ ArduinoCompiler.setup(
   `/home/${username}/.arduino15`
 );
 
+ArduinoCompiler.identifyDirectories();
+
 ArduinoCompiler.startDaemon();
 
 let port: any;
@@ -154,7 +156,7 @@ ipcMain.on('upload', (event, args) => {
     .then(({ binary }) => {
       event.reply('upload', { error: null, stage: 'UPLOADING' });
       try {
-        ArduinoCompiler.upload(binary, port);
+        ArduinoCompiler.getSerial().upload(binary, port);
         event.reply('upload', { error: null, stage: 'DONE' });
       } catch (error) {
         console.error(error);
