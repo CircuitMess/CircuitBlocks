@@ -6,6 +6,7 @@ import * as lzma from "lzma-native";
 import * as tar from "tar";
 import * as os from "os";
 import * as request from "request";
+import * as unzip from "unzip";
 
 export function tmpdir(prefix: string){
     return fs.mkdtempSync(path.join(os.tmpdir(), prefix + "-"));
@@ -34,7 +35,11 @@ export function extract(file: string, directory: string): Promise<null> {
         const extension = path.extname(file);
         let handler;
 
-        if(extension == ".gz"){
+        if(extension == ".zip"){
+            fs.createReadStream(file)
+                .pipe(unzip.Extract({ path: directory }))
+                .on("close", () => resolve());
+        }else if(extension == ".gz"){
             handler = zlib.createGunzip();
         }else if(extension == ".xz"){
             handler = lzma.createDecompressor();

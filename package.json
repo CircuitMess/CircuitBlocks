@@ -9,7 +9,8 @@
     "grpc": "^1.23.3",
     "lzma-native": "^4.0.5",
     "serialport": "^7.1.5",
-    "sudo-prompt": "^9.0.0"
+    "sudo-prompt": "^9.0.0",
+    "unzip": "^0.1.11"
   },
   "scripts": {
     "rebuild-electron": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 yarn electron-rebuild",

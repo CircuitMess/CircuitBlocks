@@ -17,6 +17,8 @@ export default class Installer {
         },
 
         arduino_cli: {
+            Windows_NT_x32: "https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Windows_32bit.zip",
+            Windows_NT_x64: "https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Windows_64bit.zip",
             Linux_x32: "https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_32bit.tar.gz",
             Linux_x64: "https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_64bit.tar.gz"
         },
@@ -56,7 +58,7 @@ export default class Installer {
 
     private downloadCli(callback: (string, error) => void){
         const dlDir = util.tmpdir("cb-cli-dl");
-        let url: string = this.downloads.arduino_cli[this.PLATFORM];
+        let url: string = this.downloads.arduino_cli[os.type() + "_" + os.arch()];
 
         util.download(url, dlDir).then(file => {
             callback(file, null);
