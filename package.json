@@ -23,7 +23,8 @@
     "files": [
       "client/build/**/*",
       "build/**/*",
-      "node_modules/**/*"
+      "node_modules/**/*",
+      "examples/**/*"
     ],
     "mac": {
       "category": "public.app-category.developer-tools"
@@ -47,8 +48,8 @@
     "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/proto -I ./proto ./proto/*.proto",
     "proto": "npm run proto-js && npm-run proto-ts",
     "postinstall": "yarn rebuild-electron",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "pack": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder --dir",
+    "dist": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -11,8 +11,8 @@ ArduinoCompiler.startDaemon();
 const serial = ArduinoCompiler.getSerial();
 serial.start();
 
-serial.registerListener(line => console.log(line));
-serial.write("foo");
+serial.registerListener((line) => console.log(line));
+serial.write('foo');
 
 const code = `#include <MAKERphone.h>
 
@@ -43,7 +43,7 @@ ArduinoCompiler.compile(code).then(
           return;
         }
 
-        ArduinoCompiler.upload(data.binary, ports[0].comName);
+        // ArduinoCompiler.upload(data.binary, ports[0].comName);
       })
       .catch((_reason) => {
         console.log('Upload failed');
