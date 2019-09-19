@@ -1043,7 +1043,7 @@ categories.push({
         },
         {
             name: "led_colour",
-            xml: Blocks.phone.colour
+            xml: Blocks.phone.led_colour
         },
         {
             name: "led_on",

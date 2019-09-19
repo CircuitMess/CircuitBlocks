@@ -39,8 +39,12 @@ export default class ArduinoCompiler {
     return this.serial;
   }
 
-  public static canSerialCom(): boolean {
-    return !this.uploading;
+  public static getDirectories(){
+    return {
+      install: this.ARDUINO_INSTALL,
+      home: this.ARDUINO_HOME,
+      local: this.ARDUINO_LOCAL
+    };
   }
 
   /**
@@ -54,6 +58,89 @@ export default class ArduinoCompiler {
     this.ARDUINO_INSTALL = install;
     this.ARDUINO_HOME = home;
     this.ARDUINO_LOCAL = local;
+  }
+
+  /**
+   * Attempts to identify relevant Arduino directories.
+   * @return True if successful, false otherwise
+   */
+  public static identifyDirectories(): boolean {
+    let local: string;
+
+    if(os.type() === "Windows_NT"){
+      local = path.join(os.homedir(), "AppData", "Local", "Arduino15");
+
+      if(!fs.existsSync(local)){
+        local = path.join(os.homedir(), "AppData", "Roaming", "Arduino15");
+      }
+    }else if(os.type() === "Linux"){
+      local = path.join(os.homedir(), ".arduino15");
+    }else if(os.type() === "Darwin"){
+      local = path.join(os.homedir(), "Library", "Arduino15");
+    }else{
+      return false;
+    }
+
+    if(!fs.existsSync(local) || !fs.existsSync(path.join(local, "preferences.txt"))) return false;
+
+    let home: string, install: string;
+
+    const preferences = fs.readFileSync(path.join(local, "preferences.txt")).toString().split(os.EOL);
+    const installs: any = {};
+    preferences.forEach(line => {
+      const parts = line.split("=");
+      const prop = parts[0];
+      const val = parts[1];
+
+      if(prop === "sketchbook.path"){
+        home = val;
+      }else if(prop.startsWith("last.ide") && prop.endsWith(".hardwarepath")){
+        let version = prop.substring(9, prop.length - 13);
+        installs[version] = val.substring(0, val.length - 9);
+      }
+    });
+
+    if(home === undefined || installs === {}) return false;
+    const versions = Object.keys(installs);
+    let newest = versions[0];
+    for(let i = 1; i < versions.length; i++){
+      if(this.isNewer(versions[i], newest)) newest = versions[i];
+    }
+
+    install = installs[newest];
+
+    // Tests
+
+    const required: string[] = [
+        path.join(local, "packages", "cm"),
+        home,
+        path.join(install, "hardware"),
+        path.join(install, "tools"),
+        path.join(install, "tools-builder"),
+    ];
+
+    for(let i = 0; i < required.length; i++){
+      if(!fs.existsSync(required[i])) return false;
+    }
+
+    this.ARDUINO_LOCAL = local;
+    this.ARDUINO_HOME = home;
+    this.ARDUINO_INSTALL = install;
+
+    console.log([ local, home, install ]);
+
+    return true;
+  }
+
+  private static isNewer(newer: string, older: string): boolean {
+    const partsNewer = newer.split(".");
+    const partsOlder = newer.split(".");
+
+    for(let i = 0; i < partsNewer.length; i++){
+      if(parseInt(partsNewer[i]) > parseInt(partsOlder[i])) return true;
+    }
+
+    return false;
   }
 
   /**
@@ -106,64 +193,6 @@ export default class ArduinoCompiler {
   }
 
   /**
-   * Uploads the specified binary to the MAKERphone
-   * @param binary Path to the binary
-   * @param port MAKERphone port
-   */
-  public static upload(binary: string, port: string) {
-    if (this.serial) this.serial.stop();
-    this.uploading = true;
-
-    const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
-
-    const win = os.type() === 'Windows_NT';
-    const TOOL = path.join(
-      CM_LOCAL,
-      'tools',
-      'esptool_py',
-      '2.6.1',
-      'esptool.' + (win ? 'exe' : 'py')
-    );
-
-    const binaryPath = path.parse(binary);
-
-    const options: string[] = [
-      TOOL,
-      '--chip esp32',
-      '--port ' + port,
-      '--baud 921600',
-      '--before default_reset',
-      '--after hard_reset',
-      'write_flash',
-      '-z',
-      '--flash_mode dio',
-      '--flash_freq 80m',
-      '--flash_size detect',
-      '0xe000 ' +
-        path.join(CM_LOCAL, 'hardware', 'esp32', '1.0.0', 'tools', 'partitions', 'boot_app0.bin'),
-      '0x1000 ' +
-        path.join(
-          CM_LOCAL,
-          'hardware',
-          'esp32',
-          '1.0.0',
-          'tools',
-          'sdk',
-          'bin',
-          'bootloader_dio_80m.bin'
-        ),
-      '0x10000 ' + binary,
-      '0x8000 ' + path.join(binaryPath.dir, binaryPath.name + '.partitions.bin')
-    ];
-
-    if (!win) options.unshift('python');
-    childProcess.execSync(options.join(' '));
-
-    this.uploading = false;
-    if (this.serial) this.serial.start();
-  }
-
-  /**
    * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
    * @see compileSketch
    * @param code Arduino C code
@@ -191,9 +220,7 @@ export default class ArduinoCompiler {
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
    */
-  public static compileSketch(
-    sketchPath: string
-  ): Promise<{ binary: string; status: string[]; output: string[] }> {
+  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[], output: string[] }> {
     const sketchName = path.parse(sketchPath).base;
     const compiledPath: string = path.join(this.CB_TMP, 'build', sketchName + '.bin');
 

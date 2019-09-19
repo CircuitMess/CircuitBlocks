@@ -6,7 +6,7 @@ import url from 'url';
 import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
 
-const reactUrl = 'http://localhost:3000';
+const reactUrl = (process.env.ELECTRON_ENV === "development") ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
@@ -27,7 +27,7 @@ function createWindow() {
   const startUrl =
     reactUrl ||
     url.format({
-      pathname: path.join(__dirname, './build/index.html'),
+      pathname: path.join(__dirname, '../client/build/index.html'),
       protocol: 'file:',
       slashes: true
     });
@@ -114,6 +114,8 @@ ArduinoCompiler.setup(
   `/home/${username}/.arduino15`
 );
 
+ArduinoCompiler.identifyDirectories();
+
 ArduinoCompiler.startDaemon();
 
 let port: any;
@@ -154,7 +156,7 @@ ipcMain.on('upload', (event, args) => {
     .then(({ binary }) => {
       event.reply('upload', { error: null, stage: 'UPLOADING' });
       try {
-        ArduinoCompiler.upload(binary, port);
+        ArduinoCompiler.getSerial().upload(binary, port);
         event.reply('upload', { error: null, stage: 'DONE' });
       } catch (error) {
         console.error(error);

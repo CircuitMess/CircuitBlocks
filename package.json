@@ -1,26 +1,54 @@
 {
   "name": "circuit_blocks",
+  "description": "A graphical programming interface that helps newbies get into embedded programming.",
+  "homepage": "https://circuitmess.com/",
+  "author": {
+    "email": "filip@circuitmess.com",
+    "name": "Filip Budiša"
+  },
   "version": "0.1.0",
-  "main": "dist/app.js",
+  "main": "build/app.js",
   "private": true,
   "dependencies": {
     "@grpc/proto-loader": "^0.5.2",
-    "electron": "^6.0.0",
+    "google-protobuf": "^3.10.0-rc.1",
     "grpc": "^1.23.3",
     "serialport": "^7.1.5"
+  },
+  "build": {
+    "appId": "com.circuitmess.circuitblocks",
+    "productName": "CircuitBlocks",
+    "copyright": "Copyright © 2019 CircuitMess",
+    "buildDependenciesFromSource": "true",
+    "files": [
+      "client/build/**/*",
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    }
   },
   "scripts": {
     "rebuild-electron": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 yarn electron-rebuild",
     "build": "tsc",
     "clean": "rm -rf node_modules",
     "clean-install": "yarn clean && yarn install",
-    "electron-start": "yarn build && electron dist/app.js",
+    "electron-start": "yarn build && env ELECTRON_ENV=development electron build/app.js",
     "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\"",
     "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./proto --grpc_out=./proto --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/proto ./proto/*.proto",
     "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/proto -I ./proto ./proto/*.proto",
     "proto": "npm run proto-js && npm-run proto-ts",
-    "postinstall": "yarn rebuild-electron"
+    "postinstall": "yarn rebuild-electron",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,6 +71,8 @@
     "@typescript-eslint/eslint-plugin": "1.13.0",
     "@typescript-eslint/parser": "1.13.0",
     "concurrently": "^4.1.1",
+    "electron": "^6.0.0",
+    "electron-builder": "^21.2.0",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",
