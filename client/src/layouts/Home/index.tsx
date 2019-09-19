@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { AllElectron, IpcRenderer, IpcRendererEvent } from 'electron';
 import styled from 'styled-components';
 
 import { ProjectSection } from '../../components/Section';
@@ -6,20 +7,20 @@ import { HeaderImage, HeaderSection } from './components/Header';
 import { Footer } from './components/Footer';
 import { Login } from './components/Login';
 
-const projects = [
-  {
-    title: 'Getting Started GuideModal',
-    author: 'Official Example',
-    description:
-      'In this sketch you can find real world examples of something important to your device programming.'
-  },
-  {
-    title: 'Getting Started Guide',
-    author: 'Official Example',
-    description:
-      'In this sketch you can find real world examples of something important to your device programming.'
-  }
-];
+// const projects = [
+//   {
+//     title: 'Getting Started GuideModal',
+//     author: 'Official Example',
+//     description:
+//       'In this sketch you can find real world examples of something important to your device programming.'
+//   },
+//   {
+//     title: 'Getting Started Guide',
+//     author: 'Official Example',
+//     description:
+//       'In this sketch you can find real world examples of something important to your device programming.'
+//   }
+// ];
 
 const Main = styled.div`
   background-color: #fafafa;
@@ -27,13 +28,43 @@ const Main = styled.div`
 
 interface HomeProps {
   isEditorOpen: boolean;
-  openEditor: () => void;
+  openEditor: (data: string) => void;
 }
 
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
+
+interface listExamples {
+  error: any;
+  data?: {};
+}
+
+interface listFiles {
+  error: any;
+  data?: string[];
+}
+
+interface FileCard {
+  title: string;
+  author: string;
+  description?: string;
+  filename: string;
+}
+
+const map_lambda = (author: string) => (filename: string) => ({
+  title: filename.slice(0, filename.length - 4),
+  author: 'You',
+  filename
+});
+
 const Home: React.FC<HomeProps> = (props) => {
-  const { isEditorOpen } = props;
-  const [loggedIn, setLoggedIn] = useState(false);
+  const { isEditorOpen, openEditor } = props;
+  const [loggedIn, setLoggedIn] = useState(true);
   const [animation, setAnimation] = useState(false);
+  const [projects, setProjects] = useState<FileCard[]>([]);
+  const [examples, setExamples] = useState<any[]>([]);
+  const [areProjectLoading, setAreProjectLoading] = useState(true);
+  const [areExamplesLoading, setAreExamplesLoading] = useState(true);
 
   // useEffect(() => {
   //   setInterval(() => setLoggedIn((logged) => !logged), 2000);
@@ -44,15 +75,85 @@ const Home: React.FC<HomeProps> = (props) => {
     setTimeout(() => setLoggedIn(true), 300);
   };
 
+  useEffect(() => {
+    ipcRenderer.once('listExamples', (event: IpcRendererEvent, args: listExamples) => {
+      if (args.error) {
+        console.error('Error loading examples');
+      } else {
+        if (args.data) {
+          const data = Object.keys(args.data).map((section_key) => ({
+            title: section_key,
+            data: (args.data as any)[section_key].map(map_lambda('Official example'))
+          }));
+          console.log(data);
+          setExamples(data);
+          setAreExamplesLoading(false);
+        }
+      }
+    });
+
+    ipcRenderer.send('listExamples');
+
+    ipcRenderer.once('listFiles', (event: IpcRendererEvent, args: listFiles) => {
+      if (args.error) {
+        console.error('Error loading examples');
+      } else {
+        if (args.data) {
+          const data = args.data.map(map_lambda('You'));
+          console.log(data);
+          setProjects(data);
+          setAreProjectLoading(false);
+        }
+      }
+    });
+
+    ipcRenderer.send('listFiles');
+  }, []);
+
+  const openFile = (filename: string) => {
+    ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
+      if (args.error) {
+        console.error('ERROR');
+      } else {
+        openEditor(args.data);
+      }
+    });
+
+    ipcRenderer.send('load', { filename });
+  };
+
   return (
-    <div className={isEditorOpen ? 'd-none' : ''} style={{ height: '100%' }}>
+    <div
+      className={isEditorOpen ? 'd-none' : 'h-open'}
+      style={{
+        height: '100%',
+        backgroundSize: 'cover',
+        backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
+        zIndex: 10
+      }}
+    >
       <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
       <HeaderSection loggedIn={loggedIn} />
       {loggedIn ? (
         <>
           <Main>
-            <ProjectSection title={'Foobar'} projects={projects} />
-            <ProjectSection title={'Foobar'} projects={projects} />
+            {areProjectLoading ? (
+              <h3>Loading...</h3>
+            ) : (
+              <ProjectSection title={'Your projects'} projects={projects} onPress={openFile} />
+            )}
+            {areExamplesLoading ? (
+              <h3>Loading...</h3>
+            ) : (
+              examples.map((section) => (
+                <ProjectSection
+                  title={section.title.slice(0, 1).toUpperCase() + section.title.slice(1)}
+                  projects={section.data}
+                  key={`Section-${section.title}`}
+                  onPress={openFile}
+                />
+              ))
+            )}
           </Main>
           <Footer>
             <p>v0.1</p>

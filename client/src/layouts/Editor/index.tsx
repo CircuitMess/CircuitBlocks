@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import Blockly from '../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
 import { saveAs } from 'file-saver';
@@ -10,10 +11,10 @@ import EditorPopup from './components/EditorPopup';
 import EditorPopupHeader from './components/EditorPopupHeader';
 import Monaco from './components/Monaco';
 import BlocklyEditor from '../../components/BlocklyEditor';
-import ReactDOM from 'react-dom';
 import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
+import { capitalize } from '../../helpers/string';
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -61,6 +62,8 @@ interface State {
   isPromptOpen?: boolean;
   promptText?: string;
   running: boolean;
+  runningStage?: string;
+  runningPercentage?: number;
   notifications: Notification[];
   makerPhoneConnected: number;
   filename: string;
@@ -71,13 +74,6 @@ interface State {
 
 const CODE = `// Code goes here\n`;
 const NAV_BAR_HEIGHT = 64;
-
-interface Notification {
-  id: string;
-  message: string;
-  icon?: string;
-  close?: boolean;
-}
 
 const INIT_STATE: State = {
   isModalOpen: false,
@@ -92,8 +88,16 @@ const INIT_STATE: State = {
   running: false,
   notifications: [],
   makerPhoneConnected: 0,
-  filename: ''
+  filename: '',
+  runningPercentage: 0
 };
+
+interface Notification {
+  id: string;
+  message: string;
+  icon?: string;
+  close?: boolean;
+}
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
@@ -139,6 +143,7 @@ class Editor extends Component<EditorProps, State> {
         this.setState({ code });
       }
     });
+
     this.load(xml);
     this.updateDimensions();
     this.injectToolbox();
@@ -157,8 +162,23 @@ class Editor extends Component<EditorProps, State> {
     });
 
     ipcRenderer.on('upload', (event: any, args: any) => {
-      this.setState({ running: false });
-      console.log(args);
+      const { error, stage, percentage } = args;
+
+      if (error) {
+        this.addNotification('Upload error');
+        this.setState({ running: false, runningPercentage: undefined });
+        return;
+      }
+
+      if (stage) {
+        if (stage === 'DONE') {
+          this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
+        } else {
+          this.setState({ runningStage: capitalize(stage) });
+        }
+      } else if (percentage) {
+        this.setState({ runningPercentage: percentage });
+      }
     });
 
     setInterval(() => {
@@ -166,20 +186,6 @@ class Editor extends Component<EditorProps, State> {
         ipcRenderer.send('ports');
       }
     }, 2000);
-
-    // ipcRenderer.once('listFiles', (event, arg) => {
-    //   if (arg.error) {
-    //     setItems({ error: true });
-    //   } else {
-    //     setItems({ error: false, data: arg.data });
-    //   }
-
-    //   setLoading(false);
-    // });
-
-    // React.useEffect(() => {
-    //   ipcRenderer.send('listFiles');
-    // }, []);
   }
 
   injectToolbox() {
@@ -200,8 +206,13 @@ class Editor extends Component<EditorProps, State> {
   }
 
   run = () => {
-    console.log('RUN');
     this.setState({ running: true });
+    setInterval(() => {
+      this.setState({
+        runningPercentage:
+          this.state.runningPercentage === undefined ? 0 : this.state.runningPercentage + 1
+      });
+    }, 100);
     ipcRenderer.send('upload', { code: this.state.code });
   };
 
@@ -367,6 +378,10 @@ class Editor extends Component<EditorProps, State> {
     });
   };
 
+  cleanup = () => {
+    Blockly.hideChaff();
+  };
+
   render() {
     const {
       isModalOpen,
@@ -374,12 +389,15 @@ class Editor extends Component<EditorProps, State> {
       isCodeOpen,
       isCodeFull,
       height,
+      width,
       code,
       theme,
       isPromptOpen,
       initState,
       promptText,
       running,
+      runningStage,
+      runningPercentage,
       notifications,
       makerPhoneConnected,
       filename,
@@ -416,52 +434,58 @@ class Editor extends Component<EditorProps, State> {
     };
 
     return (
-      <div className={isEditorOpen ? '' : 'd-none'}>
-        {isModalOpen &&
-          (modal.type === 'save' ? (
-            <Modal.SaveModal
-              {...modalProps}
-              filename={filename}
-              filenameError={filenameError}
-              onChange={this.onChangeSaveModal}
-              onSubmit={this.onSubmitSaveModal}
+      <div className={isEditorOpen ? 'e-open' : 'e-close'}>
+        {isEditorOpen && (
+          <React.Fragment>
+            {isModalOpen &&
+              (modal.type === 'save' ? (
+                <Modal.SaveModal
+                  {...modalProps}
+                  filename={filename}
+                  filenameError={filenameError}
+                  onChange={this.onChangeSaveModal}
+                  onSubmit={this.onSubmitSaveModal}
+                />
+              ) : (
+                <Modal.LoadModal {...modalProps} />
+              ))}
+
+            {isPromptOpen && (
+              <Prompt
+                initValue={initState || ''}
+                callback={this.callback}
+                promptText={promptText || ''}
+                closePrompt={this.closePrompt}
+              />
+            )}
+
+            <EditorHeader
+              home={openHome}
+              load={this.openLoadModal}
+              run={this.run}
+              save={this.openSaveModal}
+              toggle={this.toggle}
+              title={title}
+              isCodeOpen={isCodeOpen}
+              running={running}
+              runningStage={runningStage}
+              runningPercentage={runningPercentage}
+              connected={makerPhoneConnected > 0}
             />
-          ) : (
-            <Modal.LoadModal {...modalProps} />
-          ))}
 
-        {isPromptOpen && (
-          <Prompt
-            initValue={initState || ''}
-            callback={this.callback}
-            promptText={promptText || ''}
-            closePrompt={this.closePrompt}
-          />
+            {notifications && (
+              <NotificationWrapper>
+                {notifications.map((item) => (
+                  <Notification key={item.id} {...item} onClick={this.closeNotification(item.id)} />
+                ))}
+              </NotificationWrapper>
+            )}
+          </React.Fragment>
         )}
 
-        <EditorHeader
-          home={openHome}
-          load={this.openLoadModal}
-          run={this.run}
-          save={this.openSaveModal}
-          toggle={this.toggle}
-          title={title}
-          isCodeOpen={isCodeOpen}
-          running={running}
-          connected={makerPhoneConnected > 0}
-        />
+        <BlocklyEditor height={height} width={width} isCodeOpen={false} setRef={this.setRef} />
 
-        {notifications && (
-          <NotificationWrapper>
-            {notifications.map((item) => (
-              <Notification key={item.id} {...item} onClick={this.closeNotification(item.id)} />
-            ))}
-          </NotificationWrapper>
-        )}
-
-        <BlocklyEditor height={height} isCodeOpen={false} setRef={this.setRef} />
-
-        {isCodeOpen && (
+        {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
             <EditorPopupHeader
               closeCode={this.closeCode}

@@ -9,18 +9,23 @@ import './assets/poppins.css';
 import './assets/source_code_pro.css';
 
 const App = () => {
-  const [isEditorOpen, setIsEditorOpen] = useState(true);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const monacoRef = React.createRef();
-  // const blocklyRef = React.createRef();
+  const blocklyRef = React.createRef<Editor>();
 
   const openHome = () => {
+    (blocklyRef.current as any).cleanup();
     setIsEditorOpen(false);
   };
 
-  const openEditor = () => {
+  const openEditor = (data: string) => {
+    (blocklyRef.current as any).load(data);
     setIsEditorOpen(true);
+    // setTimeout(() => {
+    //   (blocklyRef.current as any).updateDimensions();
+    // }, 300);
   };
 
   const closeAlert = () => {
@@ -44,6 +49,7 @@ const App = () => {
         title={'Foobar'}
         openHome={openHome}
         monacoRef={monacoRef}
+        ref={blocklyRef}
       />
     </>
   );

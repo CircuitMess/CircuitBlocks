@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Button from '../../../components/Button';
+import Progressbar from './ProgressBar';
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -11,6 +12,9 @@ const StyledHeader = styled.div`
   width: 100%;
   height: 60px;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   .left {
     display: inline-block;
@@ -37,6 +41,31 @@ const StyledHeader = styled.div`
     font-weight: normal;
     font-style: normal;
   }
+
+  .row {
+    display: flex;
+    align-items: center;
+  }
+
+  .row h3 {
+    margin: 0;
+  }
+
+  .circle {
+    margin-left: 12px;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .circle.red {
+    background-color: red;
+  }
+
+  .circle.green {
+    background-color: green;
+  }
 `;
 
 interface Props {
@@ -48,14 +77,30 @@ interface Props {
   run: () => void;
   isCodeOpen: boolean;
   running: boolean;
+  runningStage?: string;
+  runningPercentage?: number;
   connected: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
-  const { home, title, load, save, toggle, run, isCodeOpen, running, connected } = props;
+  const {
+    home,
+    title,
+    load,
+    save,
+    toggle,
+    run,
+    isCodeOpen,
+    connected,
+    running,
+    runningStage,
+    runningPercentage
+  } = props;
 
   return (
     <StyledHeader>
+      {running && runningPercentage && <Progressbar percentage={runningPercentage} />}
+
       <div className="left">
         <Button className="icon" color="no-fill" onClick={home}>
           <i className="material-icons"> arrow_back </i>
@@ -64,7 +109,10 @@ const EditorHeader: React.FC<Props> = (props) => {
       </div>
 
       <div className="center">
-        <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+        <div className="row">
+          <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+          <div className={`circle ${connected ? 'green' : 'red'}`}></div>
+        </div>
       </div>
 
       <div className="right">
@@ -78,8 +126,13 @@ const EditorHeader: React.FC<Props> = (props) => {
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
         </Button>
-        <Button className={`icon-text ${running ? 'running' : ''}`} color="red" onClick={run}>
-          <div className="text">Run{running ? 'ning' : ''}</div>
+        <Button
+          className={`icon-text ${running ? 'running' : ''} ${!connected ? 'disabled' : ''}`}
+          color="red"
+          onClick={run}
+          disabled={!connected}
+        >
+          <div className="text">{running ? runningStage : 'Run'}</div>
           <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>
       </div>

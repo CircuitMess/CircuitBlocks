@@ -3,10 +3,11 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import { load, save, listFiles } from './core/files';
+import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler from './core/compiler/compiler';
 
 const reactUrl = (process.env.ELECTRON_ENV === "development") ? 'http://localhost:3000' : null;
+const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
 
@@ -98,11 +99,17 @@ ipcMain.on('listFiles', (event, _args) => {
   listFiles(callback('listFiles', event));
 });
 
+ipcMain.on('listExamples', (event, _args) => {
+  listExamples(callback('listExamples', event), EXAMPLES_PATH);
+});
+
 // TODO: Add env variables
 const username = process.env.USER;
 
+const installPath = username === 'fran' ? 'installs' : 'Downloads';
+
 ArduinoCompiler.setup(
-  `/home/${username}/installs/arduino-1.8.9`,
+  `/home/${username}/${installPath}/arduino-1.8.9`,
   `/home/${username}/Arduino`,
   `/home/${username}/.arduino15`
 );
@@ -116,14 +123,10 @@ ipcMain.on('ports', (event, _args) => {
     .then((data) => {
       if (data.length === 0) {
         const res = { error: { type: 'NO_DEVICES' } };
-
-        console.log(res);
         event.reply('ports', res);
       } else {
         const res = { error: null, data };
         port = data[0].comName;
-
-        console.log(res.data.map((item) => item.comName));
         event.reply('ports', res);
       }
     })
@@ -134,16 +137,25 @@ ipcMain.on('ports', (event, _args) => {
 });
 
 ipcMain.on('upload', (event, args) => {
-  const { code } = args;
+  // const { code } = args;
+  const code = `
+  void setup() {
+    Serial.begin(9600);
+  }
 
-  console.log('Compiling code');
+  void loop() {
+    Serial.println("Hello world");
+    delay(100);
+  }
+  `;
+  event.reply('upload', { error: null, stage: 'COMPILING' });
 
   ArduinoCompiler.compile(code)
     .then(({ binary }) => {
-      console.log(`Uploading to ${port}`);
+      event.reply('upload', { error: null, stage: 'UPLOADING' });
       try {
         ArduinoCompiler.upload(binary, port);
-        event.reply('upload', { error: null, data: { type: 'DONE' } });
+        event.reply('upload', { error: null, stage: 'DONE' });
       } catch (error) {
         console.error(error);
         event.reply({ error });
