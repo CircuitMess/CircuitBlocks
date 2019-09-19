@@ -65,13 +65,34 @@ export default class Installer {
         });
     }
 
+    private installCliWindows(file, callback: (err) => void){
+        const tmp = util.tmpdir("cb-cli-inst");
+        const dest = path.join(os.homedir(), "AppData", "Local", "ArduinoCLI");
+        if(!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+
+        util.extract(file, tmp).then(() => {
+            const file = "arduino-cli.exe";
+            const install = path.join(dest, file);
+
+            fs.copySync(path.join(tmp, file), install);
+
+            child_process.execSync([ install, "config", "init" ].join(" "));
+            child_process.execSync([ install, "core", "update-index" ].join(" "));
+            child_process.execSync([ install, "lib", "update-index" ].join(" "));
+
+            callback(null);
+        }).catch(err => {
+            callback(err);
+        });
+    }
+
     private installCliLinux(file, callback: (err) => void){
         const tmp = util.tmpdir("cb-cli-inst");
         const dest = path.join(os.homedir(), ".arduino");
         if(!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
 
         util.extract(file, tmp).then(() => {
-            const file = "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : "");
+            const file = "arduino-cli";
             const install = path.join(dest, file);
 
             fs.copySync(path.join(tmp, file), install);
@@ -89,7 +110,15 @@ export default class Installer {
     }
 
     private installCli(file, callback: (err) => void){
-        this.installCliLinux(file, callback);
+        if(this.PLATFORM == "Windows_NT"){
+            this.installCliWindows(file, callback);
+        }else if(this.PLATFORM.startsWith("Linux")){
+            this.installCliLinux(file, callback);
+        }
+    }
+
+    private installArduinoWindows(file, callback: (err) => void){
+
     }
 
     private installArduinoLinux(file, callback: (err) => void){
@@ -157,11 +186,17 @@ export default class Installer {
     }
 
     private installArduino(file, callback: (err) => void){
-        this.installArduinoLinux(file, callback);
+        if(this.PLATFORM == "Windows_NT"){
+            this.installArduinoWindows(file, callback);
+        }else if(this.PLATFORM.startsWith("Linux")){
+            this.installArduinoLinux(file, callback);
+        }
     }
 
     private installRingo(callback: () => void){
-        const cli = path.join(os.homedir(), ".arduino", "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""));
+        const cli = this.PLATFORM == "Windows_NT"
+            ? path.join(os.homedir(), "AppData", "Local", "ArduinoCLI", "arduino-cli.exe")
+            : path.join(os.homedir(), ".arduino", "arduino-cli");
 
         child_process.execSync([ cli, "--additional-urls", this.downloads.ringo.manager, "core", "update-index" ].join(" "));
         child_process.execSync([ cli, "--additional-urls", this.downloads.ringo.manager, "lib   ", "update-index" ].join(" "));
