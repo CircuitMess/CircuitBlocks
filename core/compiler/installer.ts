@@ -120,7 +120,16 @@ export default class Installer {
     }
 
     private installArduinoWindows(file, callback: (err) => void){
+        sudo_prompt.exec(file + " /S",
+            { name: "Arduino installer", stdio: "inherit" },
+            (error, stderr, stdout) => {
+                if(error){
+                    callback(error);
+                    return;
+                }
 
+                callback(null);
+            });
     }
 
     private installArduinoLinux(file, callback: (err) => void){

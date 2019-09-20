@@ -10,7 +10,7 @@
     "lzma-native": "^4.0.5",
     "serialport": "^7.1.5",
     "sudo-prompt": "^9.0.0",
-    "unzip": "^0.1.11"
+    "unzipper": "^0.10.5"
   },
   "scripts": {
     "rebuild-electron": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 yarn electron-rebuild",
