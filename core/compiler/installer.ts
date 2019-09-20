@@ -1,4 +1,4 @@
-import ArduinoCompiler from "./compiler";
+import ArduinoCompiler, {InstallInfo} from "./compiler";
 import * as util from "./util";
 import * as fs from "fs-extra";
 import * as os from "os";
@@ -78,9 +78,7 @@ export default class Installer {
 
             fs.copySync(path.join(tmp, file), install);
 
-            child_process.execSync([ install, "config", "init" ].join(" "));
-            child_process.execSync([ install, "core", "update-index" ].join(" "));
-            child_process.execSync([ install, "lib", "update-index" ].join(" "));
+            this.cliInit(install);
 
             callback(null);
         }).catch(err => {
@@ -101,14 +99,18 @@ export default class Installer {
 
             fs.chmodSync(install, "755");
 
-            child_process.execSync([ install, "config", "init" ].join(" "));
-            child_process.execSync([ install, "core", "update-index" ].join(" "));
-            child_process.execSync([ install, "lib", "update-index" ].join(" "));
+            this.cliInit(install);
 
             callback(null);
         }).catch(err => {
             callback(err);
         });
+    }
+
+    private cliInit(path){
+        child_process.execSync([ path, "config", "init" ].join(" "));
+        child_process.execSync([ path, "core", "update-index" ].join(" "));
+        child_process.execSync([ path, "lib", "update-index" ].join(" "));
     }
 
     private installCli(file, callback: (err) => void){
@@ -242,26 +244,47 @@ export default class Installer {
         });
     }
 
-    public install(stage: (string) => void, error: (err) => void){
-        stage("ARDUINO");
-        this.arduino((err) => {
+    public install(info: InstallInfo, stage: (string) => void, error: (err) => void){
+        const stageRingo = () => {
+            ArduinoCompiler.checkInstall();
+            stage("DONE");
+        };
+
+        const stageCli = err => {
             if(err){
                 error(err);
                 return;
             }
 
-            stage("CLI");
-            this.cli((err2) => {
-                if(err2){
-                    error(err2);
-                    return;
-                }
+            stage("RINGO");
+            this.installRingo(stageRingo);
+        };
 
-                stage("RINGO");
-                this.installRingo(() => {
-                    stage("DONE");
-                });
-            });
-        })
+        const stageArduino = err => {
+            if(err){
+                error(err);
+                return;
+            }
+
+            if(info.cli == null){
+                stage("CLI");
+                this.cli(stageCli);
+            }else{
+                stage("DONE");
+            }
+        };
+
+        if(info.arduino == null){
+            stage("ARDUINO");
+            this.arduino(stageArduino);
+        }else if(info.cli == null){
+            stage("CLI");
+            this.cli(stageCli);
+        }else if(info.local == null || info.sketchbook == null){
+            stage("CLI");
+            this.cliInit(path.join(info.cli, "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : "")));
+            stage("RINGO");
+            this.installRingo(stageRingo);
+        }
     }
 }

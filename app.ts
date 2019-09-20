@@ -99,21 +99,13 @@ ipcMain.on('listFiles', (event, _args) => {
   listFiles(callback('listFiles', event));
 });
 
-// TODO: Add env variables
-const username = process.env.USER;
-
-ArduinoCompiler.setup(
-  `/home/${username}/installs/arduino-1.8.9`,
-  `/home/${username}/Arduino`,
-  `/home/${username}/.arduino15`
-);
-
-ArduinoCompiler.identifyDirectories();
-
-//ArduinoCompiler.startDaemon();
-
-const installer = new Installer();
-installer.install(console.log, console.log);
+const installInfo = ArduinoCompiler.checkInstall();
+if(installInfo == null || Object.values(installInfo).indexOf(null) != -1){
+  new Installer()
+      .install(installInfo,
+          stage => console.log(stage),
+          err => console.log(err));
+}
 
 let port: any;
 

@@ -4,6 +4,7 @@ import * as grpc from 'grpc';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
+import * as yaml from "js-yaml";
 
 import { BuilderClient } from '../proto/builder_grpc_pb';
 import { BuildParams } from '../proto/builder_pb';
@@ -19,6 +20,14 @@ export interface PortDescriptor {
   comName: string;
 }
 
+export interface InstallInfo {
+  arduino: string | null,
+  cli: string | null,
+
+  sketchbook: string | null,
+  local: string | null
+}
+
 export default class ArduinoCompiler {
   private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
   private static process: childProcess.ChildProcess;
@@ -29,6 +38,7 @@ export default class ArduinoCompiler {
   private static ARDUINO_LOCAL: string = '';
 
   private static serial: Serial;
+  private static installInfo: InstallInfo;
 
   public static getDirectories(){
     return {
@@ -59,11 +69,7 @@ export default class ArduinoCompiler {
     this.ARDUINO_LOCAL = local;
   }
 
-  /**
-   * Attempts to identify relevant Arduino directories.
-   * @return True if successful, false otherwise
-   */
-  public static identifyDirectories(): boolean {
+  public static checkInstall(): InstallInfo | null {
     let local: string;
 
     if(os.type() === "Windows_NT"){
@@ -77,14 +83,70 @@ export default class ArduinoCompiler {
     }else if(os.type() === "Darwin"){
       local = path.join(os.homedir(), "Library", "Arduino15");
     }else{
-      return false;
+      return null;
     }
 
-    if(!fs.existsSync(local) || !fs.existsSync(path.join(local, "preferences.txt"))) return false;
+    if(!fs.existsSync(local)){
+      return null;
+    }
 
-    let home: string, install: string;
+    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: local };
 
-    const preferences = fs.readFileSync(path.join(local, "preferences.txt")).toString().split(os.EOL);
+    const prefPath = path.join(local, "preferences.txt");
+    const configPath = path.join(local, "arduino-cli.yaml");
+
+    if(fs.existsSync(prefPath)){
+      const preferences = this.parsePreferences(prefPath);
+
+      if(preferences != null){
+        info.arduino = preferences.arduino;
+        info.sketchbook = preferences.sketchbook;
+      }
+    }
+
+    if(fs.existsSync(configPath)){
+      const config = yaml.safeLoad(fs.readFileSync(configPath));
+
+      info.local = config.arduino_data;
+      info.sketchbook = config.sketchbook_path;
+    }
+
+    const installPath = path.join(local, "..", os.type() == "Windows_NT" ? "Arduino" : ".arduino");
+
+    if(!fs.existsSync(installPath)){
+      return info;
+    }
+
+    const cliPath = path.join(installPath, "arduino-cli" + (os.type() == "Windows_NT" ? ".exe" : ""));
+    if(fs.existsSync(cliPath)){
+      info.cli = installPath;
+    }
+
+    if(info.arduino == null){
+      let install: { version: string, path: string } | null = null;
+
+      fs.readdirSync(installPath).forEach(file => {
+        const arduinoPath = path.join(installPath, file);
+        if(!fs.statSync(arduinoPath).isDirectory()) return;
+        if(!file.startsWith("arduino-")) return;
+        const version = file.substring(8);
+
+        if(install == null || this.isNewer(version, install.version)){
+          install = { version, path: arduinoPath };
+        }
+      });
+
+      info.arduino = install.path;
+    }
+
+    this.installInfo = info;
+    return info;
+  }
+
+  private static parsePreferences(prefPath): { arduino: string, sketchbook: string } | null {
+    const preferences = fs.readFileSync(prefPath).toString().split(os.EOL);
+
+    let home: string = "";
     const installs: any = {};
     preferences.forEach(line => {
       const parts = line.split("=");
@@ -99,36 +161,14 @@ export default class ArduinoCompiler {
       }
     });
 
-    if(home === undefined || installs === {}) return false;
+    if(installs === {}) return null;
     const versions = Object.keys(installs);
     let newest = versions[0];
     for(let i = 1; i < versions.length; i++){
       if(this.isNewer(versions[i], newest)) newest = versions[i];
     }
 
-    install = installs[newest];
-
-    // Tests
-
-    /*const required: string[] = [
-        path.join(local, "packages", "cm"),
-        home,
-        path.join(install, "hardware"),
-        path.join(install, "tools"),
-        path.join(install, "tools-builder"),
-    ];
-
-    for(let i = 0; i < required.length; i++){
-      if(!fs.existsSync(required[i])) return false;
-    }*/
-
-    this.ARDUINO_LOCAL = local;
-    this.ARDUINO_HOME = home;
-    this.ARDUINO_INSTALL = install;
-
-    console.log([ local, home, install ]);
-
-    return true;
+    return { arduino: installs[newest], sketchbook: home };
   }
 
   private static isNewer(newer: string, older: string): boolean {
