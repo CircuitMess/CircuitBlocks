@@ -192,7 +192,8 @@ export default class ArduinoCompiler {
         return;
       }
 
-      const builderPath = path.join(this.ARDUINO_INSTALL, 'arduino-builder');
+      let builderPath = path.join(this.ARDUINO_INSTALL, 'arduino-builder');
+      if(os.type() == "Windows_NT") builderPath += ".exe";
 
       if (!fs.existsSync(builderPath)) {
         reject(new Error('Builder not found'));

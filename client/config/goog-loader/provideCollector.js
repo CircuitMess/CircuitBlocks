@@ -1,6 +1,7 @@
 const path = require("path");
 const walker = require("walk");
 const fs = require('fs');
+const os = require('os');
 
 class ProvideCollector {
 
@@ -35,11 +36,11 @@ class ProvideCollector {
     let map = this.provides;
 
     let data = fs.readFileSync(filepath, { encoding: "UTF-8" });
-    data.split("\n").forEach(line => {
+    data.split(os.EOL).forEach(line => {
       let match = regex.exec(line);
       while(match !== null){
         let provide = match[1];
-        map[provide] = filepath;
+        map[provide] = filepath.replace(/\\/g, "\\\\");
         match = regex.exec(line);
       }
     });

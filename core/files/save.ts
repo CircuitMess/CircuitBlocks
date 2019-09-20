@@ -10,11 +10,6 @@ const saveFile = (data, filename, callback) => {
     fs.mkdirSync(homePath);
   }
 
-  if (fs.existsSync(filePath)) {
-    callback({ error: 'FILE_EXISTS' });
-    return;
-  }
-
   fs.writeFile(filePath, data, callback);
 };
 

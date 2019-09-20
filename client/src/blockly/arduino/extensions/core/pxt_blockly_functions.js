@@ -23,7 +23,7 @@ Blockly.Functions.flyoutCategory = function(workspace) {
                 block.setAttribute('disabled', true);
             }
         }
-        xmlList.push(block);
+        xmlList.unshift(block);
     }
 
     function populateFunctions(functionList, templateName) {

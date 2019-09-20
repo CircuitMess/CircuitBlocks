@@ -655,8 +655,8 @@ export const moreCategory: ToolboxCategory = {
 };
 
 categories.push({
-    color: "#006970",
-    icon: "\uf074",
+    color: "#c94e4e",
+    icon: "\uf085",
     name: "Logic",
 
     blocks: [
@@ -733,8 +733,8 @@ categories.push({
 
 categories.push({
     name: "Loops",
-    icon: "\uf01e",
-    color: "#107c10",
+    icon: "\uf2f1",
+    color: "#3c4c9c",
 
     blocks: [
         {
@@ -775,7 +775,7 @@ categories.push({
 
 categories.push({
     name: "Math",
-    color: "#712672",
+    color: "#91ca55",
     icon: "\uf1ec",
 
     blocks: [
@@ -927,8 +927,8 @@ categories.push({
 
 categories.push({
     name: "Text",
-    color: "#996600",
-    icon: "\uf035",
+    color: "#3c70ac",
+    icon: "\uf031",
 
     blocks: [
         {
@@ -1005,8 +1005,8 @@ categories.push({
 
 categories.push({
     name: "Variables",
-    icon: "\uf039",
-    color: "#A80000",
+    icon: "\uf01c",
+    color: "#364652",
     special: ToolboxCategorySpecial.VARIABLES,
 
     blocks: [],
@@ -1015,8 +1015,8 @@ categories.push({
 
 categories.push({
     name: "Functions",
-    icon: "\uf109",
-    color: "#005a9e",
+    icon: "\uf013",
+    color: "#50c45f",
     special: ToolboxCategorySpecial.FUNCTIONS,
 
     blocks: [],
@@ -1025,8 +1025,8 @@ categories.push({
 
 categories.push({
     name: "I/O",
-    icon: "\uf109",
-    color: "#005a9e",
+    icon: "\uf360",
+    color: "#744780",
 
     blocks: [
         {
@@ -1043,11 +1043,11 @@ categories.push({
         },
         {
             name: "led_colour",
-            xml: Blocks.display.colour
+            xml: Blocks.phone.led_colour
         },
         {
-            name: "led_colour",
-            xml: Blocks.phone.led_colour
+            name: "led_on",
+            xml: Blocks.phone.led_on
         },
         {
             name: "led_off",
@@ -1059,8 +1059,8 @@ categories.push({
 
 categories.push({
     name: "Display",
-    icon: "\uf109",
-    color: "#005a9e",
+    icon: "\uf108",
+    color: "#ff9100",
 
     blocks: [
         {
@@ -1127,8 +1127,8 @@ categories.push({
 
 categories.push({
     name: "Time",
-    icon: "\uf109",
-    color: "#005a9e",
+    icon: "\uf2f2",
+    color: "#ec652f",
 
     subcategories: [],
 

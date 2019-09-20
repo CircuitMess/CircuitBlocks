@@ -6,7 +6,7 @@ goog.provide("Blockly.Blocks.display");
 Blockly.defineBlocksWithJsonArray([
     {
         type: "display_colour",
-        message0: "colour %1",
+        message0: "display colour %1",
         args0: [
             {
                 type: "field_dropdown",
@@ -34,9 +34,9 @@ Blockly.defineBlocksWithJsonArray([
                 ]
             }
         ],
-        output: "Colour",
+        output: "TFT_Colour",
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Colour",
         helpUrl: ""
     },
@@ -58,7 +58,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Displays a pop-up message",
         helpUrl: ""
     },
@@ -69,13 +69,13 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             }
         ],
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Clears the display",
         helpUrl: ""
     },
@@ -92,7 +92,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Inverts the display",
         helpUrl: ""
     }
@@ -112,7 +112,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Sets the display font size",
         helpUrl: ""
     },
@@ -123,13 +123,13 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             }
         ],
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Sets the display font colour",
         helpUrl: ""
     },
@@ -146,7 +146,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Prints a line of text onto the display",
         helpUrl: ""
     },
@@ -174,7 +174,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a line of text on the specified coordinates",
         helpUrl: ""
     }
@@ -188,7 +188,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -215,7 +215,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a rectangle",
         helpUrl: ""
     },
@@ -226,7 +226,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -248,7 +248,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a circle",
         helpUrl: ""
     },
@@ -259,7 +259,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -286,7 +286,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw an ellipse",
         helpUrl: ""
     },
@@ -297,7 +297,7 @@ Blockly.defineBlocksWithJsonArray([
             {
                 type: "input_value",
                 name: "COLOUR",
-                check: "Colour"
+                check: "TFT_Colour"
             },
             {
                 type: "input_value",
@@ -334,7 +334,7 @@ Blockly.defineBlocksWithJsonArray([
         previousStatement: null,
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Blocks.io.HUE,
+        colour: Blockly.Msg.DISPLAY_HUE,
         tooltip: "Draw a triangle",
         helpUrl: ""
     }

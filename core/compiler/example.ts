@@ -11,8 +11,8 @@ ArduinoCompiler.startDaemon();
 const serial = ArduinoCompiler.getSerial();
 serial.start();
 
-serial.registerListener(line => console.log(line));
-serial.write("foo");
+serial.registerListener((line) => console.log(line));
+serial.write('foo');
 
 const code = `#include <MAKERphone.h>
 
