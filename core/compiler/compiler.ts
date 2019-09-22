@@ -290,7 +290,6 @@ export default class ArduinoCompiler {
         return;
       }
 
-
       const req = new CompileReq();
       req.setInstance(this.instance);
       req.setSketchpath(sketchDir);
@@ -348,7 +347,13 @@ export default class ArduinoCompiler {
     });
   }
 
-  public static uploadBinary(binary: string, port: string): Promise<null> {
+  /**
+   * Uploads the specified binary to the MAKERphone
+   * @param binary Path to the binary
+   * @param port MAKERphone port
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
+   */
+  public static uploadBinary(binary: string, port: string, progressCallback?: (number) => void): Promise<null> {
     return new Promise<null>((resolve, reject) => {
       if(!fs.existsSync(binary)){
         reject(new Error("Binary doesn't exist"));
@@ -370,6 +375,9 @@ export default class ArduinoCompiler {
       let error: any;
       const decoder = new TextDecoder("utf-8");
 
+      const progRegex = new RegExp("Writing at 0x([0-9a-f]{8})... \\((\\d+) %\\)");
+      let progressStarted = false;
+
       stream.on('error', (data) => {
         error = data;
       });
@@ -381,6 +389,26 @@ export default class ArduinoCompiler {
           }
 
           where.push(what);
+
+          if(!progressCallback) return;
+
+          const matches = progRegex.exec(what);
+          if(matches){
+            if(matches[1] == "00010000"){
+              progressStarted = true;
+            }else if(matches[1] == "00008000"){
+              progressStarted = false;
+            }
+
+            if(progressStarted){
+              const val = parseInt(matches[2]);
+              progressCallback(val);
+
+              if(val == 100){
+                progressStarted = false;
+              }
+            }
+          }
         }
 
         if(data.getOutStream().length != 0){

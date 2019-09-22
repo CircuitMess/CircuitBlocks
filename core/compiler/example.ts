@@ -24,7 +24,7 @@ ArduinoCompiler.startDaemon()
 
             console.log("uploading");
 
-            ArduinoCompiler.uploadBinary(binary.binary, ports[0].comName).then(() => console.log("done"));
+            ArduinoCompiler.uploadBinary(binary.binary, ports[0].comName, prog => console.log("progress: " + prog + " %")).then(() => console.log("done"));
         });
     }).then(console.log);
 });
