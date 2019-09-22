@@ -279,7 +279,7 @@ export default class ArduinoCompiler {
 
     const buildPath = path.join(this.CB_TMP, "build", sketchName);
     const cachePath = path.join(this.CB_TMP, "cache");
-    const compiledPath: string = path.join(this.CB_TMP, "build", sketchName, sketchName + ".ino.bin");
+    const compiledPath: string = path.join(buildPath, sketchName + ".ino.bin");
 
     if(!fs.existsSync(buildPath)) fs.mkdirSync(buildPath, { recursive: true });
     if(!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
@@ -297,7 +297,7 @@ export default class ArduinoCompiler {
       req.setBuildcachepath(cachePath);
       req.setBuildpath(buildPath);
       req.setFqbn("cm:esp32:ringo");
-      req.setExportfile(compiledPath);
+      req.setExportfile(path.join(buildPath, "export"));
 
       const stream = this.client.compile(req);
 
@@ -348,49 +348,66 @@ export default class ArduinoCompiler {
     });
   }
 
-  private static buildParams(sketchPath: string): BuildParams {
-    const buildParams: BuildParams = new BuildParams();
+  public static uploadBinary(binary: string, port: string): Promise<null> {
+    return new Promise<null>((resolve, reject) => {
+      if(!fs.existsSync(binary)){
+        reject(new Error("Binary doesn't exist"));
+        return;
+      }
 
-    const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
+      const req = new UploadReq();
+      req.setInstance(this.instance);
+      req.setFqbn("cm:esp32:ringo");
+      req.setImportFile(binary);
+      req.setSketchPath(binary);
+      req.setPort(port);
 
-    buildParams.setSketchlocation(sketchPath);
-    buildParams.setBuildpath(path.join(this.CB_TMP, 'build'));
-    buildParams.setBuildcachepath(path.join(this.CB_TMP, 'cache'));
+      const stream = this.client.upload(req);
 
-    buildParams.setHardwarefolders(
-      [path.join(this.ARDUINO_INSTALL, 'hardware'), path.join(this.ARDUINO_LOCAL, 'packages')].join(
-        ','
-      )
-    );
+      const stdout: string[] = [];
+      const stderr: string[] = [];
+      let fulfilled = false;
+      let error: any;
+      const decoder = new TextDecoder("utf-8");
 
-    buildParams.setToolsfolders(
-      [
-        path.join(this.ARDUINO_INSTALL, 'tools-builder'),
-        path.join(this.ARDUINO_INSTALL, 'hardware', 'tools', 'avr'),
-        path.join(this.ARDUINO_LOCAL, 'packages')
-      ].join(',')
-    );
+      stream.on('error', (data) => {
+        error = data;
+      });
 
-    buildParams.setBuiltinlibrariesfolders(path.join(this.ARDUINO_INSTALL, 'libraries'));
-    buildParams.setOtherlibrariesfolders(path.join(this.ARDUINO_HOME, 'libraries'));
+      stream.on('data', (data: UploadResp) => {
+        function write(what: Uint8Array | string, where: string[]){
+          if(what instanceof Uint8Array){
+            what = decoder.decode(what);
+          }
 
-    buildParams.setCustombuildproperties(
-      [
-        'runtime.tools.mkspiffs.path=' + path.join(CM_LOCAL, 'tools', 'mkdpiffs', '0.2.3'),
-        'runtime.tools.mkspiffs-0.2.3.path=' + path.join(CM_LOCAL, 'tools', 'mkdpiffs', '0.2.3'),
-        'runtime.tools.xtensa-esp32-elf-gcc.path=' +
-          path.join(CM_LOCAL, 'tools', 'xtensa-esp32-elf-gcc', '1.22.0-80-g6c4433a-5.2.0'),
-        'runtime.tools.xtensa-esp32-elf-gcc-1.22.0-80-g6c4433a-5.2.0.path=' +
-          path.join(CM_LOCAL, 'tools', 'xtensa-esp32-elf-gcc', '1.22.0-80-g6c4433a-5.2.0'),
-        'runtime.tools.esptool_py.path=' + path.join(CM_LOCAL, 'tools', 'esptool_py', '2.6.1'),
-        'runtime.tools.esptool_py-2.6.1.path=' + path.join(CM_LOCAL, 'tools', 'esptool_py', '2.6.1')
-      ].join(',')
-    );
-    buildParams.setArduinoapiversion('10809');
-    buildParams.setFqbn(
-      'cm:esp32:ringo:PartitionScheme=min_spiffs,FlashFreq=80,UploadSpeed=921600,DebugLevel=none'
-    );
+          where.push(what);
+        }
 
-    return buildParams;
+        if(data.getOutStream().length != 0){
+          write(data.getOutStream(), stdout);
+        }else{
+          write(data.getErrStream(), stderr);
+        }
+      });
+
+      stream.on('end', () => {
+        if (fulfilled) return;
+        fulfilled = true;
+
+        error.stderr = stderr;
+        reject(error);
+      });
+
+      stream.on('status', (data) => {
+        fulfilled = true;
+
+        if (data.code === 0) {
+          resolve();
+        } else {
+          error.stderr = stderr;
+          reject(error);
+        }
+      });
+    });
   }
 }
