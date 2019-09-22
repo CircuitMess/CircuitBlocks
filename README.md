@@ -1,6 +1,6 @@
 # CircuitBlocks
 
-A graphical programming interface that helps newbies get into embedded programming. Based on Microsoft's PXT and PXT-Blockly.
+A graphical programming interface that helps newbies get into embedded programming. Based on Microsoft's PXT, PXT-Blockly (Google Blockly fork), and carlosperate's [Ardublockly](https://github.com/carlosperate/ardublockly).
 
 When first started, the app will try to identify an already existing Arduino installation. If one isn't found it will download and install the Arduino IDE along with all the required drivers and libraries required for the CircuitMess Ringo board.
 
