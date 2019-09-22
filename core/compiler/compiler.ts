@@ -354,11 +354,15 @@ export default class ArduinoCompiler {
    * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
   public static uploadBinary(binary: string, port: string, progressCallback?: (number) => void): Promise<null> {
-    return new Promise<null>((resolve, reject) => {
+    const promise = new Promise<null>((resolve, reject) => {
       if(!fs.existsSync(binary)){
         reject(new Error("Binary doesn't exist"));
         return;
       }
+
+      const serial = this.getSerial();
+      serial.stop();
+      serial.setUploading(true);
 
       const req = new UploadReq();
       req.setInstance(this.instance);
@@ -437,5 +441,9 @@ export default class ArduinoCompiler {
         }
       });
     });
+
+    promise.finally(() => this.getSerial().setUploading(false));
+
+    return promise;
   }
 }
