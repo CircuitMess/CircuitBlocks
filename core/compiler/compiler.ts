@@ -6,9 +6,12 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as yaml from "js-yaml";
 
-import { BuilderClient } from '../proto/builder_grpc_pb';
-import { BuildParams } from '../proto/builder_pb';
 import Serial from './serial';
+import {ArduinoCoreClient} from "../grpc/commands_grpc_pb";
+import {CompileReq, CompileResp} from "../grpc/compile_pb";
+import {Configuration, InitReq, VersionReq} from "../grpc/commands_pb";
+import {Instance} from "../grpc/common_pb";
+import {UploadReq, UploadResp} from "../grpc/upload_pb";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -29,8 +32,9 @@ export interface InstallInfo {
 }
 
 export default class ArduinoCompiler {
-  private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
+  private static client = new ArduinoCoreClient('localhost:50051', grpc.credentials.createInsecure());
   private static process: childProcess.ChildProcess;
+  private static instance: Instance;
 
   private static readonly CB_TMP: string = path.join(os.tmpdir(), 'circuitblocks');
   private static ARDUINO_INSTALL: string = '';
@@ -187,22 +191,33 @@ export default class ArduinoCompiler {
    */
   public static startDaemon(): Promise<null> {
     return new Promise<null>((resolve, reject) => {
-      if (this.ARDUINO_LOCAL === '') {
-        reject(new Error('Pahts not set up'));
+      if (this.installInfo.cli == null) {
+        reject(new Error('Paths not set up'));
         return;
       }
 
-      let builderPath = path.join(this.ARDUINO_INSTALL, 'arduino-builder');
-      if(os.type() == "Windows_NT") builderPath += ".exe";
-
-      if (!fs.existsSync(builderPath)) {
-        reject(new Error('Builder not found'));
+      let cliPath = path.join(this.installInfo.cli, 'arduino-cli' + (os.type() == "Windows_NT" ? ".exe" : ""));
+      if (!fs.existsSync(cliPath)) {
+        reject(new Error('CLI not found'));
         return;
       }
 
-      this.process = childProcess.execFile(builderPath, ['--daemon']);
+      this.process = childProcess.execFile(cliPath, ['daemon']);
 
-      resolve();
+      const req = new InitReq();
+      req.setLibraryManagerOnly(false);
+      const conf = new Configuration();
+      conf.setBoardmanageradditionalurlsList([ "https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json" ]);
+      conf.setDatadir(this.installInfo.local);
+      conf.setSketchbookdir(this.installInfo.sketchbook);
+      req.setConfiguration(conf);
+
+      this.client.init(req)
+          .on("data", data => {
+            this.instance = new Instance();
+            this.instance.setId(data.array[0][0]);
+          })
+          .on("end", data => resolve());
     });
   }
 
@@ -211,6 +226,7 @@ export default class ArduinoCompiler {
    */
   public static stopDaemon() {
     this.process.kill();
+    this.instance = undefined;
   }
 
   /**
@@ -236,7 +252,7 @@ export default class ArduinoCompiler {
    * @see compileSketch
    * @param code Arduino C code
    */
-  public static compile(code: string): Promise<{ binary: string; status: string[] }> {
+  public static compile(code: string): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
     const sketchDir = path.join(this.CB_TMP, 'sketch');
     const sketchPath = path.join(sketchDir, 'sketch.ino');
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
@@ -249,50 +265,73 @@ export default class ArduinoCompiler {
    * Compiles the specified Arduino sketch.
    *
    * Returns a promise. On success, resolves with the following object:
-   * { binary: path to the compiled binary, status: array of status strings returned by the compiler }
+   * { binary: path to the compiled binary, stdout: array of status strings returned by the compiler,
+   *    stderr: array of error/warning messages returned by the compiler}
    *
-   * On error rejects with the following object:
-   * { message: a short error message, error: the error object returned by the compiler }
-   *
-   * On compilation error, the rejected object will have code 2. On resolution and rejection due to compiler errors,
-   * the returned object will have the property 'output' which is an array of strings outputted by the copiler.
+   * On error rejects with an error object with an additional stderr array containing error/warning messages.
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
    */
-  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[], output: string[] }> {
-    const sketchName = path.parse(sketchPath).base;
-    const compiledPath: string = path.join(this.CB_TMP, 'build', sketchName + '.bin');
+  public static compileSketch(sketchPath: string): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
+    const pathParsed = path.parse(sketchPath);
+    const sketchName = pathParsed.name;
+    const sketchDir = pathParsed.dir;
+
+    const buildPath = path.join(this.CB_TMP, "build", sketchName);
+    const cachePath = path.join(this.CB_TMP, "cache");
+    const compiledPath: string = path.join(this.CB_TMP, "build", sketchName, sketchName + ".ino.bin");
+
+    if(!fs.existsSync(buildPath)) fs.mkdirSync(buildPath, { recursive: true });
+    if(!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
 
     return new Promise((resolve, reject) => {
-      if (this.ARDUINO_LOCAL === '')
-        reject(new Error('Arduino directories not set up. Run the setup method first'));
+      if(this.instance == undefined){
+        reject(new Error("Daemon not started"));
+        return;
+      }
 
-      const stream = this.client.build(this.buildParams(sketchPath), (err, _response) => {
-        if (err) reject(err);
-      });
 
-      const status: string[] = [];
-      const output: string[] = [];
+      const req = new CompileReq();
+      req.setInstance(this.instance);
+      req.setSketchpath(sketchDir);
+      req.setBuildcachepath(cachePath);
+      req.setBuildpath(buildPath);
+      req.setFqbn("cm:esp32:ringo");
+      req.setExportfile(compiledPath);
+
+      const stream = this.client.compile(req);
+
+      const stdout: string[] = [];
+      const stderr: string[] = [];
       let fulfilled = false;
       let error: any;
-
-      this.process.stderr.on('data', (data) => {
-        output.push(data);
-      });
+      const decoder = new TextDecoder("utf-8");
 
       stream.on('error', (data) => {
         error = data;
       });
 
-      stream.on('data', (data) => {
-        status.push(data.array);
+      stream.on('data', (data: CompileResp) => {
+        function write(what: Uint8Array | string, where: string[]){
+          if(what instanceof Uint8Array){
+            what = decoder.decode(what);
+          }
+
+          where.push(what);
+        }
+
+        if(data.getOutStream().length != 0){
+          write(data.getOutStream(), stdout);
+        }else{
+          write(data.getErrStream(), stderr);
+        }
       });
 
       stream.on('end', () => {
         if (fulfilled) return;
         fulfilled = true;
 
-        error.output = output;
+        error.stderr = stderr;
         reject(error);
       });
 
@@ -300,9 +339,9 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve({ binary: compiledPath, status, output });
+          resolve({ binary: compiledPath, stdout, stderr });
         } else {
-          error.output = output;
+          error.stderr = stderr;
           reject(error);
         }
       });

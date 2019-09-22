@@ -34,17 +34,6 @@ export default class Installer {
         if(this.PLATFORM == "Linux") this.PLATFORM += "_" + os.arch();
     }
 
-    private checkArduino(): boolean {
-        if(!ArduinoCompiler.identifyDirectories()) return false;
-        const dirs = ArduinoCompiler.getDirectories();
-
-        if(dirs.install === undefined || !fs.existsSync(dirs.install)) return false;
-    }
-
-    private checkArduinoCli(): boolean {
-        return false;
-    }
-
     private downloadArduino(callback: (string, error) => void){
         const dlDir = util.tmpdir("cb-ard-dl");
         let url: string = this.downloads.arduino[this.PLATFORM];

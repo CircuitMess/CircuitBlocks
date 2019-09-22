@@ -4,7 +4,7 @@ import path from 'path';
 import url from 'url';
 
 import { load, save, listFiles, listExamples } from './core/files';
-import ArduinoCompiler from './core/compiler/compiler';
+import ArduinoCompiler, {PortDescriptor} from './core/compiler/compiler';
 import Installer from "./core/compiler/installer";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
@@ -117,6 +117,10 @@ if(installInfo == null || Object.values(installInfo).indexOf(null) != -1){
           stage => console.log(stage),
           err => console.log(err));
 }
+
+ArduinoCompiler.startDaemon().catch((error) => console.log(error)).then(() => {
+  console.log("Daemon started");
+});
 
 let port: any;
 
