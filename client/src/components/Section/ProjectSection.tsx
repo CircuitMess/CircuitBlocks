@@ -8,7 +8,7 @@ interface ProjectSectionProps {
   title: string;
   projects: FileCard[];
   onPress: (params: { type: 'NEW' | 'OPEN'; filename?: string }) => void;
-  createNew: boolean;
+  createNew?: boolean;
 }
 
 const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProps) => {

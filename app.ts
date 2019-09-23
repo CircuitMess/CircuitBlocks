@@ -4,8 +4,8 @@ import path from 'path';
 import url from 'url';
 
 import { load, save, listFiles, listExamples } from './core/files';
-import ArduinoCompiler, {PortDescriptor} from './core/compiler/compiler';
-import Installer from "./core/compiler/installer";
+import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
+import Installer from './core/compiler/installer';
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
@@ -102,70 +102,68 @@ ipcMain.on('listFiles', (event, _args) => {
   listFiles(callback('listFiles', event));
 });
 
-
 ipcMain.on('listExamples', (event, _args) => {
   listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
 
-// TODO: Add env variables
-const username = process.env.USER;
-
 const installInfo = ArduinoCompiler.checkInstall();
-if(installInfo == null || Object.values(installInfo).indexOf(null) != -1){
-  new Installer()
-      .install(installInfo,
-          stage => console.log(stage),
-          err => console.log(err));
+if (installInfo == null || Object.values(installInfo).indexOf(null) !== -1) {
+  console.log('Installgin');
+  new Installer().install(installInfo, (stage) => console.log(stage), (err) => console.log(err));
+} else {
+  console.log('All ok');
 }
 
-ArduinoCompiler.startDaemon().catch((error) => console.log(error)).then(() => {
-  console.log("Daemon started");
-});
+// ArduinoCompiler.startDaemon()
+//   .catch((error) => console.log(error))
+//   .then(() => {
+//     console.log('Daemon started');
+//   });
 
-let port: any;
+// let port: any;
 
-ipcMain.on('ports', (event, _args) => {
-  ArduinoCompiler.identifyPort(true)
-    .then((data) => {
-      if (data.length === 0) {
-        const res = { error: { type: 'NO_DEVICES' } };
-        event.reply('ports', res);
-      } else {
-        const res = { error: null, data };
-        port = data[0].comName;
-        event.reply('ports', res);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      event.reply('ports', { error });
-    });
-});
+// ipcMain.on('ports', (event, _args) => {
+//   ArduinoCompiler.identifyPort(true)
+//     .then((data) => {
+//       if (data.length === 0) {
+//         const res = { error: { type: 'NO_DEVICES' } };
+//         event.reply('ports', res);
+//       } else {
+//         const res = { error: null, data };
+//         port = data[0].comName;
+//         event.reply('ports', res);
+//       }
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       event.reply('ports', { error });
+//     });
+// });
 
-ipcMain.on('upload', (event, args) => {
-  const { code } = args;
-  // const code = `
-  // void setup() {
-  //   Serial.begin(9600);
-  // }
+// ipcMain.on('upload', (event, args) => {
+//   const { code } = args;
+//   // const code = `
+//   // void setup() {
+//   //   Serial.begin(9600);
+//   // }
 
-  // void loop() {
-  //   Serial.println("Hello world");
-  //   delay(100);
-  // }
-  // `;
-  event.reply('upload', { error: null, stage: 'COMPILING' });
+//   // void loop() {
+//   //   Serial.println("Hello world");
+//   //   delay(100);
+//   // }
+//   // `;
+//   event.reply('upload', { error: null, stage: 'COMPILING' });
 
-  ArduinoCompiler.compile(code)
-    .then(({ binary }) => {
-      event.reply('upload', { error: null, stage: 'UPLOADING' });
-      try {
-        ArduinoCompiler.getSerial().upload(binary, port);
-        event.reply('upload', { error: null, stage: 'DONE' });
-      } catch (error) {
-        console.error(error);
-        event.reply({ error });
-      }
-    })
-    .catch((error) => console.error(error));
-});
+//   ArduinoCompiler.compile(code)
+//     .then(({ binary }) => {
+//       event.reply('upload', { error: null, stage: 'UPLOADING' });
+//       try {
+//         ArduinoCompiler.getSerial().upload(binary, port);
+//         event.reply('upload', { error: null, stage: 'DONE' });
+//       } catch (error) {
+//         console.error(error);
+//         event.reply({ error });
+//       }
+//     })
+//     .catch((error) => console.error(error));
+// });

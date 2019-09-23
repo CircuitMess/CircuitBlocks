@@ -19,7 +19,7 @@ export default class Serial {
     this.buffer = '';
   }
 
-  public setUploading(uploading: boolean){
+  public setUploading(uploading: boolean) {
     this.uploading = uploading;
   }
 
