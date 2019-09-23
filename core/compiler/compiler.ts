@@ -4,10 +4,14 @@ import * as grpc from 'grpc';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
+import * as yaml from "js-yaml";
 
-import { BuilderClient } from '../proto/builder_grpc_pb';
-import { BuildParams } from '../proto/builder_pb';
 import Serial from './serial';
+import {ArduinoCoreClient} from "../grpc/commands_grpc_pb";
+import {CompileReq, CompileResp} from "../grpc/compile_pb";
+import {Configuration, InitReq, VersionReq} from "../grpc/commands_pb";
+import {Instance} from "../grpc/common_pb";
+import {UploadReq, UploadResp} from "../grpc/upload_pb";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -19,25 +23,26 @@ export interface PortDescriptor {
   comName: string;
 }
 
+export interface InstallInfo {
+  arduino: string | null,
+  cli: string | null,
+
+  sketchbook: string | null,
+  local: string | null
+}
+
 export default class ArduinoCompiler {
-  private static client = new BuilderClient('localhost:12345', grpc.credentials.createInsecure());
+  private static client = new ArduinoCoreClient('localhost:50051', grpc.credentials.createInsecure());
   private static process: childProcess.ChildProcess;
+  private static instance: Instance;
 
   private static readonly CB_TMP: string = path.join(os.tmpdir(), 'circuitblocks');
   private static ARDUINO_INSTALL: string = '';
   private static ARDUINO_HOME: string = '';
   private static ARDUINO_LOCAL: string = '';
 
-  private static serial: Serial | undefined;
-  private static uploading: boolean = false;
-
-  public static getSerial(): Serial {
-    if (this.serial === undefined) {
-      this.serial = new Serial();
-    }
-
-    return this.serial;
-  }
+  private static serial: Serial;
+  private static installInfo: InstallInfo;
 
   public static getDirectories(){
     return {
@@ -45,6 +50,14 @@ export default class ArduinoCompiler {
       home: this.ARDUINO_HOME,
       local: this.ARDUINO_LOCAL
     };
+  }
+
+  public static getSerial(){
+    if(this.serial == undefined){
+      this.serial = new Serial();
+    }
+
+    return this.serial;
   }
 
   /**
@@ -60,11 +73,7 @@ export default class ArduinoCompiler {
     this.ARDUINO_LOCAL = local;
   }
 
-  /**
-   * Attempts to identify relevant Arduino directories.
-   * @return True if successful, false otherwise
-   */
-  public static identifyDirectories(): boolean {
+  public static checkInstall(): InstallInfo | null {
     let local: string;
 
     if(os.type() === "Windows_NT"){
@@ -78,14 +87,70 @@ export default class ArduinoCompiler {
     }else if(os.type() === "Darwin"){
       local = path.join(os.homedir(), "Library", "Arduino15");
     }else{
-      return false;
+      return null;
     }
 
-    if(!fs.existsSync(local) || !fs.existsSync(path.join(local, "preferences.txt"))) return false;
+    if(!fs.existsSync(local)){
+      return null;
+    }
 
-    let home: string, install: string;
+    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: local };
 
-    const preferences = fs.readFileSync(path.join(local, "preferences.txt")).toString().split(os.EOL);
+    const prefPath = path.join(local, "preferences.txt");
+    const configPath = path.join(local, "arduino-cli.yaml");
+
+    if(fs.existsSync(prefPath)){
+      const preferences = this.parsePreferences(prefPath);
+
+      if(preferences != null){
+        info.arduino = preferences.arduino;
+        info.sketchbook = preferences.sketchbook;
+      }
+    }
+
+    if(fs.existsSync(configPath)){
+      const config = yaml.safeLoad(fs.readFileSync(configPath));
+
+      info.local = config.arduino_data;
+      info.sketchbook = config.sketchbook_path;
+    }
+
+    const installPath = path.join(local, "..", os.type() == "Windows_NT" ? "Arduino" : ".arduino");
+
+    if(!fs.existsSync(installPath)){
+      return info;
+    }
+
+    const cliPath = path.join(installPath, "arduino-cli" + (os.type() == "Windows_NT" ? ".exe" : ""));
+    if(fs.existsSync(cliPath)){
+      info.cli = installPath;
+    }
+
+    if(info.arduino == null){
+      let install: { version: string, path: string } | null = null;
+
+      fs.readdirSync(installPath).forEach(file => {
+        const arduinoPath = path.join(installPath, file);
+        if(!fs.statSync(arduinoPath).isDirectory()) return;
+        if(!file.startsWith("arduino-")) return;
+        const version = file.substring(8);
+
+        if(install == null || this.isNewer(version, install.version)){
+          install = { version, path: arduinoPath };
+        }
+      });
+
+      info.arduino = install.path;
+    }
+
+    this.installInfo = info;
+    return info;
+  }
+
+  private static parsePreferences(prefPath): { arduino: string, sketchbook: string } | null {
+    const preferences = fs.readFileSync(prefPath).toString().split(os.EOL);
+
+    let home: string = "";
     const installs: any = {};
     preferences.forEach(line => {
       const parts = line.split("=");
@@ -100,36 +165,14 @@ export default class ArduinoCompiler {
       }
     });
 
-    if(home === undefined || installs === {}) return false;
+    if(installs === {}) return null;
     const versions = Object.keys(installs);
     let newest = versions[0];
     for(let i = 1; i < versions.length; i++){
       if(this.isNewer(versions[i], newest)) newest = versions[i];
     }
 
-    install = installs[newest];
-
-    // Tests
-
-    const required: string[] = [
-        path.join(local, "packages", "cm"),
-        home,
-        path.join(install, "hardware"),
-        path.join(install, "tools"),
-        path.join(install, "tools-builder"),
-    ];
-
-    for(let i = 0; i < required.length; i++){
-      if(!fs.existsSync(required[i])) return false;
-    }
-
-    this.ARDUINO_LOCAL = local;
-    this.ARDUINO_HOME = home;
-    this.ARDUINO_INSTALL = install;
-
-    console.log([ local, home, install ]);
-
-    return true;
+    return { arduino: installs[newest], sketchbook: home };
   }
 
   private static isNewer(newer: string, older: string): boolean {
@@ -148,22 +191,33 @@ export default class ArduinoCompiler {
    */
   public static startDaemon(): Promise<null> {
     return new Promise<null>((resolve, reject) => {
-      if (this.ARDUINO_LOCAL === '') {
-        reject(new Error('Pahts not set up'));
+      if (this.installInfo.cli == null) {
+        reject(new Error('Paths not set up'));
         return;
       }
 
-      let builderPath = path.join(this.ARDUINO_INSTALL, 'arduino-builder');
-      if(os.type() == "Windows_NT") builderPath += ".exe";
-
-      if (!fs.existsSync(builderPath)) {
-        reject(new Error('Builder not found'));
+      let cliPath = path.join(this.installInfo.cli, 'arduino-cli' + (os.type() == "Windows_NT" ? ".exe" : ""));
+      if (!fs.existsSync(cliPath)) {
+        reject(new Error('CLI not found'));
         return;
       }
 
-      this.process = childProcess.execFile(builderPath, ['--daemon']);
+      this.process = childProcess.execFile(cliPath, ['daemon']);
 
-      resolve();
+      const req = new InitReq();
+      req.setLibraryManagerOnly(false);
+      const conf = new Configuration();
+      conf.setBoardmanageradditionalurlsList([ "https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json" ]);
+      conf.setDatadir(this.installInfo.local);
+      conf.setSketchbookdir(this.installInfo.sketchbook);
+      req.setConfiguration(conf);
+
+      this.client.init(req)
+          .on("data", data => {
+            this.instance = new Instance();
+            this.instance.setId(data.array[0][0]);
+          })
+          .on("end", data => resolve());
     });
   }
 
@@ -172,6 +226,7 @@ export default class ArduinoCompiler {
    */
   public static stopDaemon() {
     this.process.kill();
+    this.instance = undefined;
   }
 
   /**
@@ -196,8 +251,9 @@ export default class ArduinoCompiler {
    * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
    * @see compileSketch
    * @param code Arduino C code
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
-  public static compile(code: string): Promise<{ binary: string; status: string[] }> {
+  public static compile(code: string, progressCallback?: (number) => void): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
     const sketchDir = path.join(this.CB_TMP, 'sketch');
     const sketchPath = path.join(sketchDir, 'sketch.ino');
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
@@ -210,50 +266,113 @@ export default class ArduinoCompiler {
    * Compiles the specified Arduino sketch.
    *
    * Returns a promise. On success, resolves with the following object:
-   * { binary: path to the compiled binary, status: array of status strings returned by the compiler }
+   * { binary: path to the compiled binary, stdout: array of status strings returned by the compiler,
+   *    stderr: array of error/warning messages returned by the compiler}
    *
-   * On error rejects with the following object:
-   * { message: a short error message, error: the error object returned by the compiler }
-   *
-   * On compilation error, the rejected object will have code 2. On resolution and rejection due to compiler errors,
-   * the returned object will have the property 'output' which is an array of strings outputted by the copiler.
+   * On error rejects with an error object with an additional stderr array containing error/warning messages.
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
-  public static compileSketch(sketchPath: string): Promise<{ binary: string; status: string[], output: string[] }> {
-    const sketchName = path.parse(sketchPath).base;
-    const compiledPath: string = path.join(this.CB_TMP, 'build', sketchName + '.bin');
+  public static compileSketch(sketchPath: string, progressCallback?: (number) => void): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
+    const pathParsed = path.parse(sketchPath);
+    const sketchName = pathParsed.name;
+    const sketchDir = pathParsed.dir;
+
+    const buildPath = path.join(this.CB_TMP, "build", sketchName);
+    const cachePath = path.join(this.CB_TMP, "cache");
+    const compiledPath: string = path.join(buildPath, sketchName + ".ino.bin");
+
+    if(!fs.existsSync(buildPath)) fs.mkdirSync(buildPath, { recursive: true });
+    if(!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
+
+    const time = 20; // approx. time to compile
 
     return new Promise((resolve, reject) => {
-      if (this.ARDUINO_LOCAL === '')
-        reject(new Error('Arduino directories not set up. Run the setup method first'));
+      if(this.instance == undefined){
+        reject(new Error("Daemon not started"));
+        return;
+      }
 
-      const stream = this.client.build(this.buildParams(sketchPath), (err, _response) => {
-        if (err) reject(err);
-      });
+      let currentProgress = 0;
+      let progPerTenthSec = 100/(time * 10);
+      let finished = false;
+      let resolveObject = undefined;
+      let stage = 1;
+      function popProgress(){
+        if(stage == 1 && currentProgress >= 90 && !finished){
+          console.log("slowing 90");
+          progPerTenthSec /= 10;
+          stage++;
+        }else if(stage == 2 && currentProgress >= 95 && !finished){
+          console.log("slowing 95");
+          progPerTenthSec /= 10;
+          stage++;
+        }else if(stage == 3 && currentProgress >= 98 && !finished){
+          console.log("slowing 98");
+          progPerTenthSec /= 10;
+          stage++;
+        }
 
-      const status: string[] = [];
-      const output: string[] = [];
+        if(currentProgress < 100){
+          currentProgress += progPerTenthSec;
+          currentProgress = Math.min(currentProgress, 100);
+        }
+        progressCallback(currentProgress);
+
+        if(currentProgress >= 100 && finished){
+          clearInterval(progInterval);
+          resolve(resolveObject);
+        }
+      }
+
+      let progInterval;
+      if(progressCallback){
+        progInterval = setInterval(popProgress, 100);
+      }
+
+      const req = new CompileReq();
+      req.setInstance(this.instance);
+      req.setSketchpath(sketchDir);
+      req.setBuildcachepath(cachePath);
+      req.setBuildpath(buildPath);
+      req.setFqbn("cm:esp32:ringo");
+      req.setExportfile(path.join(buildPath, "export"));
+
+      const stream = this.client.compile(req);
+
+      const stdout: string[] = [];
+      const stderr: string[] = [];
       let fulfilled = false;
       let error: any;
-
-      this.process.stderr.on('data', (data) => {
-        output.push(data);
-      });
+      const decoder = new TextDecoder("utf-8");
 
       stream.on('error', (data) => {
         error = data;
       });
 
-      stream.on('data', (data) => {
-        status.push(data.array);
+      stream.on('data', (data: CompileResp) => {
+        function write(what: Uint8Array | string, where: string[]){
+          if(what instanceof Uint8Array){
+            what = decoder.decode(what);
+          }
+
+          where.push(what);
+        }
+
+        if(data.getOutStream().length != 0){
+          write(data.getOutStream(), stdout);
+        }else{
+          write(data.getErrStream(), stderr);
+        }
       });
 
       stream.on('end', () => {
         if (fulfilled) return;
         fulfilled = true;
 
-        error.output = output;
+        error.stderr = stderr;
+        if(progInterval) clearInterval(progInterval);
         reject(error);
       });
 
@@ -261,58 +380,124 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve({ binary: compiledPath, status, output });
+          resolveObject = { binary: compiledPath, stdout, stderr };
+
+          if(progInterval){
+            finished = true;
+            progPerTenthSec = 100/(time * 10);
+            console.log("finished");
+
+            clearInterval(progInterval);
+            progInterval = setInterval(popProgress, 10);
+          }else{
+            resolve(resolveObject);
+          }
         } else {
-          error.output = output;
+          error.stderr = stderr;
+          if(progInterval) clearInterval(progInterval);
           reject(error);
         }
       });
     });
   }
 
-  private static buildParams(sketchPath: string): BuildParams {
-    const buildParams: BuildParams = new BuildParams();
+  /**
+   * Uploads the specified binary to the MAKERphone
+   * @param binary Path to the binary
+   * @param port MAKERphone port
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
+   */
+  public static uploadBinary(binary: string, port: string, progressCallback?: (number) => void): Promise<null> {
+    const promise = new Promise<null>((resolve, reject) => {
+      if(!fs.existsSync(binary)){
+        reject(new Error("Binary doesn't exist"));
+        return;
+      }
 
-    const CM_LOCAL: string = path.join(this.ARDUINO_LOCAL, 'packages', 'cm');
+      const serial = this.getSerial();
+      serial.stop();
+      serial.setUploading(true);
 
-    buildParams.setSketchlocation(sketchPath);
-    buildParams.setBuildpath(path.join(this.CB_TMP, 'build'));
-    buildParams.setBuildcachepath(path.join(this.CB_TMP, 'cache'));
+      const req = new UploadReq();
+      req.setInstance(this.instance);
+      req.setFqbn("cm:esp32:ringo");
+      req.setImportFile(binary);
+      req.setSketchPath(binary);
+      req.setPort(port);
 
-    buildParams.setHardwarefolders(
-      [path.join(this.ARDUINO_INSTALL, 'hardware'), path.join(this.ARDUINO_LOCAL, 'packages')].join(
-        ','
-      )
-    );
+      const stream = this.client.upload(req);
 
-    buildParams.setToolsfolders(
-      [
-        path.join(this.ARDUINO_INSTALL, 'tools-builder'),
-        path.join(this.ARDUINO_INSTALL, 'hardware', 'tools', 'avr'),
-        path.join(this.ARDUINO_LOCAL, 'packages')
-      ].join(',')
-    );
+      const stdout: string[] = [];
+      const stderr: string[] = [];
+      let fulfilled = false;
+      let error: any;
+      const decoder = new TextDecoder("utf-8");
 
-    buildParams.setBuiltinlibrariesfolders(path.join(this.ARDUINO_INSTALL, 'libraries'));
-    buildParams.setOtherlibrariesfolders(path.join(this.ARDUINO_HOME, 'libraries'));
+      const progRegex = new RegExp("Writing at 0x([0-9a-f]{8})... \\((\\d+) %\\)");
+      let progressStarted = false;
 
-    buildParams.setCustombuildproperties(
-      [
-        'runtime.tools.mkspiffs.path=' + path.join(CM_LOCAL, 'tools', 'mkdpiffs', '0.2.3'),
-        'runtime.tools.mkspiffs-0.2.3.path=' + path.join(CM_LOCAL, 'tools', 'mkdpiffs', '0.2.3'),
-        'runtime.tools.xtensa-esp32-elf-gcc.path=' +
-          path.join(CM_LOCAL, 'tools', 'xtensa-esp32-elf-gcc', '1.22.0-80-g6c4433a-5.2.0'),
-        'runtime.tools.xtensa-esp32-elf-gcc-1.22.0-80-g6c4433a-5.2.0.path=' +
-          path.join(CM_LOCAL, 'tools', 'xtensa-esp32-elf-gcc', '1.22.0-80-g6c4433a-5.2.0'),
-        'runtime.tools.esptool_py.path=' + path.join(CM_LOCAL, 'tools', 'esptool_py', '2.6.1'),
-        'runtime.tools.esptool_py-2.6.1.path=' + path.join(CM_LOCAL, 'tools', 'esptool_py', '2.6.1')
-      ].join(',')
-    );
-    buildParams.setArduinoapiversion('10809');
-    buildParams.setFqbn(
-      'cm:esp32:ringo:PartitionScheme=min_spiffs,FlashFreq=80,UploadSpeed=921600,DebugLevel=none'
-    );
+      stream.on('error', (data) => {
+        error = data;
+      });
 
-    return buildParams;
+      stream.on('data', (data: UploadResp) => {
+        function write(what: Uint8Array | string, where: string[]){
+          if(what instanceof Uint8Array){
+            what = decoder.decode(what);
+          }
+
+          where.push(what);
+
+          if(!progressCallback) return;
+
+          const matches = progRegex.exec(what);
+          if(matches){
+            if(matches[1] == "00010000"){
+              progressStarted = true;
+            }else if(matches[1] == "00008000"){
+              progressStarted = false;
+            }
+
+            if(progressStarted){
+              const val = parseInt(matches[2]);
+              progressCallback(val);
+
+              if(val == 100){
+                progressStarted = false;
+              }
+            }
+          }
+        }
+
+        if(data.getOutStream().length != 0){
+          write(data.getOutStream(), stdout);
+        }else{
+          write(data.getErrStream(), stderr);
+        }
+      });
+
+      stream.on('end', () => {
+        if (fulfilled) return;
+        fulfilled = true;
+
+        error.stderr = stderr;
+        reject(error);
+      });
+
+      stream.on('status', (data) => {
+        fulfilled = true;
+
+        if (data.code === 0) {
+          resolve();
+        } else {
+          error.stderr = stderr;
+          reject(error);
+        }
+      });
+    });
+
+    promise.finally(() => this.getSerial().setUploading(false));
+
+    return promise;
   }
 }

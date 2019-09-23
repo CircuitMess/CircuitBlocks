@@ -4,7 +4,8 @@ import path from 'path';
 import url from 'url';
 
 import { load, save, listFiles, listExamples } from './core/files';
-import ArduinoCompiler from './core/compiler/compiler';
+import ArduinoCompiler, {PortDescriptor} from './core/compiler/compiler';
+import Installer from "./core/compiler/installer";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
@@ -101,6 +102,7 @@ ipcMain.on('listFiles', (event, _args) => {
   listFiles(callback('listFiles', event));
 });
 
+
 ipcMain.on('listExamples', (event, _args) => {
   listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
@@ -108,17 +110,17 @@ ipcMain.on('listExamples', (event, _args) => {
 // TODO: Add env variables
 const username = process.env.USER;
 
-const installPath = username === 'fran' ? 'installs' : 'Downloads';
+const installInfo = ArduinoCompiler.checkInstall();
+if(installInfo == null || Object.values(installInfo).indexOf(null) != -1){
+  new Installer()
+      .install(installInfo,
+          stage => console.log(stage),
+          err => console.log(err));
+}
 
-ArduinoCompiler.setup(
-  `/home/${username}/${installPath}/arduino-1.8.9`,
-  `/home/${username}/Arduino`,
-  `/home/${username}/.arduino15`
-);
-
-ArduinoCompiler.identifyDirectories();
-
-ArduinoCompiler.startDaemon();
+ArduinoCompiler.startDaemon().catch((error) => console.log(error)).then(() => {
+  console.log("Daemon started");
+});
 
 let port: any;
 

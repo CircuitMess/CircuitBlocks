@@ -13,7 +13,11 @@
     "@grpc/proto-loader": "^0.5.2",
     "google-protobuf": "^3.10.0-rc.1",
     "grpc": "^1.23.3",
-    "serialport": "^7.1.5"
+    "js-yaml": "^3.13.1",
+    "lzma-native": "^4.0.5",
+    "serialport": "^7.1.5",
+    "sudo-prompt": "^9.0.0",
+    "unzipper": "^0.10.5"
   },
   "build": {
     "appId": "com.circuitmess.circuitblocks",
@@ -44,9 +48,9 @@
     "electron-start": "yarn build && env ELECTRON_ENV=development electron build/app.js",
     "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\"",
-    "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./proto --grpc_out=./proto --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/proto ./proto/*.proto",
-    "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/proto -I ./proto ./proto/*.proto",
-    "proto": "npm run proto-js && npm-run proto-ts",
+    "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./core/grpc --grpc_out=./core/grpc --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/grpc/proto core/grpc/proto/*.proto",
+    "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/grpc -I core/grpc/proto core/grpc/proto/*.proto",
+    "proto": "yarn proto-js && yarn proto-ts",
     "postinstall": "yarn rebuild-electron",
     "pack": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder --dir",
     "dist": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder"

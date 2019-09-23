@@ -19,6 +19,10 @@ export default class Serial {
     this.buffer = '';
   }
 
+  public setUploading(uploading: boolean){
+    this.uploading = uploading;
+  }
+
   public stop() {
     if (this.com === undefined) return;
 
