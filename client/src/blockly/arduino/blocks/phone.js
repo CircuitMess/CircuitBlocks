@@ -255,18 +255,9 @@ Blockly.defineBlocksWithJsonArray([
         message0: "set led %1 to colour %2",
         args0: [
             {
-                type: "field_dropdown",
+                type: "input_value",
                 name: "LED",
-                options: [
-                    [ "1", "0" ],
-                    [ "2", "1" ],
-                    [ "3", "2" ],
-                    [ "4", "3" ],
-                    [ "5", "4" ],
-                    [ "6", "5" ],
-                    [ "7", "6" ],
-                    [ "8", "7" ]
-                ]
+                check: "Number"
             },
             {
                 type: "input_value",

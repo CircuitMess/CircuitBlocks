@@ -32,7 +32,7 @@ Blockly.Arduino['led_colour'] = function(block) {
 };
 
 Blockly.Arduino['led_on'] = function(block) {
-    var led = block.getFieldValue('LED');
+    var led = Blockly.Arduino.valueToCode(block, 'LED', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
     var code = 'mp.leds[' + led + '] = ' + colour + ";\n";
