@@ -14,7 +14,7 @@ ArduinoCompiler.startDaemon()
     .then(() => {
     console.log("compiling");
 
-    ArduinoCompiler.compileSketch("/home/cm/Arduino/sketches/test/test.ino").then(binary => {
+    ArduinoCompiler.compileSketch("/home/cm/Arduino/sketches/test/test.ino", prog => console.log("compile progress: " + prog + " %")).then(binary => {
         console.log(binary);
         ArduinoCompiler.identifyPort().then((ports: PortDescriptor[]) => {
             if(ports.length == 0){
@@ -24,7 +24,7 @@ ArduinoCompiler.startDaemon()
 
             console.log("uploading");
 
-            ArduinoCompiler.uploadBinary(binary.binary, ports[0].comName, prog => console.log("progress: " + prog + " %")).then(() => console.log("done"));
+            ArduinoCompiler.uploadBinary(binary.binary, ports[0].comName, prog => console.log("upload progress: " + prog + " %")).then(() => console.log("done"));
         });
-    }).then(console.log);
+    });
 });

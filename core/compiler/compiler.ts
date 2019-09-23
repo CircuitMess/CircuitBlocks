@@ -251,8 +251,9 @@ export default class ArduinoCompiler {
    * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
    * @see compileSketch
    * @param code Arduino C code
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
-  public static compile(code: string): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
+  public static compile(code: string, progressCallback?: (number) => void): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
     const sketchDir = path.join(this.CB_TMP, 'sketch');
     const sketchPath = path.join(sketchDir, 'sketch.ino');
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
@@ -271,8 +272,9 @@ export default class ArduinoCompiler {
    * On error rejects with an error object with an additional stderr array containing error/warning messages.
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
+   * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
-  public static compileSketch(sketchPath: string): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
+  public static compileSketch(sketchPath: string, progressCallback?: (number) => void): Promise<{ binary: string; stdout: string[], stderr: string[] }> {
     const pathParsed = path.parse(sketchPath);
     const sketchName = pathParsed.name;
     const sketchDir = pathParsed.dir;
@@ -284,10 +286,49 @@ export default class ArduinoCompiler {
     if(!fs.existsSync(buildPath)) fs.mkdirSync(buildPath, { recursive: true });
     if(!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
 
+    const time = 20; // approx. time to compile
+
     return new Promise((resolve, reject) => {
       if(this.instance == undefined){
         reject(new Error("Daemon not started"));
         return;
+      }
+
+      let currentProgress = 0;
+      let progPerTenthSec = 100/(time * 10);
+      let finished = false;
+      let resolveObject = undefined;
+      let stage = 1;
+      function popProgress(){
+        if(stage == 1 && currentProgress >= 90 && !finished){
+          console.log("slowing 90");
+          progPerTenthSec /= 10;
+          stage++;
+        }else if(stage == 2 && currentProgress >= 95 && !finished){
+          console.log("slowing 95");
+          progPerTenthSec /= 10;
+          stage++;
+        }else if(stage == 3 && currentProgress >= 98 && !finished){
+          console.log("slowing 98");
+          progPerTenthSec /= 10;
+          stage++;
+        }
+
+        if(currentProgress < 100){
+          currentProgress += progPerTenthSec;
+          currentProgress = Math.min(currentProgress, 100);
+        }
+        progressCallback(currentProgress);
+
+        if(currentProgress >= 100 && finished){
+          clearInterval(progInterval);
+          resolve(resolveObject);
+        }
+      }
+
+      let progInterval;
+      if(progressCallback){
+        progInterval = setInterval(popProgress, 100);
       }
 
       const req = new CompileReq();
@@ -331,6 +372,7 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         error.stderr = stderr;
+        if(progInterval) clearInterval(progInterval);
         reject(error);
       });
 
@@ -338,9 +380,21 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve({ binary: compiledPath, stdout, stderr });
+          resolveObject = { binary: compiledPath, stdout, stderr };
+
+          if(progInterval){
+            finished = true;
+            progPerTenthSec = 100/(time * 10);
+            console.log("finished");
+
+            clearInterval(progInterval);
+            progInterval = setInterval(popProgress, 10);
+          }else{
+            resolve(resolveObject);
+          }
         } else {
           error.stderr = stderr;
+          if(progInterval) clearInterval(progInterval);
           reject(error);
         }
       });
