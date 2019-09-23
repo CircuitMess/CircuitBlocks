@@ -2,8 +2,16 @@ import React from 'react';
 
 import { Card, CardContainer } from '../Card';
 import Section from './Section';
+import { FileCard } from '../../layouts/Home';
 
-const ProjectSection = (props) => {
+interface ProjectSectionProps {
+  title: string;
+  projects: FileCard[];
+  onPress: (params: { type: 'NEW' | 'OPEN'; filename?: string }) => void;
+  createNew: boolean;
+}
+
+const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProps) => {
   const { title, projects, onPress, createNew } = props;
 
   console.log(projects);

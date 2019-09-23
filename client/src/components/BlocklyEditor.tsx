@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class BlocklyEditor extends React.Component {
+interface BlocklyEditorProps {
+  height: number;
+  width: number;
+  isCodeOpen: boolean;
+}
+
+class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
   static propTypes = {
     setRef: PropTypes.func.isRequired,
     height: PropTypes.number.isRequired,

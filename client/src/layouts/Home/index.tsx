@@ -44,7 +44,7 @@ interface listFiles {
   data?: string[];
 }
 
-interface FileCard {
+export interface FileCard {
   title: string;
   author: string;
   description?: string;
