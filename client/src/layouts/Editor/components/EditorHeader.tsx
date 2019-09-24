@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import NProgress from 'nprogress';
 
 import Button from '../../../components/Button';
 import Progressbar from './ProgressBar';
@@ -102,7 +103,7 @@ const EditorHeader: React.FC<Props> = (props) => {
       {running && runningPercentage && <Progressbar percentage={runningPercentage} />}
 
       <div className="left">
-        <Button className="icon" color="no-fill" onClick={home}>
+        <Button className="icon" onClick={home}>
           <i className="material-icons"> arrow_back </i>
         </Button>
         <div className="title">{title}</div>

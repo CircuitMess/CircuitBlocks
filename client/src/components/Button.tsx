@@ -1,5 +1,37 @@
 import styled from 'styled-components';
 
+interface Colors {
+  [name: string]: {
+    backgroundColor: string;
+    color: string;
+    boxShadow?: string;
+  };
+}
+
+const colors: Colors = {
+  red: {
+    backgroundColor: '#E3384D',
+    color: 'white'
+  },
+  blue: {
+    backgroundColor: '#1045BA',
+    color: 'white'
+  },
+  teal: {
+    backgroundColor: '#00BED6',
+    color: 'white'
+  },
+  white: {
+    backgroundColor: '#ffffff',
+    color: '#595959'
+  },
+  noFill: {
+    backgroundColor: ' none',
+    boxShadow: 'none',
+    color: '#595959'
+  }
+};
+
 const Button = styled.button`
   border: none;
   -moz-user-select: none;
@@ -47,14 +79,16 @@ const Button = styled.button`
 
   i.material-icons,
   .text {
-    color: white;
+    color: ${(props) =>
+      props && props.color ? colors[props.color] && colors[props.color].color : 'white'};
     display: inline-block;
     line-height: 24px;
     vertical-align: middle;
   }
 
   .text {
-    color: white;
+    color: ${(props) =>
+      props && props.color ? colors[props.color] && colors[props.color].color : 'white'};
     font-style: normal;
     font-weight: 600;
     font-size: 10px;
@@ -73,40 +107,5 @@ const Button = styled.button`
 
   ${(props) => props.color && colors[props.color]}
 `;
-
-interface Colors {
-  [name: string]:
-    | {
-        backgroundColor: string;
-        color: string;
-      }
-    | {
-        backgroundColor: string;
-        boxShadow: string;
-      };
-}
-
-const colors: Colors = {
-  red: {
-    backgroundColor: '#E3384D',
-    color: 'white'
-  },
-  blue: {
-    backgroundColor: '#1045BA',
-    color: 'white'
-  },
-  teal: {
-    backgroundColor: '#00BED6',
-    color: 'white'
-  },
-  white: {
-    backgroundColor: '#ffffff',
-    color: '#595959'
-  },
-  noFill: {
-    backgroundColor: ' none',
-    boxShadow: 'none'
-  }
-};
 
 export default Button;
