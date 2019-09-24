@@ -76,7 +76,7 @@ const Prompt: React.FC<Props> = (props) => {
         <form onSubmit={onSubmit}>
           <input type="text" value={value} onChange={handleChange} autoFocus />
           <Footer>
-            <Button onClick={close} color="danger">
+            <Button onClick={close} color="danger" type="button">
               Close
             </Button>
             <Button color="success" type="submit">
