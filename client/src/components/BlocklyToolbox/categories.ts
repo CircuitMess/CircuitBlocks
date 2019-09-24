@@ -1086,6 +1086,11 @@ categories.push({
             xml: Blocks.display.fontsize
         },
         {
+            name: "display_fonttype",
+            group: "Text",
+            xml: Blocks.display.fonttype
+        },
+        {
             name: "display_fontcolour",
             group: "Text",
             xml: Blocks.display.fontcolour

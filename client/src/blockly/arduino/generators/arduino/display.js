@@ -36,7 +36,14 @@ Blockly.Arduino['display_invert'] = function(block) {
 Blockly.Arduino['display_fontsize'] = function(block) {
     var size = Blockly.Arduino.valueToCode(block, 'SIZE', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.display.setTextFont(" + size + ");\n";
+    var code = "mp.display.setTextSize(" + size + ");\n";
+    return code;
+};
+
+Blockly.Arduino['display_fonttype'] = function(block) {
+    var type = block.getFieldValue('TYPE');
+
+    var code = "mp.display.setTextFont(" + type + ");\n";
     return code;
 };
 
@@ -70,7 +77,9 @@ Blockly.Arduino['draw_rect'] = function(block) {
     var h = Blockly.Arduino.valueToCode(block, 'H', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.display.drawRect(${x}, ${y}, ${w}, ${h}, ${colour});\n`;
+    var func = block.getFieldValue("FUNC");
+
+    var code = `mp.display.${func}Rect(${x}, ${y}, ${w}, ${h}, ${colour});\n`;
     return code;
 };
 
@@ -80,7 +89,9 @@ Blockly.Arduino['draw_circle'] = function(block) {
     var r = Blockly.Arduino.valueToCode(block, 'R', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.display.drawCircle(${x}, ${y}, ${r}, ${colour});\n`;
+    var func = block.getFieldValue("FUNC");
+
+    var code = `mp.display.${func}Circle(${x}, ${y}, ${r}, ${colour});\n`;
     return code;
 };
 
@@ -91,7 +102,9 @@ Blockly.Arduino['draw_ellipse'] = function(block) {
     var ry = Blockly.Arduino.valueToCode(block, 'RY', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = `mp.display.drawCircle(${x}, ${y}, ${rx}, ${ry}, ${colour});\n`;
+    var func = block.getFieldValue("FUNC");
+
+    var code = `mp.display.${func}Ellipse(${x}, ${y}, ${rx}, ${ry}, ${colour});\n`;
     return code;
 };
 
@@ -104,7 +117,8 @@ Blockly.Arduino['draw_triangle'] = function(block) {
     var y2 = Blockly.Arduino.valueToCode(block, 'Y2', Blockly.Arduino.ORDER_ATOMIC);
 
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);
+    var func = block.getFieldValue("FUNC");
 
-    var code = `mp.display.drawTriangle(${x0}, ${y0}, ${x1}, ${y1}, ${x2}, ${y2}, ${colour});\n`;
+    var code = `mp.display.${func}Triangle(${x0}, ${y0}, ${x1}, ${y1}, ${x2}, ${y2}, ${colour});\n`;
     return code;
 };

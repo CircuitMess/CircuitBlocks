@@ -117,6 +117,26 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     },
     {
+        type: "display_fonttype",
+        message0: "set font type %1",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "TYPE",
+                options: [
+                    [ "1", "1" ],
+                    [ "2", "2" ],
+                ]
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Msg.DISPLAY_HUE,
+        tooltip: "Sets the display font type",
+        helpUrl: ""
+    },
+    {
         type: "display_fontcolour",
         message0: "set font colour to %1",
         args0: [
@@ -183,8 +203,16 @@ Blockly.defineBlocksWithJsonArray([
 Blockly.defineBlocksWithJsonArray([
     {
         type: "draw_rect",
-        message0: "draw rectangle with colour %1 x %2 y %3 width %4 height %5",
+        message0: "draw %1 rectangle with colour %2 x %3 y %4 width %5 height %6",
         args0: [
+            {
+                type: "field_dropdown",
+                name: "FUNC",
+                options: [
+                    [ "filled", "fill" ],
+                    [ "outlined", "draw" ],
+                ]
+            },
             {
                 type: "input_value",
                 name: "COLOUR",
@@ -221,8 +249,16 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "draw_circle",
-        message0: "draw circle with colour %1 x %2 y %3 radius %4",
+        message0: "draw %1 circle with colour %2 x %3 y %4 radius %5",
         args0: [
+            {
+                type: "field_dropdown",
+                name: "FUNC",
+                options: [
+                    [ "filled", "fill" ],
+                    [ "outlined", "draw" ],
+                ]
+            },
             {
                 type: "input_value",
                 name: "COLOUR",
@@ -254,8 +290,16 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "draw_ellipse",
-        message0: "draw ellipse with colour %1 x %2 y %3 radius x %4 radius y %5",
+        message0: "draw %1 ellipse with colour %2 x %3 y %4 radius x %5 radius y %6",
         args0: [
+            {
+                type: "field_dropdown",
+                name: "FUNC",
+                options: [
+                    [ "filled", "fill" ],
+                    [ "outlined", "draw" ],
+                ]
+            },
             {
                 type: "input_value",
                 name: "COLOUR",
@@ -292,8 +336,16 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "draw_triangle",
-        message0: "draw triangle with colour %1 x0 %2 y0 %3 x1 %4 y1 %5 x2 %6 y2 %7",
+        message0: "draw %1 triangle with colour %2 x0 %3 y0 %4 x1 %5 y1 %6 x2 %7 y2 %8",
         args0: [
+            {
+                type: "field_dropdown",
+                name: "FUNC",
+                options: [
+                    [ "filled", "fill" ],
+                    [ "outlined", "draw" ],
+                ]
+            },
             {
                 type: "input_value",
                 name: "COLOUR",

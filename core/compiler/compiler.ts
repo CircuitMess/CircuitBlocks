@@ -226,13 +226,15 @@ export default class ArduinoCompiler {
       conf.setSketchbookdir(this.installInfo.sketchbook);
       req.setConfiguration(conf);
 
-      this.client
-        .init(req)
-        .on('data', (data) => {
-          this.instance = new Instance();
-          this.instance.setId(data.array[0][0]);
-        })
-        .on('end', (data) => resolve());
+      setTimeout(() => {
+        this.client
+            .init(req)
+            .on('data', (data) => {
+              this.instance = new Instance();
+              this.instance.setId(data.array[0][0]);
+            })
+            .on('end', (data) => resolve());
+      }, 2000);
     });
   }
 
