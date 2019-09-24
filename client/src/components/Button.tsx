@@ -77,7 +77,7 @@ const Button = styled.button`
 interface Colors {
   [name: string]:
     | {
-        background: string;
+        backgroundColor: string;
         color: string;
       }
     | {
@@ -88,19 +88,19 @@ interface Colors {
 
 const colors: Colors = {
   red: {
-    background: '#E3384D',
+    backgroundColor: '#E3384D',
     color: 'white'
   },
   blue: {
-    background: '#1045BA',
+    backgroundColor: '#1045BA',
     color: 'white'
   },
   teal: {
-    background: '#00BED6',
+    backgroundColor: '#00BED6',
     color: 'white'
   },
   white: {
-    background: '#ffffff',
+    backgroundColor: '#ffffff',
     color: '#595959'
   },
   noFill: {

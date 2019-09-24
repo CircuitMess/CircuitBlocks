@@ -25,9 +25,6 @@ const App = () => {
     (blocklyRef.current as any).load(data);
     setFilename(filename || '');
     setIsEditorOpen(true);
-    // setTimeout(() => {
-    //   (blocklyRef.current as any).updateDimensions();
-    // }, 300);
   };
 
   const closeAlert = () => {
