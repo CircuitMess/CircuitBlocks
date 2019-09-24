@@ -142,6 +142,7 @@ export class Blocks {
         invert: '<block type="display_invert"></block>',
 
         fontsize: '<block type="display_fontsize"></block>',
+        fonttype: '<block type="display_fonttype"></block>',
         fontcolour: '<block type="display_fontcolour"></block>',
         println: '<block type="display_println"></block>',
         drawtext: '<block type="draw_text"></block>',

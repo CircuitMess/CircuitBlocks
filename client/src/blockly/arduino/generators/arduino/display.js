@@ -36,7 +36,14 @@ Blockly.Arduino['display_invert'] = function(block) {
 Blockly.Arduino['display_fontsize'] = function(block) {
     var size = Blockly.Arduino.valueToCode(block, 'SIZE', Blockly.Arduino.ORDER_ATOMIC);
 
-    var code = "mp.display.setTextFont(" + size + ");\n";
+    var code = "mp.display.setTextSize(" + size + ");\n";
+    return code;
+};
+
+Blockly.Arduino['display_fonttype'] = function(block) {
+    var type = block.getFieldValue('TYPE');
+
+    var code = "mp.display.setTextFont(" + type + ");\n";
     return code;
 };
 

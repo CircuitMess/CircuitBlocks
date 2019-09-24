@@ -117,6 +117,26 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     },
     {
+        type: "display_fonttype",
+        message0: "set font type %1",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "TYPE",
+                options: [
+                    [ "1", "1" ],
+                    [ "2", "2" ],
+                ]
+            }
+        ],
+        previousStatement: null,
+        nextStatement: null,
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Msg.DISPLAY_HUE,
+        tooltip: "Sets the display font type",
+        helpUrl: ""
+    },
+    {
         type: "display_fontcolour",
         message0: "set font colour to %1",
         args0: [
