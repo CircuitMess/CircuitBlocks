@@ -15,9 +15,6 @@ goog.require('Blockly.Blocks');
 goog.provide("Blockly.Blocks.Procedures");
 
 
-/** Common HSV hue for all blocks in this category. */
-Blockly.Blocks.Procedures.HUE = 127;
-
 Blockly.Blocks['arduino_functions'] = {
   /**
    * Block for defining the Arduino setup() and loop() functions.
@@ -33,7 +30,7 @@ Blockly.Blocks['arduino_functions'] = {
         .appendField(Blockly.Msg.ARD_FUN_RUN_LOOP);
     this.appendStatementInput('LOOP_FUNC');
     this.setInputsInline(true);
-    this.setColour(Blockly.Blocks.Procedures.HUE);
+    this.setColour(Blockly.Msg.PROCEDURES_HUE);
     this.setTooltip(Blockly.Msg.ARD_FUN_RUN_TIP);
     this.setHelpUrl('https://arduino.cc/en/Reference/Loop');
     this.contextMenu = false;

@@ -17,9 +17,6 @@ goog.require('Blockly.Types');
 
 goog.provide('Blockly.Blocks.io');
 
-/** Common HSV hue for all blocks in this category. */
-Blockly.Blocks.io.HUE = 250;
-
 Blockly.Blocks['io_digitalwrite'] = {
   /**
    * Block for creating a 'set pin' to a state.
@@ -27,7 +24,7 @@ Blockly.Blocks['io_digitalwrite'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/DigitalWrite');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendValueInput('STATE')
         .appendField(Blockly.Msg.ARD_DIGITALWRITE)
         .appendField(new Blockly.FieldDropdown(
@@ -56,7 +53,7 @@ Blockly.Blocks['io_digitalread'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/DigitalRead');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_DIGITALREAD)
         .appendField(new Blockly.FieldDropdown(
@@ -85,7 +82,7 @@ Blockly.Blocks['io_builtin_led'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/DigitalWrite');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendValueInput('STATE')
         .appendField(Blockly.Msg.ARD_BUILTIN_LED)
         .appendField(new Blockly.FieldDropdown(
@@ -118,7 +115,7 @@ Blockly.Blocks['io_analogwrite'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/AnalogWrite');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendValueInput('NUM')
         .appendField(Blockly.Msg.ARD_ANALOGWRITE)
         .appendField(new Blockly.FieldDropdown(
@@ -150,7 +147,7 @@ Blockly.Blocks['io_analogread'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/AnalogRead');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_ANALOGREAD)
         .appendField(new Blockly.FieldDropdown(
@@ -178,7 +175,7 @@ Blockly.Blocks['io_highlow'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/Constants');
-    this.setColour(Blockly.Blocks.io.HUE);
+    this.setColour(Blockly.Msg.IO_HUE);
     this.appendDummyInput()
         .appendField(
             new Blockly.FieldDropdown([[Blockly.Msg.ARD_HIGH, 'HIGH'], [Blockly.Msg.ARD_LOW, 'LOW']]),
@@ -213,7 +210,7 @@ Blockly.Blocks['io_pulsein'] = {
       ],
       "output": Blockly.Types.NUMBER.output,
       "inputsInline": true,
-      "colour": Blockly.Blocks.io.HUE,
+      "colour": Blockly.Msg.IO_HUE,
       "tooltip": Blockly.Msg.ARD_PULSE_TIP,
       "helpUrl": 'https://www.arduino.cc/en/Reference/PulseIn'
     });
@@ -250,7 +247,7 @@ Blockly.Blocks['io_pulsetimeout'] = {
       ],
       "output": Blockly.Types.NUMBER.output,
       "inputsInline": true,
-      "colour": Blockly.Blocks.io.HUE,
+      "colour": Blockly.Msg.IO_HUE,
       "tooltip": Blockly.Msg.ARD_PULSETIMEOUT_TIP,
       "helpUrl": 'https://www.arduino.cc/en/Reference/PulseIn'
     });

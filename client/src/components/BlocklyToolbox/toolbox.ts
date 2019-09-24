@@ -1,3 +1,5 @@
+import Blockly from '../../blockly/blockly';
+
 
     export const blockColors: any = {
         loops: '#107c10',
@@ -96,8 +98,8 @@
     }
 
     export function hueToRgb(hue: number) {
-        const HSV_SATURATION = 0.45;
-        const HSV_VALUE = 0.65 * 255;
+        const HSV_SATURATION = Blockly.HSV_SATURATION;
+        const HSV_VALUE = Blockly.HSV_VALUE * 255;
         const rgbArray = hsvToRgb(hue, HSV_SATURATION, HSV_VALUE);
         return `#${componentToHex(rgbArray[0])}${componentToHex(rgbArray[1])}${componentToHex(rgbArray[2])}`;
     }

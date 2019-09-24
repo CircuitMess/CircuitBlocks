@@ -15,10 +15,6 @@ goog.require('Blockly.Types');
 
 goog.provide('Blockly.Blocks.time');
 
-
-/** Common HSV hue for all blocks in this category. */
-Blockly.Blocks.time.HUE = 17;
-
 Blockly.Blocks['time_delay'] = {
   /**
    * Delay block definition
@@ -26,7 +22,7 @@ Blockly.Blocks['time_delay'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/Delay');
-    this.setColour(Blockly.Blocks.time.HUE);
+    this.setColour(Blockly.Msg.TIME_HUE);
     this.appendValueInput('DELAY_TIME_MILI')
         .setCheck(Blockly.Types.NUMBER.checkList)
         .appendField(Blockly.Msg.ARD_TIME_DELAY);
@@ -46,7 +42,7 @@ Blockly.Blocks['time_delaymicros'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/DelayMicroseconds');
-    this.setColour(Blockly.Blocks.time.HUE);
+    this.setColour(Blockly.Msg.TIME_HUE);
     this.appendValueInput('DELAY_TIME_MICRO')
         .setCheck(Blockly.Types.NUMBER.checkList)
         .appendField(Blockly.Msg.ARD_TIME_DELAY);
@@ -66,7 +62,7 @@ Blockly.Blocks['time_millis'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/Millis');
-    this.setColour(Blockly.Blocks.time.HUE);
+    this.setColour(Blockly.Msg.TIME_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_TIME_MILLIS);
     this.setOutput(true, Blockly.Types.LARGE_NUMBER.output);
@@ -85,7 +81,7 @@ Blockly.Blocks['time_micros'] = {
    */
   init: function() {
     this.setHelpUrl('http://arduino.cc/en/Reference/Micros');
-    this.setColour(Blockly.Blocks.time.HUE);
+    this.setColour(Blockly.Msg.TIME_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_TIME_MICROS);
     this.setOutput(true, Blockly.Types.LARGE_NUMBER.output);
@@ -107,7 +103,7 @@ Blockly.Blocks['infinite_loop'] = {
    */
   init: function() {
     this.setHelpUrl('');
-    this.setColour(Blockly.Blocks.time.HUE);
+    this.setColour(Blockly.Msg.TIME_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.ARD_TIME_INF);
     this.setInputsInline(true);

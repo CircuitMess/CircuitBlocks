@@ -1,5 +1,6 @@
 import {ToolboxCategory} from "../Toolbox";
 import {Blocks} from './blocks'
+import Blockly from '../../blockly/blockly';
 
 export enum ToolboxCategorySpecial {
     VARIABLES, FUNCTIONS
@@ -655,7 +656,7 @@ export const moreCategory: ToolboxCategory = {
 };
 
 categories.push({
-    color: "#c94e4e",
+    color: Blockly.Msg.LOGIC_HUE,
     icon: "\uf085",
     name: "Logic",
 
@@ -734,7 +735,7 @@ categories.push({
 categories.push({
     name: "Loops",
     icon: "\uf2f1",
-    color: "#3c4c9c",
+    color: Blockly.Msg.LOOPS_HUE,
 
     blocks: [
         {
@@ -775,7 +776,7 @@ categories.push({
 
 categories.push({
     name: "Math",
-    color: "#91ca55",
+    color: Blockly.Msg.MATH_HUE,
     icon: "\uf1ec",
 
     blocks: [
@@ -927,7 +928,7 @@ categories.push({
 
 categories.push({
     name: "Text",
-    color: "#3c70ac",
+    color: Blockly.Msg.TEXTS_HUE,
     icon: "\uf031",
 
     blocks: [
@@ -1006,7 +1007,7 @@ categories.push({
 categories.push({
     name: "Variables",
     icon: "\uf01c",
-    color: "#364652",
+    color: Blockly.Msg.VARIABLES_HUE,
     special: ToolboxCategorySpecial.VARIABLES,
 
     blocks: [],
@@ -1016,7 +1017,7 @@ categories.push({
 categories.push({
     name: "Functions",
     icon: "\uf013",
-    color: "#50c45f",
+    color: Blockly.Msg.PROCEDURES_HUE,
     special: ToolboxCategorySpecial.FUNCTIONS,
 
     blocks: [],
@@ -1026,7 +1027,7 @@ categories.push({
 categories.push({
     name: "I/O",
     icon: "\uf360",
-    color: "#744780",
+    color: Blockly.Msg.IO_HUE,
 
     blocks: [
         {
@@ -1060,7 +1061,7 @@ categories.push({
 categories.push({
     name: "Display",
     icon: "\uf108",
-    color: "#ff9100",
+    color: Blockly.Msg.DISPLAY_HUE,
 
     blocks: [
         {
@@ -1133,7 +1134,7 @@ categories.push({
 categories.push({
     name: "Time",
     icon: "\uf2f2",
-    color: "#ec652f",
+    color: Blockly.Msg.TIME_HUE,
 
     subcategories: [],
 
