@@ -74,7 +74,19 @@ const Button = styled.button`
   ${(props) => props.color && colors[props.color]}
 `;
 
-const colors = {
+interface Colors {
+  [name: string]:
+    | {
+        background: string;
+        color: string;
+      }
+    | {
+        backgroundColor: string;
+        boxShadow: string;
+      };
+}
+
+const colors: Colors = {
   red: {
     background: '#E3384D',
     color: 'white'

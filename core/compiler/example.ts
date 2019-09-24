@@ -1,13 +1,13 @@
-import ArduinoCompiler, { PortDescriptor } from './compiler';
-import Installer from './installer';
+// import ArduinoCompiler, { PortDescriptor } from './compiler';
+// import Installer from './installer';
 
-const installInfo = ArduinoCompiler.checkInstall();
-if (installInfo == null || Object.values(installInfo).indexOf(null) !== -1) {
-  console.log('Installing');
-  new Installer().install(installInfo, (stage) => console.log(stage), (err) => console.log(err));
-} else {
-  console.log('All ok');
-}
+// const installInfo = ArduinoCompiler.checkInstall();
+// if (installInfo == null || Object.values(installInfo).indexOf(null) !== -1) {
+//   console.log('Installing');
+//   new Installer().install(installInfo, (stage) => console.log(stage), (err) => console.log(err));
+// } else {
+//   console.log('All ok');
+// }
 
 // ArduinoCompiler.startDaemon()
 //   .catch((error) => console.log(error))
@@ -32,3 +32,32 @@ if (installInfo == null || Object.values(installInfo).indexOf(null) !== -1) {
 //       });
 //     });
 //   });
+
+import ArduinoCompiler from './compiler';
+
+ArduinoCompiler.setup(
+  '/home/fran/installs/arduino-1.8.9',
+  '/home/fran/Arduino',
+  '/home/fran/.arduino15'
+);
+
+ArduinoCompiler.startDaemon();
+
+const serial = ArduinoCompiler.getSerial();
+serial.start();
+
+serial.registerListener((line) => console.log(line));
+
+// setInterval(() => {
+//   ArduinoCompiler.identifyPort()
+//     .then((ports) => {
+//       console.log(ports);
+
+//       if (ports.length === 0) {
+//         console.log('No port found');
+//       }
+//     })
+//     .catch((_reason) => {
+//       console.log('Upload failed');
+//     });
+// }, 1000);

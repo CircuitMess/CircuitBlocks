@@ -107,12 +107,20 @@ ipcMain.on('listExamples', (event, _args) => {
 });
 
 const installInfo = ArduinoCompiler.checkInstall();
-if (installInfo == null || Object.values(installInfo).indexOf(null) !== -1) {
-  console.log('Installgin');
+if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
+  console.log('Installing');
   new Installer().install(installInfo, (stage) => console.log(stage), (err) => console.log(err));
 } else {
   console.log('All ok');
 }
+
+// ArduinoCompiler.startDaemon();
+
+// const serial = ArduinoCompiler.getSerial();
+// serial.start();
+
+// serial.registerListener((line) => console.log(line));
+// serial.write('foo');
 
 // ArduinoCompiler.startDaemon()
 //   .catch((error) => console.log(error))

@@ -65,7 +65,12 @@ const ProfileWrapper = styled.div`
   }
 `;
 
-const Profile = (props) => {
+interface Props {
+  username: string;
+  image_url: string;
+}
+
+const Profile: React.FC<Props> = (props) => {
   const { username, image_url } = props;
 
   return (
