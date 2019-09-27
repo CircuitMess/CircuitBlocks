@@ -15,6 +15,7 @@ import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
 import { capitalize } from '../../helpers/string';
+import Serial from "./components/Serial";
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -155,7 +156,7 @@ class Editor extends Component<EditorProps, State> {
     window.addEventListener('resize', this.updateDimensions);
 
     ipcRenderer.on('serial', (event: any, args: any) => {
-      this.setState({serial: this.state.serial "\n" + args})
+      this.setState({serial: this.state.serial + "\n" + args})
     })
 
     ipcRenderer.on('ports', (event: any, args: any) => {
