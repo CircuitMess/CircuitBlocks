@@ -106,26 +106,33 @@ ipcMain.on('listExamples', (event, _args) => {
   listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
 
+function startDaemon(){
+  ArduinoCompiler.startDaemon()
+      .catch((error) => console.log(error))
+      .then(() => {
+        console.log('Daemon started');
+      });
+}
+
 const installInfo = ArduinoCompiler.checkInstall();
 if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
   console.log('Installing');
-  new Installer().install(installInfo, (stage) => console.log(stage), (err) => console.log(err));
+  new Installer().install(installInfo, (stage) => {
+    console.log(stage);
+
+    if(stage == "DONE"){
+      startDaemon();
+    }
+  }, (err) => console.log(err));
 } else {
   console.log('All ok');
-}
 
-ArduinoCompiler.startDaemon();
+  startDaemon();
+}
 
 const serial = ArduinoCompiler.getSerial();
 serial.start();
-
 serial.registerListener((line) => ipcMain.emit('serial', line));
-
-ArduinoCompiler.startDaemon()
-  .catch((error) => console.log(error))
-  .then(() => {
-    console.log('Daemon started');
-  });
 
 let port: any;
 
@@ -149,16 +156,7 @@ ipcMain.on('ports', (event, _args) => {
 
 ipcMain.on('upload', (event, args) => {
   const { code } = args;
-  // const code = `
-  // void setup() {
-  //   Serial.begin(9600);
-  // }
 
-  // void loop() {
-  //   Serial.println("Hello world");
-  //   delay(100);
-  // }
-  // `;
   event.reply('upload', { error: null, stage: 'COMPILING' });
 
   ArduinoCompiler.compile(code)

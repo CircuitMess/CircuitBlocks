@@ -272,7 +272,7 @@ export default class Installer {
     });
   }
 
-  public install(info: InstallInfo, stage: (string) => void, error: (err) => void) {
+  public install(info: InstallInfo | null, stage: (string) => void, error: (err) => void) {
     const stageRingo = () => {
       ArduinoCompiler.checkInstall();
       stage('DONE');
@@ -294,7 +294,7 @@ export default class Installer {
         return;
       }
 
-      if (info.cli == null) {
+      if (info == null || info.cli == null) {
         stage('CLI');
         this.cli(stageCli);
       } else {
@@ -302,7 +302,7 @@ export default class Installer {
       }
     };
 
-    if (info.arduino == null) {
+    if (info == null || info.arduino == null) {
       stage('ARDUINO');
       this.arduino(stageArduino);
     } else if (info.cli == null) {
