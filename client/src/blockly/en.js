@@ -82,7 +82,7 @@ Blockly.Msg.COLOUR_HUE = '0';
  * @const
  */
 /// {{Notranslate}} Hue value for all variable blocks.
-Blockly.Msg.VARIABLES_HUE = '60';
+Blockly.Msg.VARIABLES_HUE = '20';
 /**
  * @const
  */
