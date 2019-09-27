@@ -46,6 +46,7 @@
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "0.5.0",
     "monaco-editor": "^0.15.0",
+    "nprogress": "^0.2.0",
     "optimize-css-assets-webpack-plugin": "5.0.3",
     "pnp-webpack-plugin": "1.5.0",
     "postcss-flexbugs-fixes": "4.1.0",
@@ -148,6 +149,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.1",
+    "@types/nprogress": "^0.2.0",
     "@types/styled-components": "^4.1.18",
     "babel-plugin-styled-components": "^1.10.6",
     "monaco-editor-webpack-plugin": "^1.7.0"

@@ -10,7 +10,7 @@ interface Props {
 
 class Monaco extends React.Component<Props, any> {
   editorDidMount(editor: monacoTypes.IStandaloneCodeEditor, monaco: any) {
-    console.log('editorDidMount', editor);
+    // console.log('editorDidMount', editor);
   }
 
   render() {

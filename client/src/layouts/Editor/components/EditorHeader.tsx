@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import NProgress from 'nprogress';
 
 import Button from '../../../components/Button';
 import Progressbar from './ProgressBar';
@@ -81,6 +80,8 @@ interface Props {
   runningStage?: string;
   runningPercentage?: number;
   connected: boolean;
+  isSerialOpen: boolean;
+  openSerial: () => void;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -95,7 +96,9 @@ const EditorHeader: React.FC<Props> = (props) => {
     connected,
     running,
     runningStage,
-    runningPercentage
+    runningPercentage,
+    isSerialOpen,
+    openSerial
   } = props;
 
   return (
@@ -119,6 +122,9 @@ const EditorHeader: React.FC<Props> = (props) => {
       <div className="right">
         <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
+        </Button>
+        <Button className={`icon ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
+          <i className="material-icons"> monitor </i>
         </Button>
         <Button className="icon mr-2" onClick={save}>
           <i className="material-icons"> save </i>

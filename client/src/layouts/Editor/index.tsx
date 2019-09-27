@@ -53,6 +53,8 @@ interface State {
     type: 'save' | 'load';
     data?: any;
   };
+  serial: string;
+  isSerialOpen: boolean;
   isCodeOpen: boolean;
   isCodeFull: boolean;
   width?: number;
@@ -90,7 +92,9 @@ const INIT_STATE: State = {
   notifications: [],
   makerPhoneConnected: 0,
   filename: '',
-  runningPercentage: 0
+  runningPercentage: 0,
+  serial: '',
+  isSerialOpen: false
 };
 
 interface Notification {
@@ -149,6 +153,10 @@ class Editor extends Component<EditorProps, State> {
     this.updateDimensions();
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
+
+    ipcRenderer.on('serial', (event: any, args: any) => {
+      this.setState({serial: this.state.serial "\n" + args})
+    })
 
     ipcRenderer.on('ports', (event: any, args: any) => {
       if (!args.error) {
@@ -416,7 +424,9 @@ class Editor extends Component<EditorProps, State> {
       notifications,
       makerPhoneConnected,
       filename,
-      filenameError
+      filenameError,
+      serial,
+      isSerialOpen
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -482,6 +492,8 @@ class Editor extends Component<EditorProps, State> {
               toggle={this.toggle}
               title={title}
               isCodeOpen={isCodeOpen}
+              isSerialOpen={isSerialOpen}
+              openSerial={() => this.setState({isSerialOpen: !this.state.isSerialOpen})}
               running={running}
               runningStage={runningStage}
               runningPercentage={runningPercentage}
@@ -505,6 +517,8 @@ class Editor extends Component<EditorProps, State> {
           setRef={this.setRef}
           ws={this.workspace}
         />
+
+        {isSerialOpen && <Serial serial={serial}/>}
 
         {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
