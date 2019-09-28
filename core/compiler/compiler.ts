@@ -295,7 +295,7 @@ export default class ArduinoCompiler {
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
     fs.writeFileSync(sketchPath, code);
 
-    return this.compileSketch(sketchPath);
+    return this.compileSketch(sketchPath, progressCallback);
   }
 
   /**
@@ -340,15 +340,12 @@ export default class ArduinoCompiler {
       let stage = 1;
       function popProgress() {
         if (stage == 1 && currentProgress >= 90 && !finished) {
-          console.log('slowing 90');
           progPerTenthSec /= 10;
           stage++;
         } else if (stage == 2 && currentProgress >= 95 && !finished) {
-          console.log('slowing 95');
           progPerTenthSec /= 10;
           stage++;
         } else if (stage == 3 && currentProgress >= 98 && !finished) {
-          console.log('slowing 98');
           progPerTenthSec /= 10;
           stage++;
         }
@@ -411,6 +408,7 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         error.stderr = stderr;
+        error.stdout = stdout;
         if (progInterval) clearInterval(progInterval);
         reject(error);
       });
@@ -424,7 +422,6 @@ export default class ArduinoCompiler {
           if (progInterval) {
             finished = true;
             progPerTenthSec = 100 / (time * 10);
-            console.log('finished');
 
             clearInterval(progInterval);
             progInterval = setInterval(popProgress, 10);
@@ -433,6 +430,7 @@ export default class ArduinoCompiler {
           }
         } else {
           error.stderr = stderr;
+          error.stdout = stdout;
           if (progInterval) clearInterval(progInterval);
           reject(error);
         }
@@ -494,6 +492,7 @@ export default class ArduinoCompiler {
           if (!progressCallback) return;
 
           const matches = progRegex.exec(what);
+
           if (matches) {
             if (matches[1] == '00010000') {
               progressStarted = true;

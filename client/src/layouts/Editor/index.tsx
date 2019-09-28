@@ -157,7 +157,7 @@ class Editor extends Component<EditorProps, State> {
 
     ipcRenderer.on('serial', (event: any, args: any) => {
       this.setState({serial: this.state.serial + "\n" + args})
-    })
+    });
 
     ipcRenderer.on('ports', (event: any, args: any) => {
       if (!args.error) {
@@ -171,24 +171,25 @@ class Editor extends Component<EditorProps, State> {
       }
     });
 
-    ipcRenderer.on('upload', (event: any, args: any) => {
-      const { error, stage, percentage } = args;
+    ipcRenderer.on("runprogress", (event: any, args: any) => {
+      if(!this.state.running) return;
 
-      if (error) {
-        this.addNotification('Upload error');
-        this.setState({ running: false, runningPercentage: undefined });
+      if(args.stage == "DONE"){
+        this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
+
+        if(args.error){
+          this.addNotification(args.error);
+        }
+
         return;
       }
 
-      if (stage) {
-        if (stage === 'DONE') {
-          this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
-        } else {
-          this.setState({ runningStage: capitalize(stage) });
-        }
-      } else if (percentage) {
-        this.setState({ runningPercentage: percentage });
-      }
+      let progress = args.stage == "UPLOAD" ? 50 : 0;
+      progress += args.progress / 2;
+
+      if(progress == 0) progress = 0.1;
+
+      this.setState({ runningPercentage: progress, runningStage: args.stage })
     });
 
     setInterval(() => {
@@ -216,14 +217,8 @@ class Editor extends Component<EditorProps, State> {
   }
 
   run = () => {
-    this.setState({ running: true });
-    setInterval(() => {
-      this.setState({
-        runningPercentage:
-          this.state.runningPercentage === undefined ? 0 : this.state.runningPercentage + 1
-      });
-    }, 100);
-    ipcRenderer.send('upload', { code: this.state.code });
+    this.setState({ running: true, runningPercentage: 0 });
+    ipcRenderer.send('run', { code: this.state.code });
   };
 
   openLoadModal = () => {
@@ -512,11 +507,13 @@ class Editor extends Component<EditorProps, State> {
         )}
 
         <BlocklyEditor
+          running={this.state.running}
           height={height}
           width={width}
           isCodeOpen={isCodeOpen}
           setRef={this.setRef}
           ws={this.workspace}
+
         />
 
         {isSerialOpen && <Serial serial={serial}/>}

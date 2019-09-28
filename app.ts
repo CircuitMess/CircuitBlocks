@@ -119,7 +119,7 @@ serial.registerListener((line) => ipcMain.emit('serial', line));
 let port: any;
 
 ipcMain.on('ports', (event, _args) => {
-  ArduinoCompiler.identifyPort(true)
+  ArduinoCompiler.identifyPort(false)
     .then((data) => {
       if (data.length === 0) {
         const res = { error: { type: 'NO_DEVICES' } };
@@ -136,21 +136,32 @@ ipcMain.on('ports', (event, _args) => {
     });
 });
 
-ipcMain.on('upload', (event, args) => {
+ipcMain.on('run', (event, args) => {
   const { code } = args;
 
-  event.reply('upload', { error: null, stage: 'COMPILING' });
+  win.webContents.send('runprogress', { error: null, stage: 'COMPILE', progress: 0 });
 
-  ArduinoCompiler.compile(code)
+  ArduinoCompiler.compile(code, progress => {
+    win.webContents.send('runprogress', { error: null, stage: 'COMPILE', progress: progress });
+  })
     .then(({ binary }) => {
-      event.reply('upload', { error: null, stage: 'UPLOADING' });
+      win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: 0 });
       try {
-        ArduinoCompiler.getSerial().upload(binary, port);
-        event.reply('upload', { error: null, stage: 'DONE' });
+        ArduinoCompiler.uploadBinary(binary, port, progress => {
+          win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: progress });
+        }).then(() => {
+          win.webContents.send('runprogress', { error: null, stage: 'DONE' });
+        });
       } catch (error) {
         console.error(error);
-        event.reply({ error });
+        win.webContents.send('runprogress', { error: "Upload error. Check your Ringo then try again.", stage: 'DONE' });
       }
     })
-    .catch((error) => console.error(error));
+    .catch((error) =>{
+      win.webContents.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
+
+      console.error(error);
+      console.log(error.stdout);
+      console.log(error.stderr);
+    });
 });

@@ -101,6 +101,8 @@ const EditorHeader: React.FC<Props> = (props) => {
     openSerial
   } = props;
 
+  const stage = runningStage == "COMPILE" ? "Compiling" : "Uploading";
+
   return (
     <StyledHeader>
       {running && runningPercentage && <Progressbar percentage={runningPercentage} />}
@@ -139,7 +141,7 @@ const EditorHeader: React.FC<Props> = (props) => {
           onClick={run}
           disabled={!connected}
         >
-          <div className="text">{running ? runningStage : 'Run'}</div>
+          <div className="text">{running ? stage : 'Run'}</div>
           <i className={`material-icons ${running ? 'rotating' : ''}`}> play_arrow </i>
         </Button>
       </div>
