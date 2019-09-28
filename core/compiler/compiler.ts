@@ -226,15 +226,31 @@ export default class ArduinoCompiler {
       conf.setSketchbookdir(this.installInfo.sketchbook);
       req.setConfiguration(conf);
 
-      setTimeout(() => {
-        this.client
-            .init(req)
-            .on('data', (data) => {
-              this.instance = new Instance();
-              this.instance.setId(data.array[0][0]);
-            })
-            .on('end', (data) => resolve());
-      }, 2000);
+      const context = this;
+      let tries = 0;
+
+      function connect(){
+        if (tries > 5) {
+          reject(new Error('Unable to connect to CLI. Please restart the program.'));
+        }
+
+        tries++;
+        console.log("Connecting to daemon, try " + tries);
+
+        try {
+          context.client
+              .init(req)
+              .on('data', (data) => {
+                context.instance = new Instance();
+                context.instance.setId(data.array[0][0]);
+              })
+              .on('end', (data) => resolve());
+        }catch(e){
+          setTimeout(connect, 2000);
+        }
+      }
+
+      connect();
     });
   }
 
