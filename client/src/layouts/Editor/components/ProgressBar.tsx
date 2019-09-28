@@ -11,7 +11,7 @@ const ProgressBar = styled.div<Props>`
   height: 4px;
   width: ${(props) => `${props.percentage}%`};
   background-color: green;
-  transition-duration: 0.1s;
+  transition-duration: 0.2s;
 `;
 
 export default ProgressBar;

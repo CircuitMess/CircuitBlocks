@@ -508,6 +508,7 @@ class Editor extends Component<EditorProps, State> {
 
         <BlocklyEditor
           running={this.state.running}
+          runStage={this.state.runningStage}
           height={height}
           width={width}
           isCodeOpen={isCodeOpen}

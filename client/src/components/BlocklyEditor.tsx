@@ -10,6 +10,7 @@ interface BlocklyEditorProps {
   ws: any;
   setRef: (instance: HTMLDivElement | null) => void;
   running: boolean;
+  runStage: string | undefined;
 }
 
 class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
@@ -22,7 +23,7 @@ class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
   }
 
   render() {
-    const { setRef, height, width, isCodeOpen, running } = this.props;
+    const { setRef, height, width, isCodeOpen, running, runStage } = this.props;
 
     let style: any = {
       height,
@@ -39,9 +40,11 @@ class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
       cursor: "wait"
     };
 
+    let stage = runStage == "UPLOAD" ? "Uploading" : "Compiling";
+
     return (
         <div style={style}>
-          <Dimmer active={running} style={overlayStyle} inverted><Loader massive indeterminate>Running sketch...</Loader></Dimmer>
+          <Dimmer active={running} style={overlayStyle} inverted><Loader massive indeterminate>{stage} sketch...</Loader></Dimmer>
           <div
               id="blocklyDiv"
               style={{ width: "100%", height: "100%" }}
