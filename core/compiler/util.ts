@@ -28,7 +28,7 @@ export function download(download: string, directory: string): Promise<string> {
         });
       })
       .on('error', (err) => {
-        reject(err);
+        reject(new Error("Network error. Please check your internet connection."));
       });
   });
 }
@@ -51,13 +51,13 @@ export function extract(file: string, directory: string): Promise<null> {
     } else if (extension === '.xz') {
       handler = lzma.createDecompressor();
     } else {
-      reject(new Error('Invalid archive format'));
+      reject(new Error('Invalid archive format.'));
     }
 
-    handler.on('error', (err) => reject(err));
+    handler.on('error', (err) => reject(new Error("Archive unpacking error.")));
 
     fs.createReadStream(file)
-      .on('error', (err) => reject(err))
+      .on('error', (err) => reject(new Error("Archive unpacking error.")))
       .pipe(handler)
       .pipe(new tar.Parse())
       .on('entry', (entry) => {

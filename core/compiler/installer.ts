@@ -153,7 +153,7 @@ export default class Installer {
       .then(() => {
         const files = fs.readdirSync(tmp);
         if (files.length == 0) {
-          callback(new Error('Extract failed'));
+          callback(new Error('Archive extract failed.'));
           return;
         }
 

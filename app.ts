@@ -6,11 +6,15 @@ import url from 'url';
 import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import Installer from './core/compiler/installer';
+import Arduino from "./core/files/arduino";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
+
+const arduinoSetup = new Arduino();
+arduinoSetup.setup();
 
 function createWindow() {
   // Create the browser window.
@@ -23,6 +27,8 @@ function createWindow() {
       nodeIntegration: true
     }
   });
+
+  arduinoSetup.setWindow(win);
 
   // and load the index.html of the app.
   const startUrl =
@@ -105,30 +111,6 @@ ipcMain.on('listFiles', (event, _args) => {
 ipcMain.on('listExamples', (event, _args) => {
   listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
-
-function startDaemon(){
-  ArduinoCompiler.startDaemon()
-      .catch((error) => console.log(error))
-      .then(() => {
-        console.log('Daemon started');
-      });
-}
-
-const installInfo = ArduinoCompiler.checkInstall();
-if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
-  console.log('Installing');
-  new Installer().install(installInfo, (stage) => {
-    console.log(stage);
-
-    if(stage == "DONE"){
-      startDaemon();
-    }
-  }, (err) => console.log(err));
-} else {
-  console.log('All ok');
-
-  startDaemon();
-}
 
 const serial = ArduinoCompiler.getSerial();
 serial.start();
