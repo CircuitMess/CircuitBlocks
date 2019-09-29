@@ -1,4 +1,4 @@
-import ArduinoCompiler from './compiler';
+import ArduinoCompiler, {PortDescriptor} from './compiler';
 import SerialPort from 'serialport';
 import * as path from 'path';
 import * as os from 'os';
@@ -24,7 +24,7 @@ export default class Serial {
   }
 
   public stop() {
-    if (this.com === undefined) return;
+    if (this.com === undefined || !this.com.isOpen) return;
 
     this.com.flush();
     this.com.close();
@@ -43,17 +43,26 @@ export default class Serial {
     }
   }
 
-  public start() {
+  public start(port?: PortDescriptor) {
     if (this.uploading) return;
     this.stop();
 
-    ArduinoCompiler.identifyPort().then((ports) => {
-      if (ports.length == 0) return;
-      const port = ports[0].comName;
+    const context = this;
 
-      this.com = new SerialPort(port, { baudRate: 9600 });
-      this.com.on('data', (data) => this.data(data));
-    });
+    function connect(comName){
+      console.log("conncting " + comName);
+      context.com = new SerialPort(comName, { baudRate: 9600});
+      context.com.on('data', (data) => context.data(data));
+    }
+
+    if(port){
+      connect(port.comName);
+    }else{
+      ArduinoCompiler.identifyPort().then((ports) => {
+        if(ports.length == 0) return;
+        connect(ports[0].comName);
+      });
+    }
   }
 
   public registerListener(listener: (msg: string) => void) {
@@ -63,11 +72,12 @@ export default class Serial {
   public write(message: string) {
     if (this.com === undefined) return;
 
-    this.com.write(message);
+    this.com.write(message + "\n");
   }
 
   /**
    * Uploads the specified binary to the MAKERphone
+   * @deprecated Use {@link ArduinoCompiler.uploadBinary} instead
    * @param binary Path to the binary
    * @param port MAKERphone port
    */

@@ -69,7 +69,7 @@ interface State {
   runningStage?: string;
   runningPercentage?: number;
   notifications: Notification[];
-  makerPhoneConnected: number;
+  makerPhoneConnected: boolean;
   filename: string;
   filenames?: string[];
   filenameError?: string;
@@ -91,7 +91,7 @@ const INIT_STATE: State = {
   theme: 'vs-dark',
   running: false,
   notifications: [],
-  makerPhoneConnected: 0,
+  makerPhoneConnected: false,
   filename: '',
   runningPercentage: 0,
   serial: '',
@@ -155,19 +155,15 @@ class Editor extends Component<EditorProps, State> {
     this.injectToolbox();
     window.addEventListener('resize', this.updateDimensions);
 
-    ipcRenderer.on('serial', (event: any, args: any) => {
-      this.setState({serial: this.state.serial + "\n" + args})
-    });
-
     ipcRenderer.on('ports', (event: any, args: any) => {
-      if (!args.error) {
-        if (this.state.makerPhoneConnected !== args.data.length) {
-          this.addNotification('Makerphone connected');
-        }
-        this.setState({ makerPhoneConnected: args.data.length });
-      } else if (args.error.type === 'NO_DEVICES' && this.state.makerPhoneConnected !== 0) {
+      const { port } = args;
+
+      if(port && !this.state.makerPhoneConnected){
+        this.addNotification('Makerphone connected');
+        this.setState({ makerPhoneConnected: true });
+      }else if(!port && this.state.makerPhoneConnected){
         this.addNotification(`Makerphone disconnected`);
-        this.setState({ makerPhoneConnected: 0 });
+        this.setState({ makerPhoneConnected: false });
       }
     });
 
@@ -192,11 +188,7 @@ class Editor extends Component<EditorProps, State> {
       this.setState({ runningPercentage: progress, runningStage: args.stage })
     });
 
-    setInterval(() => {
-      if (!this.state.running) {
-        ipcRenderer.send('ports');
-      }
-    }, 2000);
+    ipcRenderer.send('ports');
   }
 
   injectToolbox() {
@@ -493,7 +485,7 @@ class Editor extends Component<EditorProps, State> {
               running={running}
               runningStage={runningStage}
               runningPercentage={runningPercentage}
-              connected={makerPhoneConnected > 0}
+              connected={makerPhoneConnected}
             />
 
             {notifications && (
@@ -517,7 +509,7 @@ class Editor extends Component<EditorProps, State> {
 
         />
 
-        {isSerialOpen && <Serial serial={serial}/>}
+        <Serial connected={this.state.makerPhoneConnected && runningStage != "UPLOAD"} open={isSerialOpen} />
 
         {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>

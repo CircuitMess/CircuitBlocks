@@ -266,7 +266,7 @@ export default class ArduinoCompiler {
    * Retrieves the possible MAKERphone ports.
    * @param thirdParty accept any usb to serial
    */
-  public static identifyPort(thirdParty: boolean = true): Promise<PortDescriptor[]> {
+  public static identifyPort(thirdParty: boolean = false): Promise<PortDescriptor[]> {
     return new Promise<any>((resolve, _reject) => {
       SerialPort.list((err, ports) => {
         resolve(
@@ -538,7 +538,7 @@ export default class ArduinoCompiler {
       });
     });
 
-    promise.finally(() => this.getSerial().setUploading(false));
+    promise.finally(() => { this.getSerial().setUploading(false); this.getSerial().start() });
 
     return promise;
   }

@@ -6,15 +6,18 @@ import url from 'url';
 import { load, save, listFiles, listExamples } from './core/files';
 import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import Installer from './core/compiler/installer';
-import Arduino from "./core/files/arduino";
+import arduinoInstall from "./core/files/arduinoInstall";
+import {ArduinoSerial} from "./core/files/arduinoSerial";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
 
-const arduinoSetup = new Arduino();
+const arduinoSetup = new arduinoInstall();
 arduinoSetup.setup();
+
+const arduinoSerial = new ArduinoSerial();
 
 function createWindow() {
   // Create the browser window.
@@ -29,6 +32,7 @@ function createWindow() {
   });
 
   arduinoSetup.setWindow(win);
+  arduinoSerial.setWindow(win);
 
   // and load the index.html of the app.
   const startUrl =
@@ -112,30 +116,6 @@ ipcMain.on('listExamples', (event, _args) => {
   listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
 
-const serial = ArduinoCompiler.getSerial();
-serial.start();
-serial.registerListener((line) => ipcMain.emit('serial', line));
-
-let port: any;
-
-ipcMain.on('ports', (event, _args) => {
-  ArduinoCompiler.identifyPort(false)
-    .then((data) => {
-      if (data.length === 0) {
-        const res = { error: { type: 'NO_DEVICES' } };
-        event.reply('ports', res);
-      } else {
-        const res = { error: null, data };
-        port = data[0].comName;
-        event.reply('ports', res);
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      event.reply('ports', { error });
-    });
-});
-
 ipcMain.on('run', (event, args) => {
   const { code } = args;
 
@@ -147,7 +127,7 @@ ipcMain.on('run', (event, args) => {
     .then(({ binary }) => {
       win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: 0 });
       try {
-        ArduinoCompiler.uploadBinary(binary, port, progress => {
+        ArduinoCompiler.uploadBinary(binary, arduinoSerial.getPort().comName, progress => {
           win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: progress });
         }).then(() => {
           win.webContents.send('runprogress', { error: null, stage: 'DONE' });

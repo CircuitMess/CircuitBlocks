@@ -7,7 +7,7 @@ interface SetupState {
     error: string | undefined;
 }
 
-export default class Arduino {
+export default class arduinoInstall {
 
     private setupState: SetupState = { stage: "", error: undefined };
     private window: BrowserWindow;
@@ -23,7 +23,7 @@ export default class Arduino {
         });
     }
 
-    public setWindow(window){
+    public setWindow(window: BrowserWindow){
         this.window = window;
     }
 

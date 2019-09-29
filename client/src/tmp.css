@@ -70,6 +70,10 @@ body {
   transform: translateY(2px);
 }
 
+.mr-1 {
+  margin-right: 30px !important;
+}
+
 .mr-2 {
   margin-right: 48px !important;
 }

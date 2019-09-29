@@ -28,7 +28,8 @@ class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
     let style: any = {
       height,
       width: isCodeOpen ? width && width / 2 : width,
-      position: "relative"
+      position: "relative",
+      zIndex: 50
     };
 
     if(running){

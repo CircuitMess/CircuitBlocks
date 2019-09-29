@@ -125,11 +125,11 @@ const EditorHeader: React.FC<Props> = (props) => {
         <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
         </Button>
-        <Button className={`icon ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
-          <i className="material-icons"> monitor </i>
-        </Button>
-        <Button className="icon mr-2" onClick={save}>
+        <Button className="icon mr-1" onClick={save}>
           <i className="material-icons"> save </i>
+        </Button>
+        <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
+          <i className="material-icons"> call_to_action </i>
         </Button>
         <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>

@@ -45,6 +45,7 @@ const Button = styled.button`
   padding: 6px;
   transition-duration: 0.3s;
   color: white;
+  outline: none;
 
   &.long {
     width: 100%;
@@ -70,7 +71,11 @@ const Button = styled.button`
 
   &.disabled {
     opacity: 0.25;
-    cursor: no-drop;
+    
+    &:hover {
+      cursor: default;
+      opacity: 0.25;
+    }
   }
 
   &:last-child {
@@ -99,6 +104,10 @@ const Button = styled.button`
 
   &.active {
     background-color: #2f2fb5;
+  }
+  
+  &.active.yellow {
+    background-color: #eccf36;
   }
 
   &.running {
