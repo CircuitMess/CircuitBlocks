@@ -509,7 +509,7 @@ class Editor extends Component<EditorProps, State> {
 
         />
 
-        <Serial connected={this.state.makerPhoneConnected && runningStage != "UPLOAD"} open={isSerialOpen} />
+        <Serial connected={this.state.makerPhoneConnected && runningStage != "UPLOAD"} isOpen={isSerialOpen} />
 
         {isCodeOpen && isEditorOpen && (
           <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>

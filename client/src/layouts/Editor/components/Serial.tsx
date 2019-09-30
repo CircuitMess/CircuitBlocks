@@ -49,7 +49,7 @@ const SerialContent = styled.div`
 `;
 
 interface SerialProps {
-    open: boolean;
+    isOpen: boolean;
     connected: boolean;
 }
 
@@ -103,7 +103,7 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
 
     public render() {
         const { content, input } = this.state;
-        const { open, connected } = this.props;
+        const { isOpen, connected } = this.props;
 
         const serialContent = content.map(e => {
             if(e instanceof Element) return e;
@@ -111,7 +111,7 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
         });
         serialContent.push(<p ref={(element) => this.contentEnd = element }></p>);
 
-        return <SerialWrapper className={open ? "" : "d-none"}>
+        return <SerialWrapper className={isOpen ? "" : "d-none"}>
             <h2>Serial monitor</h2>
             <SerialContent ref={(element) => { this.content = element; }}>{ serialContent }</SerialContent>
             <form onSubmit={(e) => { e.preventDefault(); this.send(); return false; }} style={{ flexShrink: 0, display: "flex", flexDirection: "row" }}>
