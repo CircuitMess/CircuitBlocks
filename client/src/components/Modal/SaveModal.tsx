@@ -26,6 +26,7 @@ const SaveModal: React.FC<SaveModalProps> = ({
     <Modal {...props} title={"Save sketch"}>
       <form onSubmit={onSubmit}>
         <input
+            autoFocus
           type="text"
           value={filename}
           onChange={onChange}
