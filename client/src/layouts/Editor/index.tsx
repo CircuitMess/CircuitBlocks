@@ -14,8 +14,8 @@ import BlocklyEditor from '../../components/BlocklyEditor';
 import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
-import { capitalize } from '../../helpers/string';
 import Serial from "./components/Serial";
+import { Sketch } from "../Home/index";
 
 const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
   <variables></variables>
@@ -251,14 +251,7 @@ class Editor extends Component<EditorProps, State> {
     Blockly.Xml.domToWorkspace(xml, this.workspace);
   };
 
-  openSaveModal = () => {
-    const fileSaved = false;
-
-    if (this.workspace.getAllBlocks().length === 0) {
-      this.addNotification('You cant save an empty sketch.');
-      return;
-    }
-
+  private generateSketch(): string {
     const xmlDom = Blockly.Xml.workspaceToDom(this.workspace) as unknown as Element;
 
     const node = this.workspace.getCanvas().cloneNode(true);
@@ -268,32 +261,62 @@ class Editor extends Component<EditorProps, State> {
     snapshot.appendChild(node);
     xmlDom.prepend(snapshot);
 
-    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
+    return Blockly.Xml.domToText(xmlDom);
+  }
 
-    this.setState({ xml: xmlText });
-
-    ipcRenderer.once('listFiles', (event, arg) => {
-      if (!arg.error) {
-        const filenames = arg.data.map((item: string) => item.split('.xml')[0]);
-
-        this.setState({ filenames });
+  save = () => {
+    ipcRenderer.once('save', (event, arg) => {
+      if(arg.error) {
+        this.addNotification(arg.error);
+      }else{
+        this.addNotification("Sketch saved.");
       }
     });
 
-    ipcRenderer.send('listFiles');
+    ipcRenderer.send('save', { title: this.props.title, data: this.generateSketch() });
+  };
 
-    if (fileSaved) {
-      // rewrite file
-    } else {
-      this.setState({
-        isModalOpen: true,
-        modal: {
-          type: 'save'
-        },
-        filename: '',
-        filenameError: 'EMPTY'
-      });
+  onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
+    const filename = sanitizeName(this.state.filename);
+    e && e.preventDefault();
+
+    ipcRenderer.once('save', (event, arg) => {
+      if(arg.error) {
+        this.addNotification(arg.error);
+      } else {
+        this.props.setFilename(filename);
+        this.finishSaveModal();
+        this.addNotification("Sketch saved.");
+      }
+    });
+
+    ipcRenderer.send('save', { title: filename, data: this.state.xml });
+  };
+
+  openSaveModal = () => {
+    if (this.workspace.getAllBlocks().length === 0) {
+      this.addNotification("You can't save an empty sketch.");
+      return;
     }
+
+    this.setState({ xml: this.generateSketch() });
+
+    ipcRenderer.once('sketches', (event, arg) => {
+      if (!arg.sketches) return;
+      const filenames = arg.sketches.map((sketch: Sketch) => sketch.title);
+      this.setState({filenames});
+    });
+
+    ipcRenderer.send('sketches');
+
+    this.setState({
+      isModalOpen: true,
+      modal: {
+        type: 'save'
+      },
+      filename: '',
+      filenameError: 'EMPTY'
+    });
   };
 
   toggle = () => {
@@ -325,22 +348,6 @@ class Editor extends Component<EditorProps, State> {
     this.setState({ isPromptOpen: false });
   };
 
-  save = () => {
-    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
-    const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
-
-    ipcRenderer.once('save', (event, arg) => {
-      if (arg.error) {
-        console.error(arg.error);
-        alert('error');
-      } else {
-        this.addNotification('Saved');
-      }
-    });
-
-    ipcRenderer.send('save', { filename: `${this.props.title}.xml`, data: xmlText });
-  };
-
   onChangeSaveModal = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filename = e.target.value;
     const newState: { filename: string; filenameError: string | undefined } = {
@@ -367,22 +374,6 @@ class Editor extends Component<EditorProps, State> {
       saveAs(blob, 'filename.xml');
     }
     this.finishSaveModal();
-  };
-
-  onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
-    const filename = sanitizeName(this.state.filename);
-    e && e.preventDefault();
-
-    ipcRenderer.once('save', (event, arg) => {
-      if (arg.error) {
-        alert(arg.error);
-      } else {
-        this.props.setFilename(filename);
-        this.finishSaveModal();
-      }
-    });
-
-    ipcRenderer.send('save', { filename: `${filename}.xml`, data: this.state.xml });
   };
 
   finishSaveModal = () => {
@@ -464,7 +455,7 @@ class Editor extends Component<EditorProps, State> {
                   onSubmit={this.onSubmitSaveModal}
                 />
               ) : (
-                <Modal.LoadModal {...modalProps} />
+                null
               ))}
 
             {isPromptOpen && (

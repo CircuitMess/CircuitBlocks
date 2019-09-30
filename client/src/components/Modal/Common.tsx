@@ -3,16 +3,15 @@ import styled from 'styled-components';
 const ModalBase = styled.div`
   position: absolute;
   width: 50%;
-  max-height: 50%;
+  max-height: 70%;
+  overflow-y: auto;
   top: 50%;
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
   background-color: #fafafa;
   color: #595959;
   border-radius: 8px;
-  padding: 32px 24px;
-  padding-top: 74px;
-  padding-bottom: 92px;
+  padding: 24px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10000;
 
@@ -24,18 +23,16 @@ const ModalBase = styled.div`
   .title {
     font-family: Poppins;
     font-style: normal;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: bold;
+    font-size: 18px;
     line-height: 18px;
-    margin: 8px 0 32px 0;
-    position: absolute;
-    top: 32px;
+    margin-bottom: 32px;
   }
 
   .icons {
     position: absolute;
     right: 24px;
-    top: 29px;
+    top: 20px;
   }
 
   .icons i {
@@ -44,16 +41,14 @@ const ModalBase = styled.div`
   }
 
   .buttons {
-    position: absolute;
+    margin-top: 26px;
   }
 
   .buttons.left {
-    left: 24px;
-    bottom: 32px;
+    float: left;
   }
   .buttons.right {
-    right: 24px;
-    bottom: 32px;
+    float: right;
   }
 
   .content {

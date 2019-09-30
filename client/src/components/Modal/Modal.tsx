@@ -25,7 +25,7 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
   return (
     <>
       <div className="buttons left">
-        {left.map(({ color, onClick, text, disabled }, index) => (
+        {null && left.map(({ color, onClick, text, disabled }, index) => (
           <Button
             key={`ButtonFooterLeft${index}`}
             color={color || 'white'}
@@ -37,8 +37,8 @@ const Footer: React.FC<FooterProps> = ({ left, right }) => {
           </Button>
         ))}
       </div>
-      <div className="buttons right">
-        {right.map(({ color, onClick, text, disabled }, index) => (
+      <div className="buttons left">
+        {right.reverse().map(({ color, onClick, text, disabled }, index) => (
           <Button
             key={`ButtonFooterLeft${index}`}
             color={color || 'white'}

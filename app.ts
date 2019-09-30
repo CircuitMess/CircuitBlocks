@@ -3,14 +3,12 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import { save } from './core/files';
 import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
-const EXAMPLES_PATH = './examples';
 
 let win: BrowserWindow;
 
@@ -83,24 +81,6 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-const callback = (type, event) => {
-  return (error, data) => {
-    if (error === null) {
-      event.reply(type, { error: null, data });
-      // win.webContents.send(type, { error: null, data });
-    } else {
-      event.reply(type, { error });
-      // win.webContents.send(type, { error });
-    }
-  };
-};
-
-ipcMain.on('save', (event, args) => {
-  console.count('save');
-  const { filename, data } = args;
-  save(data, filename, callback('save', event));
-});
 
 ipcMain.on('run', (event, args) => {
   const { code } = args;

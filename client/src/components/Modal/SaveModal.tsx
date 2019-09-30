@@ -16,17 +16,22 @@ const SaveModal: React.FC<SaveModalProps> = ({
   onSubmit,
   ...props
 }) => {
+
+  const errors: any = {
+    EMPTY: "You can't save a sketch with no name.",
+    EXISTS: "A sketch with that name already exists."
+  };
+
   return (
-    <Modal {...props}>
-      <h4> Save sketch </h4>
+    <Modal {...props} title={"Save sketch"}>
       <form onSubmit={onSubmit}>
         <input
           type="text"
-          placeholder="Untitled Project"
           value={filename}
           onChange={onChange}
+          className={ filenameError ? "error" : undefined }
         ></input>
-        <label>{filenameError}</label>
+        <p style={{ paddingTop: 5, color: "#a00" }}>{ filenameError && errors[filenameError] }</p>
       </form>
     </Modal>
   );

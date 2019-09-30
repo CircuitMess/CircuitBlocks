@@ -37,8 +37,8 @@ const StyledHeader = styled.div`
     top: 50%;
     transform: translateY(-50%);
     line-height: 0px;
-    font-size: 12px;
-    font-weight: normal;
+    font-size: 14px;
+    font-weight: bold;
     font-style: normal;
   }
 
@@ -111,6 +111,9 @@ const EditorHeader: React.FC<Props> = (props) => {
         <Button className="icon" onClick={home}>
           <i className="material-icons"> arrow_back </i>
         </Button>
+        <Button className="icon mr-1" onClick={save}>
+          <i className="material-icons"> save </i>
+        </Button>
         <div className="title">{title}</div>
       </div>
 
@@ -122,12 +125,9 @@ const EditorHeader: React.FC<Props> = (props) => {
       </div>
 
       <div className="right">
-        <Button className="icon" onClick={load}>
+        { null && <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
-        </Button>
-        <Button className="icon mr-1" onClick={save}>
-          <i className="material-icons"> save </i>
-        </Button>
+        </Button> }
         <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
           <i className="material-icons"> call_to_action </i>
         </Button>

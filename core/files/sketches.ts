@@ -46,6 +46,23 @@ export default class Sketches {
                 }
             });
         });
+
+        ipcMain.on("save", (event, args) => {
+            const { title, data } = args;
+
+            if(!fs.existsSync(homePath)){
+                fs.mkdirSync(homePath);
+            }
+
+            const sketchPath = path.join(homePath, title + ".xml");
+            fs.writeFile(sketchPath, data, { encoding: "utf-8" }, err => {
+                if(err){
+                    event.reply("save", { error: "Error saving sketch." })
+                }else{
+                    event.reply("save", { });
+                }
+            });
+        });
     }
 
     private getSkecthes(directory: string): Sketch[] {
