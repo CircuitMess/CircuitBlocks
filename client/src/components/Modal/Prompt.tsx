@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-
-import Button from '../Button';
+import {Button} from "semantic-ui-react";
 
 const AlertBackdrop = styled.div`
   position: absolute;
@@ -18,22 +17,20 @@ const AlertDiv = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  min-height: 180px;
-  min-width: 300px;
+  width: 300px;
   transform: translate(-50%, -50%);
   background: white;
   border-radius: 8px;
   padding: 10px 50px;
+  padding-bottom: 20px;
   text-align: center;
 `;
 
 const Footer = styled.div`
-  position: absolute;
-  bottom: 20px;
-  left: 10px;
-  right: 10px;
+  margin-top: 20px;
   display: flex;
-  justify-content: space-around;
+  flex-direction: row;
+  justify-content: space-between;
 
   button,
   div {
@@ -76,10 +73,10 @@ const Prompt: React.FC<Props> = (props) => {
         <form onSubmit={onSubmit}>
           <input type="text" value={value} onChange={handleChange} autoFocus />
           <Footer>
-            <Button onClick={close} color="danger" type="button">
+            <Button onClick={close} type="button">
               Close
             </Button>
-            <Button color="success" type="submit">
+            <Button primary type="submit">
               Save
             </Button>
           </Footer>
