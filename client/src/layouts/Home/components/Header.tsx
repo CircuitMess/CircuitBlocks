@@ -42,7 +42,7 @@ interface HeaderSectionProps {
 export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn }) => {
   const username = 'Albert Gajsak';
   return (
-    <Section className="bg-image">
+    <Section className="bg-image" style={{ boxShadow: "0 0px 5px rgba(0, 0, 0, 0.5)" }}>
       <Header loggedIn={loggedIn}>
         <div className="left">
           <img className="logo" src={require('../../../assets/images/logo.png')} alt={username} />
