@@ -36,6 +36,16 @@ export default class Sketches {
             const categories = this.getExamples();
             event.reply("examples", { categories });
         });
+
+        ipcMain.on("load", (event, args) => {
+            fs.readFile(args.path, { encoding: "utf-8" }, (err, data) => {
+                if(err){
+                    event.reply("load", { error: "Error loading sketch. Please restart or make sure the sketch wasn't deleted." });
+                }else{
+                    event.reply("load", { data });
+                }
+            });
+        });
     }
 
     private getSkecthes(directory: string): Sketch[] {

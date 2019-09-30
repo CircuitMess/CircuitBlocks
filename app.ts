@@ -3,7 +3,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import { load, save } from './core/files';
+import { save } from './core/files';
 import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
@@ -95,12 +95,6 @@ const callback = (type, event) => {
     }
   };
 };
-
-ipcMain.on('load', (event, args) => {
-  console.count('load');
-  const { filename } = args;
-  load(filename, callback('load', event));
-});
 
 ipcMain.on('save', (event, args) => {
   console.count('save');

@@ -7,7 +7,7 @@ import { Sketch } from '../../layouts/Home';
 interface ProjectSectionProps {
   title: string;
   projects: Sketch[];
-  onPress: (params: { type: 'NEW' | 'OPEN'; filename?: string }) => void;
+  onPress: (params: { type: 'NEW' | 'OPEN'; sketch?: Sketch }) => void;
   createNew?: boolean;
 }
 
@@ -24,13 +24,13 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
           </Card>
         )}
 
-        {projects.map((project, index) => (
+        {projects.map((sketch: Sketch, index) => (
           <Card key={`section-${title}-${index}`}
-            onClick={() => onPress({ type: 'OPEN', filename: project.path })}>
-              <div className="image"><svg dangerouslySetInnerHTML={{ __html: project.snapshot || "" }} /></div>
+            onClick={() => onPress({ type: 'OPEN', sketch })}>
+              <div className="image"><svg dangerouslySetInnerHTML={{ __html: sketch.snapshot || "" }} /></div>
             <div className="cover">
-              <div className="title">{project.title}</div>
-              {project.description && <div className="description">{project.description}</div>}
+              <div className="title">{sketch.title}</div>
+              {sketch.description && <div className="description">{sketch.description}</div>}
             </div>
           </Card>
         ))}

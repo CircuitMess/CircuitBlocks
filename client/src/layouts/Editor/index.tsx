@@ -247,7 +247,7 @@ class Editor extends Component<EditorProps, State> {
 
   load = (data: string) => {
     const xml = Blockly.Xml.textToDom(data);
-    Blockly.getMainWorkspace().clear();
+    this.workspace.clear();
     Blockly.Xml.domToWorkspace(xml, this.workspace);
   };
 

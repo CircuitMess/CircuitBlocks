@@ -86,19 +86,19 @@ const Home: React.FC<HomeProps> = (props) => {
     ipcRenderer.send('examples');
   }, [isEditorOpen]);
 
-  const openFile = ({ type, filename }: { type: 'OPEN' | 'NEW'; filename?: string }) => {
+  const openFile = ({ type, sketch }: { type: 'OPEN' | 'NEW'; sketch?: Sketch }) => {
     if (type === 'NEW') {
       openEditor('', undefined);
-    } else {
+    } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
-          console.error('ERROR');
+          console.error('ERROR'); // TODO
         } else {
-          openEditor(args.data, filename && filename.slice(0, filename.length - 4));
+          openEditor(args.data, sketch.title);
         }
       });
 
-      ipcRenderer.send('load', { filename });
+      ipcRenderer.send('load', { path: sketch.path });
     }
   };
 
