@@ -25,6 +25,7 @@ import {Loader} from "semantic-ui-react";
 
 const Main = styled.div`
   background-color: #fafafa;
+  padding: 30px 0;
 `;
 
 interface HomeProps {
@@ -92,7 +93,7 @@ const Home: React.FC<HomeProps> = (props) => {
     } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
-          console.error('ERROR'); // TODO
+          console.error('ERROR'); // TODO alert
         } else {
           openEditor(args.data, sketch.title);
         }
@@ -123,7 +124,7 @@ const Home: React.FC<HomeProps> = (props) => {
                 onPress={openFile}
                 createNew={ !projectsLoadding } />
 
-              <Loader active={projectsLoadding || examplesLoading} inline={"centered"} style={{ margin: "20px auto" }} />
+              <Loader active={projectsLoadding || examplesLoading} inline={"centered"} style={{ marginBottom: 20 }} />
 
               { examples.map(category =>
                 <ProjectSection

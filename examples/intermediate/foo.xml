@@ -1,4 +1,5 @@
 <xml xmlns="https://developers.google.com/blockly/xml">
+  <description>This is an intermediate FOO example</description>
   <variables></variables>
   <block type="controls_if" id="tG-YtbN%;__4cSs@{3qi" x="191" y="100"/>
 </xml>

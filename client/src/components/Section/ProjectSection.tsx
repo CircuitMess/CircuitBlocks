@@ -25,7 +25,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
         )}
 
         {projects.map((sketch: Sketch, index) => (
-          <Card key={`section-${title}-${index}`}
+          <Card key={`section-${title}-${index}`} className={ sketch.description ? "descriptive" : undefined }
             onClick={() => onPress({ type: 'OPEN', sketch })}>
               <div className="image"><svg dangerouslySetInnerHTML={{ __html: sketch.snapshot || "" }} /></div>
             <div className="cover">

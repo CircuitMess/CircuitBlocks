@@ -3,12 +3,12 @@ import styled from 'styled-components';
 const Section = styled.div`
   position: relative;
   width: 100vw;
-  padding: 0 40px;
+  padding: 10px 40px;
   box-sizing: border-box;
   background-color: #fafafa;
-  padding-top: 48px;
   opacity: 1;
   transition-duration: 0.6s;
+  padding-bottom: 40px;
 
   &.bg-image {
     background-color: #19191900;
@@ -17,7 +17,12 @@ const Section = styled.div`
   }
 
   &:last-child {
-    padding-bottom: 32px;
+    padding-bottom: 0;
+  }
+  
+  h2 {
+    text-transform: capitalize;
+    font-size: 24px;
   }
 `;
 
