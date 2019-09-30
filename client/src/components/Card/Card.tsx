@@ -12,6 +12,23 @@ const Card = styled.div`
   overflow: hidden;
   cursor: pointer;
   transition: box-shadow 0.2s ease;
+  
+  &.new {
+    background: #fff;
+    color: #595959;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    
+    i { font-size: 60px; }
+    
+    h3 {
+      font-weight: 300;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+  }
 
   :hover {
     box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.6);

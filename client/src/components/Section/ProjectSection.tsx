@@ -19,8 +19,11 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
       <h2>{title}</h2>
       <CardContainer>
         {createNew && (
-          <Card onClick={() => onPress({ type: 'NEW' })}>
-            <h1>New project</h1>
+          <Card onClick={() => onPress({ type: 'NEW' })} className={"new"}>
+              <div>
+                  <i className="material-icons"> add </i>
+                  <h3>New project</h3>
+              </div>
           </Card>
         )}
 
