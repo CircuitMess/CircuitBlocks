@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component, DOMElement} from 'react';
 import ReactDOM from 'react-dom';
 import Blockly from '../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
@@ -145,7 +145,6 @@ class Editor extends Component<EditorProps, State> {
     this.workspace.addChangeListener((e: any) => {
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
       if (this.state.code !== code) {
-        console.log(code);
         this.setState({ code });
       }
     });
@@ -256,11 +255,19 @@ class Editor extends Component<EditorProps, State> {
     const fileSaved = false;
 
     if (this.workspace.getAllBlocks().length === 0) {
-      this.addNotification('You cant save an empty file');
+      this.addNotification('You cant save an empty sketch.');
       return;
     }
 
-    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace);
+    const xmlDom = Blockly.Xml.workspaceToDom(this.workspace) as unknown as Element;
+
+    const node = this.workspace.getCanvas().cloneNode(true);
+    node.removeAttribute("transform");
+    node.firstChild.removeAttribute("transform");
+    const snapshot = document.createElement("snapshot");
+    snapshot.appendChild(node);
+    xmlDom.prepend(snapshot);
+
     const xmlText = Blockly.Xml.domToPrettyText(xmlDom);
 
     this.setState({ xml: xmlText });
@@ -268,9 +275,6 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.once('listFiles', (event, arg) => {
       if (!arg.error) {
         const filenames = arg.data.map((item: string) => item.split('.xml')[0]);
-
-        console.log(arg.data);
-        console.log(filenames);
 
         this.setState({ filenames });
       }

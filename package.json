@@ -11,11 +11,13 @@
   "private": true,
   "dependencies": {
     "@grpc/proto-loader": "^0.5.2",
+    "dom-parser": "^0.1.6",
     "fs-extra": "^8.1.0",
     "google-protobuf": "^3.10.0-rc.1",
     "grpc": "^1.23.3",
     "js-yaml": "^3.13.1",
     "lzma-native": "^4.0.5",
+    "request": "^2.88.0",
     "serialport": "^7.1.5",
     "sudo-prompt": "^9.0.0",
     "unzipper": "^0.10.5"

@@ -3,11 +3,11 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import { load, save, listFiles, listExamples } from './core/files';
+import { load, save } from './core/files';
 import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
-import Installer from './core/compiler/installer';
 import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
+import Sketches from "./core/files/sketches";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 const EXAMPLES_PATH = './examples';
@@ -18,6 +18,7 @@ const arduinoSetup = new arduinoInstall();
 arduinoSetup.setup();
 
 const arduinoSerial = new ArduinoSerial();
+const sketches = new Sketches();
 
 function createWindow() {
   // Create the browser window.
@@ -105,15 +106,6 @@ ipcMain.on('save', (event, args) => {
   console.count('save');
   const { filename, data } = args;
   save(data, filename, callback('save', event));
-});
-
-ipcMain.on('listFiles', (event, _args) => {
-  console.count('listFiles');
-  listFiles(callback('listFiles', event));
-});
-
-ipcMain.on('listExamples', (event, _args) => {
-  listExamples(callback('listExamples', event), EXAMPLES_PATH);
 });
 
 ipcMain.on('run', (event, args) => {

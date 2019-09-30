@@ -6,6 +6,7 @@ import { ProjectSection } from '../../components/Section';
 import { HeaderImage, HeaderSection } from './components/Header';
 import { Footer } from './components/Footer';
 import { Login } from './components/Login';
+import {Loader} from "semantic-ui-react";
 
 // const projects = [
 //   {
@@ -34,37 +35,26 @@ interface HomeProps {
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
-interface listExamples {
-  error: any;
-  data?: {};
-}
-
-interface listFiles {
-  error: any;
-  data?: string[];
-}
-
-export interface FileCard {
+export interface Sketch {
   title: string;
-  author: string;
+  path?: string;
+  snapshot?: string;
   description?: string;
-  filename: string;
 }
 
-const map_lambda = (author: string) => (filename: string) => ({
-  title: filename.slice(0, filename.length - 4),
-  author: 'You',
-  filename
-});
+export interface Category {
+  title: string;
+  sketches: Sketch[]
+}
 
 const Home: React.FC<HomeProps> = (props) => {
   const { isEditorOpen, openEditor } = props;
   const [loggedIn, setLoggedIn] = useState(true);
   const [animation, setAnimation] = useState(false);
-  const [projects, setProjects] = useState<FileCard[]>([]);
-  const [examples, setExamples] = useState<any[]>([]);
-  const [areProjectLoading, setAreProjectLoading] = useState(true);
-  const [areExamplesLoading, setAreExamplesLoading] = useState(true);
+  const [sketches, setSketches] = useState<Sketch[]>([]);
+  const [examples, setExamples] = useState<Category[]>([]);
+  const [projectsLoadding, setProjectLoading] = useState(true);
+  const [examplesLoading, setExamplesLoading] = useState(true);
 
   // useEffect(() => {
   //   setInterval(() => setLoggedIn((logged) => !logged), 2000);
@@ -76,38 +66,24 @@ const Home: React.FC<HomeProps> = (props) => {
   };
 
   useEffect(() => {
-    ipcRenderer.once('listExamples', (event: IpcRendererEvent, args: listExamples) => {
-      if (args.error) {
-        console.error('Error loading examples');
-      } else {
-        if (args.data) {
-          const data = Object.keys(args.data).map((section_key) => ({
-            title: section_key,
-            data: (args.data as any)[section_key].map(map_lambda('Official example'))
-          }));
-          console.log(data);
-          setExamples(data);
-          setAreExamplesLoading(false);
-        }
+    ipcRenderer.once('sketches', (event: IpcRendererEvent, args) => {
+      if(args.sketches){
+        setSketches(args.sketches);
       }
+
+      setProjectLoading(false);
     });
 
-    ipcRenderer.send('listExamples');
-
-    ipcRenderer.once('listFiles', (event: IpcRendererEvent, args: listFiles) => {
-      if (args.error) {
-        console.error('Error loading examples');
-      } else {
-        if (args.data) {
-          const data = args.data.map(map_lambda('You'));
-          console.log(data);
-          setProjects(data);
-          setAreProjectLoading(false);
-        }
+    ipcRenderer.once('examples', (event: IpcRendererEvent, args) => {
+      if(args.categories){
+        setExamples(args.categories);
       }
+
+      setExamplesLoading(false);
     });
 
-    ipcRenderer.send('listFiles');
+    ipcRenderer.send('sketches');
+    ipcRenderer.send('examples');
   }, [isEditorOpen]);
 
   const openFile = ({ type, filename }: { type: 'OPEN' | 'NEW'; filename?: string }) => {
@@ -141,28 +117,21 @@ const Home: React.FC<HomeProps> = (props) => {
       {loggedIn ? (
         <>
           <Main>
-            {areProjectLoading ? (
-              <h3>Loading...</h3>
-            ) : (
               <ProjectSection
-                title={'Your projects'}
-                projects={projects}
+                title={'Your sketches'}
+                projects={sketches}
                 onPress={openFile}
-                createNew
-              />
-            )}
-            {areExamplesLoading ? (
-              <h3>Loading...</h3>
-            ) : (
-              examples.map((section) => (
+                createNew={ !projectsLoadding } />
+
+              <Loader active={projectsLoadding || examplesLoading} inline={"centered"} style={{ margin: "20px auto" }} />
+
+              { examples.map(category =>
                 <ProjectSection
-                  title={section.title.slice(0, 1).toUpperCase() + section.title.slice(1)}
-                  projects={section.data}
-                  key={`Section-${section.title}`}
-                  onPress={openFile}
-                />
-              ))
-            )}
+                    title={category.title}
+                    projects={category.sketches}
+                    key={`Section-${category.title}`}
+                    onPress={openFile}
+                /> )}
           </Main>
           <Footer>
             <p>v0.1</p>

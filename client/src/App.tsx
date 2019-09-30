@@ -10,7 +10,7 @@ import './assets/source_code_pro.css';
 import InstallInfo from "./components/InstallInfo";
 
 const App = () => {
-  const [isEditorOpen, setIsEditorOpen] = useState(true);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [filename, setFilename] = useState('');
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
