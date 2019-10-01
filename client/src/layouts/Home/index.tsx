@@ -33,7 +33,7 @@ interface HomeProps {
   isEditorOpen: boolean;
   openEditor: (data: string, filename?: string) => void;
   scrollStop: boolean;
-  reportError: (error: string) => void;
+  reportError: (error: string, fatal?: boolean) => void;
 }
 
 interface HomeState {

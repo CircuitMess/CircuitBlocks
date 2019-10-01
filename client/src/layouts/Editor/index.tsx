@@ -46,6 +46,7 @@ interface EditorProps {
   title: string;
   setFilename: (filename: string) => void;
   monacoRef: React.RefObject<any>;
+  reportError: (error: string, fatal?: boolean) => void;
 }
 
 interface State {

@@ -7,7 +7,8 @@ const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 interface InstallInfoProps {
-    setIsInstalling: (installing: boolean) => void
+    setIsInstalling: (installing: boolean) => void;
+    reportError: (error: string, fatal?: boolean) => void;
 }
 
 interface InstallInfoState {
