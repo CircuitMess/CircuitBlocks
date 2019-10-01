@@ -21,6 +21,13 @@ export default class arduinoInstall {
         ipcMain.on("install", (event, args) => {
             this.setup();
         });
+
+        ipcMain.on("daemoncheck", (event, args) => {
+            const stats = ArduinoCompiler.getDaemon();
+            if (!stats.connected && !stats.connecting) {
+                event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess."});
+            }
+        });
     }
 
     public setWindow(window: BrowserWindow){
@@ -29,9 +36,15 @@ export default class arduinoInstall {
 
     private startDaemon(){
         ArduinoCompiler.startDaemon()
-            .catch((error) => console.log(error))
             .then(() => {
                 console.log('Daemon started');
+            })
+            .catch((error) => {
+                console.log(error);
+
+                if(this.window){
+                    this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess." });
+                }
             });
     }
 

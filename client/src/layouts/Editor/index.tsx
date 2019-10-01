@@ -110,9 +110,6 @@ const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 const { dialog } = electron.remote;
 
-console.log("dialog");
-console.log(electron.dialog);
-
 class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
   workspace: any = undefined;
@@ -176,7 +173,7 @@ class Editor extends Component<EditorProps, State> {
 
       if(args.stage == "DONE"){
         if(args.error){
-          this.addNotification(args.error);
+          this.props.reportError(args.error, args.fatal);
 
           if(args.running){
             this.setState({ running: true, runningPercentage: 0 });

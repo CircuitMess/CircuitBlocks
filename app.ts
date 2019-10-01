@@ -3,7 +3,6 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import url from 'url';
 
-import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";

@@ -15,6 +15,16 @@ export default class ArduinoCompile {
         this.arduinoSerial = arduinoSerial;
 
         ipcMain.on("run", (event, args) => {
+            const stats = ArduinoCompiler.getDaemon();
+            if(!stats.connected){
+                if(stats.connecting){
+                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
+                }else{
+                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
+                }
+                return;
+            }
+
             if(this.running){
                 this.send("runprogress", { stage: "DONE", error: "A compile operation is already running. Please wait or restart CircuitBlocks.", running: true });
                 return;
@@ -34,6 +44,16 @@ export default class ArduinoCompile {
         });
 
         ipcMain.on("export", (event, args) => {
+            const stats = ArduinoCompiler.getDaemon();
+            if(!stats.connected){
+                if(stats.connecting){
+                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
+                }else{
+                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
+                }
+                return;
+            }
+
             if(this.running){
                 this.send("runprogress", { stage: "DONE", error: "A compile operation is already running. Please wait or restart CircuitBlocks.", running: true });
                 return;

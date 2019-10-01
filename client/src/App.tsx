@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import { Alert } from './components/Modal';
 import { Home, Editor } from './layouts';
@@ -9,6 +9,11 @@ import './assets/poppins.css';
 import './assets/source_code_pro.css';
 import InstallInfo from "./components/InstallInfo";
 import Error from "./layouts/Home/components/Error";
+
+import { IpcRenderer, AllElectron } from 'electron';
+
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 const App = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -49,12 +54,21 @@ const App = () => {
     }
   };
 
+  useEffect(() => {
+    ipcRenderer.on("daemonfatal", (event, args) => {
+      setErrorFatal(true);
+      setError(args.error);
+    });
+
+    ipcRenderer.send("daemoncheck");
+  }, []);
+
   return (
     <>
       {isAlertOpen && (
         <Alert title="Foobar" body="Something......" close={closeAlert} yes={okAlert} />
       )}
-      { error && <Error message={error} dismiss={() => setError(undefined)}  /> }
+      { error && <Error message={error} dismiss={errorFatal ? undefined : () => setError(undefined)}  /> }
       <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} reportError={(message, fatal) => reportError(message, fatal)} />
       <Home reportError={(message, fatal) => reportError(message, fatal)}
             scrollStop={!!error || isInstalling}

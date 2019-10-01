@@ -47,6 +47,15 @@ export default class ArduinoCompiler {
   private static serial: Serial;
   private static installInfo: InstallInfo;
 
+  private static daemonConnecting: boolean = false;
+
+  public static getDaemon(): { connected: boolean, connecting: boolean }{
+    return {
+      connecting: this.daemonConnecting,
+      connected: this.instance != undefined
+    };
+  }
+
   public static getDirectories() {
     return {
       install: this.ARDUINO_INSTALL,
@@ -205,6 +214,8 @@ export default class ArduinoCompiler {
         return;
       }
 
+      this.daemonConnecting = true;
+
       let cliPath = path.join(
         this.installInfo.cli,
         'arduino-cli' + (os.type() == 'Windows_NT' ? '.exe' : '')
@@ -228,10 +239,13 @@ export default class ArduinoCompiler {
 
       const context = this;
       let tries = 0;
+      let restarted = false;
 
       function connect(){
-        if (tries > 5) {
+        if (tries > 5 && restarted) {
+          context.daemonConnecting = false;
           reject(new Error('Unable to connect to CLI. Please restart the program.'));
+          return;
         }
 
         tries++;
@@ -243,9 +257,18 @@ export default class ArduinoCompiler {
               .on('data', (data) => {
                 context.instance = new Instance();
                 context.instance.setId(data.array[0][0]);
+                context.daemonConnecting = false;
               })
               .on('end', (data) => resolve());
         }catch(e){
+          if(tries > 5 && !restarted){
+            restarted = true;
+            tries = 0;
+
+            context.stopDaemon();
+            context.process = childProcess.execFile(cliPath, ['daemon']);
+          }
+
           setTimeout(connect, 2000);
         }
       }
