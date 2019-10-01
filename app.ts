@@ -34,6 +34,7 @@ function createWindow() {
 
   arduinoSetup.setWindow(win);
   arduinoSerial.setWindow(win);
+  arduinoCompile.setWindow(win);
 
   // and load the index.html of the app.
   const startUrl =

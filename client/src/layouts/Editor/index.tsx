@@ -175,11 +175,16 @@ class Editor extends Component<EditorProps, State> {
       if(!this.state.running) return;
 
       if(args.stage == "DONE"){
-        this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
-
         if(args.error){
           this.addNotification(args.error);
+
+          if(args.running){
+            this.setState({ running: true, runningPercentage: 0 });
+            return;
+          }
         }
+
+        this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
 
         return;
       }
