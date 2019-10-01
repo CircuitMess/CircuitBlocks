@@ -279,7 +279,7 @@ class Editor extends Component<EditorProps, State> {
   save = () => {
     ipcRenderer.once('save', (event, arg) => {
       if(arg.error) {
-        this.addNotification(arg.error);
+        this.props.reportError(arg.error);
       }else{
         this.addNotification("Sketch saved.");
       }
@@ -294,7 +294,7 @@ class Editor extends Component<EditorProps, State> {
 
     ipcRenderer.once('save', (event, arg) => {
       if(arg.error) {
-        this.addNotification(arg.error);
+        this.props.reportError(arg.error);
       } else {
         this.props.setFilename(filename);
         this.finishSaveModal();
@@ -307,7 +307,7 @@ class Editor extends Component<EditorProps, State> {
 
   openSaveModal = () => {
     if (this.workspace.getAllBlocks().length === 0) {
-      this.addNotification("You can't save an empty sketch.");
+      this.props.reportError("You can't save an empty sketch.");
       return;
     }
 
