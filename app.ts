@@ -7,6 +7,7 @@ import ArduinoCompiler, { PortDescriptor } from './core/compiler/compiler';
 import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
+import ArduinoCompile from "./core/files/arduinoCompile";
 
 const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
 
@@ -16,6 +17,7 @@ const arduinoSetup = new arduinoInstall();
 arduinoSetup.setup();
 
 const arduinoSerial = new ArduinoSerial();
+const arduinoCompile = new ArduinoCompile(arduinoSerial);
 const sketches = new Sketches();
 
 function createWindow() {
@@ -81,33 +83,3 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-ipcMain.on('run', (event, args) => {
-  const { code } = args;
-
-  win.webContents.send('runprogress', { error: null, stage: 'COMPILE', progress: 0 });
-
-  ArduinoCompiler.compile(code, progress => {
-    win.webContents.send('runprogress', { error: null, stage: 'COMPILE', progress: progress });
-  })
-    .then(({ binary }) => {
-      win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: 0 });
-      try {
-        ArduinoCompiler.uploadBinary(binary, arduinoSerial.getPort().comName, progress => {
-          win.webContents.send('runprogress', { error: null, stage: 'UPLOAD', progress: progress });
-        }).then(() => {
-          win.webContents.send('runprogress', { error: null, stage: 'DONE' });
-        });
-      } catch (error) {
-        console.error(error);
-        win.webContents.send('runprogress', { error: "Upload error. Check your Ringo then try again.", stage: 'DONE' });
-      }
-    })
-    .catch((error) =>{
-      win.webContents.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
-
-      console.error(error);
-      console.log(error.stdout);
-      console.log(error.stderr);
-    });
-});
