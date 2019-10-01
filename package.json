@@ -31,10 +31,15 @@
       "client/build/**/*",
       "build/**/*",
       "node_modules/**/*",
-      "examples/**/*"
+      "examples/**/*",
+      "resources/**/*"
     ],
+    "directories": {
+      "buildResources": "resources"
+    },
     "mac": {
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "icon": "resources/icon.icns"
     },
     "linux": {
       "target": [
