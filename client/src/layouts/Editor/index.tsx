@@ -331,6 +331,8 @@ class Editor extends Component<EditorProps, State> {
 
   exportBinary = () => {
     const path = dialog.showSaveDialogSync({});
+    if(path == undefined) return;
+
     this.setState({ running: true, runningPercentage: 0 });
     ipcRenderer.send('export', { code: this.state.code, path });
   };
