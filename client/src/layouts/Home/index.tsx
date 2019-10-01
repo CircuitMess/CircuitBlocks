@@ -7,6 +7,7 @@ import { HeaderImage, HeaderSection } from './components/Header';
 import { Footer } from './components/Footer';
 import { Login } from './components/Login';
 import {Loader} from "semantic-ui-react";
+import Error from "./components/Error";
 
 // const projects = [
 //   {
@@ -31,6 +32,7 @@ const Main = styled.div`
 interface HomeProps {
   isEditorOpen: boolean;
   openEditor: (data: string, filename?: string) => void;
+  installing: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -49,7 +51,8 @@ export interface Category {
 }
 
 const Home: React.FC<HomeProps> = (props) => {
-  const { isEditorOpen, openEditor } = props;
+  const { isEditorOpen, openEditor, installing } = props;
+  const [error, setError] = useState<string|undefined>(undefined);
   const [loggedIn, setLoggedIn] = useState(true);
   const [animation, setAnimation] = useState(false);
   const [sketches, setSketches] = useState<Sketch[]>([]);
@@ -93,7 +96,7 @@ const Home: React.FC<HomeProps> = (props) => {
     } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
-          console.error('ERROR'); // TODO alert
+          setError(args.error);
         } else {
           openEditor(args.data, sketch.title);
         }
@@ -110,9 +113,11 @@ const Home: React.FC<HomeProps> = (props) => {
         height: '100%',
         backgroundSize: 'cover',
         backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
-        zIndex: 10
+        zIndex: 10,
+        overflow: (error || installing) ? "hidden" : undefined
       }}
     >
+      { error && <Error message={error} dismiss={() => setError(undefined)}  /> }
       <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
       <HeaderSection loggedIn={loggedIn} />
       {loggedIn ? (

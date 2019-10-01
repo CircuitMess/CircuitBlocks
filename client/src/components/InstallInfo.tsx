@@ -7,7 +7,7 @@ const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 interface InstallInfoProps {
-
+    setIsInstalling: (installing: boolean) => void
 }
 
 interface InstallInfoState {
@@ -26,6 +26,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         };
 
         ipcRenderer.on("installstate", (event, args) => {
+            props.setIsInstalling([ "", "DONE" ].indexOf(args.state.stage || "") == -1); // go figure
             this.setState(args.state);
         });
 

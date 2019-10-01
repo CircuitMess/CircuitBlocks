@@ -12,6 +12,7 @@ import InstallInfo from "./components/InstallInfo";
 const App = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [filename, setFilename] = useState('');
+  const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const monacoRef = React.createRef();
@@ -43,8 +44,8 @@ const App = () => {
       {isAlertOpen && (
         <Alert title="Foobar" body="Something......" close={closeAlert} yes={okAlert} />
       )}
-      <InstallInfo />
-      <Home isEditorOpen={isEditorOpen} openEditor={openEditor} />
+      <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} />
+      <Home installing={isInstalling} isEditorOpen={isEditorOpen} openEditor={openEditor} />
       <Editor
         isEditorOpen={isEditorOpen}
         title={filename}
