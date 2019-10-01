@@ -23,12 +23,14 @@ export function download(download: string, directory: string): Promise<string> {
       .get(download)
       .on('response', (response) => {
         response.pipe(output);
-        output.on('finish', () => {
-          resolve(filepath);
-        });
+        output
+            .on('finish', () => {
+                resolve(filepath);
+            })
+            .on("error", err => reject(new Error("Download error. " + (err.message || ""))))
       })
       .on('error', (err) => {
-        reject(new Error("Network error. Please check your internet connection."));
+        reject(new Error("Network error. Please check your internet connection. " + (err.message || "")));
       });
   });
 }
@@ -54,10 +56,10 @@ export function extract(file: string, directory: string): Promise<null> {
       reject(new Error('Invalid archive format.'));
     }
 
-    handler.on('error', (err) => reject(new Error("Archive unpacking error.")));
+    handler.on('error', (err) => reject(new Error("Archive unpacking error. " + (err.message || ""))));
 
     fs.createReadStream(file)
-      .on('error', (err) => reject(new Error("Archive unpacking error.")))
+      .on('error', (err) => reject(new Error("Archive unpacking error. " + (err.message || ""))))
       .pipe(handler)
       .pipe(new tar.Parse())
       .on('entry', (entry) => {
@@ -73,7 +75,8 @@ export function extract(file: string, directory: string): Promise<null> {
           fs.mkdirSync(filedir, { recursive: true });
         }
 
-        entry.pipe(fs.createWriteStream(filepath));
+        entry.pipe(fs.createWriteStream(filepath))
+            .on("error", err => reject(new Error("Error extracting archive. " + (err.message || ""))));
       })
       .on('end', () => resolve());
   });

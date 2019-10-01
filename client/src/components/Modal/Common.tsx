@@ -18,6 +18,7 @@ const ModalBase = styled.div`
   &.small {
     height: auto;
     width: 28%;
+    min-width: 250px;
   }
 
   .title {

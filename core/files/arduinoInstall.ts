@@ -42,6 +42,7 @@ export default class arduinoInstall {
     }
 
     public setup(){
+        this.setupState.error = undefined;
         const installInfo = ArduinoCompiler.checkInstall();
         if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
             console.log('Installing');

@@ -67,12 +67,12 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             <Dimmer active={true} />
             { loading
                 ? <Loader active={true} size={"massive"} />
-                : <ModalBase style={{ paddingTop: 20, paddingBottom: 20 }}>
+                : <ModalBase className={"small"}>
                     <div className={"title"} style={{ position: "relative", fontSize: 24, top: 0, textAlign: "center", marginBottom: 10 }}>{ heading }</div>
                     <div className="content">
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
-                        { error != undefined && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>Try again</Button> }
+                        { (error != undefined) && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>Try again</Button> }
                     </div>
                 </ModalBase> }
         </div>
