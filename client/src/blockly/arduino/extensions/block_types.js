@@ -12,13 +12,19 @@ goog.provide("Blockly.BlockTypes");
 // Math
 
 Blockly.Blocks['math_number'].getBlockType = function(){
-  // TODO: Check
-
   var numString = this.getFieldValue('NUM');
   return Blockly.Types.identifyNumber(numString);
 };
 
 Blockly.Blocks['math_single'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+Blockly.Blocks['math_constant'].getBlockType = function(){
+  return Blockly.Types.DECIMAL;
+};
+
+Blockly.Blocks['math_arithmetic'].getBlockType = function(){
   return Blockly.Types.DECIMAL;
 };
 
@@ -90,15 +96,25 @@ Blockly.Blocks['text_trim'].getBlockType = function(){
   return Blockly.Types.TEXT;
 };
 
+Blockly.Blocks['text_getSubstring'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
+Blockly.Blocks['text_charAt'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
+Blockly.Blocks['text_indexOf'].getBlockType = function(){
+  return Blockly.Types.TEXT;
+};
+
 Blockly.Blocks['text_prompt_ext'].getBlockType = function(){
-  // TODO: check
-  return (this.getFieldValue('TYPE') == Blockly.Types.TEXT.output) ?
+  return (this.getFieldValue('TYPE').toLowerCase() == Blockly.Types.TEXT.output.toLowerCase()) ?
     Blockly.Types.TEXT : Blockly.Types.NUMBER;
 };
 
 Blockly.Blocks['text_prompt'].getBlockType = function(){
-  // TODO: check
-  return (this.getFieldValue('TYPE') == Blockly.Types.NUMBER.output) ?
+  return (this.getFieldValue('TYPE').toLowerCase() == Blockly.Types.NUMBER.output.toLowerCase()) ?
     Blockly.Types.NUMBER : Blockly.Types.TEXT;
 };
 
