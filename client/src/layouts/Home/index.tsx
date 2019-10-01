@@ -32,7 +32,17 @@ const Main = styled.div`
 interface HomeProps {
   isEditorOpen: boolean;
   openEditor: (data: string, filename?: string) => void;
-  installing: boolean;
+  scrollStop: boolean;
+  reportError: (error: string) => void;
+}
+
+interface HomeState {
+  animation: boolean;
+  loggedIn: boolean;
+  sketches: Sketch[];
+  examples: Category[];
+  projectsLoading: boolean;
+  examplesLoading: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -50,53 +60,63 @@ export interface Category {
   sketches: Sketch[]
 }
 
-const Home: React.FC<HomeProps> = (props) => {
-  const { isEditorOpen, openEditor, installing } = props;
-  const [error, setError] = useState<string|undefined>(undefined);
-  const [loggedIn, setLoggedIn] = useState(true);
-  const [animation, setAnimation] = useState(false);
-  const [sketches, setSketches] = useState<Sketch[]>([]);
-  const [examples, setExamples] = useState<Category[]>([]);
-  const [projectsLoadding, setProjectLoading] = useState(true);
-  const [examplesLoading, setExamplesLoading] = useState(true);
+export default class Home extends React.Component<HomeProps, HomeState> {
+
 
   // useEffect(() => {
   //   setInterval(() => setLoggedIn((logged) => !logged), 2000);
   // }, []);
 
-  const foo = () => {
-    setAnimation(true);
-    setTimeout(() => setLoggedIn(true), 300);
+  public constructor(props: HomeProps){
+    super(props);
+
+    this.state = {
+      loggedIn: true,
+      animation: false,
+      sketches: [],
+      examples: [],
+      projectsLoading: true,
+      examplesLoading: true
+    };
+  }
+
+  private foo(){
+    this.setState({ animation: true });
+    setTimeout(() => this.setState({ loggedIn: true }), 300);
   };
 
-  useEffect(() => {
-    ipcRenderer.once('sketches', (event: IpcRendererEvent, args) => {
-      if(args.sketches){
-        setSketches(args.sketches);
-      }
+  public componentDidUpdate(prevProps: Readonly<HomeProps>, prevState: Readonly<HomeState>, snapshot?: any): void {
+    if(prevProps.isEditorOpen == this.props.isEditorOpen) return;
 
-      setProjectLoading(false);
+    this.loadSketches();
+  }
+
+  public componentDidMount(): void {
+    this.loadSketches();
+  }
+
+  public loadSketches(){
+    ipcRenderer.once('sketches', (event: IpcRendererEvent, args) => {
+      this.setState({ sketches: args.sketches || [], projectsLoading: false });
     });
 
     ipcRenderer.once('examples', (event: IpcRendererEvent, args) => {
-      if(args.categories){
-        setExamples(args.categories);
-      }
-
-      setExamplesLoading(false);
+      this.setState({ examples: args.categories || [], examplesLoading: false });
     });
 
     ipcRenderer.send('sketches');
     ipcRenderer.send('examples');
-  }, [isEditorOpen]);
+  } //, [isEditorOpen]);
 
-  const openFile = ({ type, sketch }: { type: 'OPEN' | 'NEW'; sketch?: Sketch }) => {
+  public openFile(type: 'NEW' | 'OPEN', sketch?: Sketch){
+    const { reportError, openEditor } = this.props;
+
     if (type === 'NEW') {
       openEditor('', undefined);
     } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
-          setError(args.error);
+          reportError(args.error);
         } else {
           openEditor(args.data, sketch.title);
         }
@@ -104,78 +124,78 @@ const Home: React.FC<HomeProps> = (props) => {
 
       ipcRenderer.send('load', { path: sketch.path });
     }
-  };
+  }
 
-  return (
-    <div
-      className={isEditorOpen ? 'd-none' : 'h-open'}
-      style={{
-        height: '100%',
-        backgroundSize: 'cover',
-        backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
-        zIndex: 10,
-        overflow: (error || installing) ? "hidden" : undefined
-      }}
-    >
-      { error && <Error message={error} dismiss={() => setError(undefined)}  /> }
-      <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
-      <HeaderSection loggedIn={loggedIn} />
-      {loggedIn ? (
-        <>
-          <Main>
-              <ProjectSection
-                title={'Your sketches'}
-                projects={sketches}
-                onPress={openFile}
-                createNew={ !projectsLoadding } />
+  public render(){
+    const { isEditorOpen, scrollStop } = this.props;
+    const { animation, loggedIn, sketches, examples, projectsLoading, examplesLoading } = this.state;
 
-              <Loader active={projectsLoadding || examplesLoading} inline={"centered"} style={{ marginBottom: 20 }} />
+    return <div
+            className={isEditorOpen ? 'd-none' : 'h-open'}
+            style={{
+              height: '100%',
+              backgroundSize: 'cover',
+              backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
+              zIndex: 10,
+              overflow: (scrollStop) ? "hidden" : undefined
+            }}
+        >
+          <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
+          <HeaderSection loggedIn={loggedIn} />
+          {loggedIn ? (
+              <>
+                <Main>
+                  <ProjectSection
+                      title={'Your sketches'}
+                      projects={sketches}
+                      onPress={(type, sketch) => this.openFile(type, sketch)}
+                      createNew={ !projectsLoading } />
 
-              { examples.map(category =>
-                <ProjectSection
-                    title={category.title}
-                    projects={category.sketches}
-                    key={`Section-${category.title}`}
-                    onPress={openFile}
-                /> )}
-          </Main>
-          <Footer>
-            <p>v0.1</p>
-          </Footer>
-        </>
-      ) : (
-        <Login className={animation ? 'log-in' : ''}>
-          <img src={require('../../assets/SVG/login.svg')} height="80px" alt="Login" />
-          <div className="form">
-            <h2>Log In</h2>
-            <p>Connect with your CircuitMess ID</p>
-            <br />
-            <div className="label">Email</div>
-            <input type="text" className="error" />
-            <div className="errortext">You must provide an Email!</div>
+                  <Loader active={projectsLoading || examplesLoading} inline={"centered"} style={{ marginBottom: 20 }} />
 
-            <div className="label">Password</div>
-            <input type="password" />
-            <div className="errortext">&nbsp;</div>
+                  { examples.map(category =>
+                      <ProjectSection
+                          title={category.title}
+                          projects={category.sketches}
+                          key={`Section-${category.title}`}
+                          onPress={(type, sketch) => this.openFile(type, sketch)}
+                      /> )}
+                </Main>
+                <Footer>
+                  <p>v0.1</p>
+                </Footer>
+              </>
+          ) : (
+              <Login className={animation ? 'log-in' : ''}>
+                <img src={require('../../assets/SVG/login.svg')} height="80px" alt="Login" />
+                <div className="form">
+                  <h2>Log In</h2>
+                  <p>Connect with your CircuitMess ID</p>
+                  <br />
+                  <div className="label">Email</div>
+                  <input type="text" className="error" />
+                  <div className="errortext">You must provide an Email!</div>
 
-            <div className="button mid blue">
-              <div className="text">Log In</div>
-            </div>
-          </div>
-          <div className="form clickable a-l">
-            <h3 className="stack blue">Sign Up</h3>
-            <p>Not a member? Not a problem!</p>
-            <div className="icon right blue">
-              <i className="material-icons"> open_in_new </i>
-            </div>
-          </div>
-          <div className="button mid teal">
-            <button onClick={foo}>Skip Log In</button>
-          </div>
-        </Login>
-      )}
-    </div>
-  );
+                  <div className="label">Password</div>
+                  <input type="password" />
+                  <div className="errortext">&nbsp;</div>
+
+                  <div className="button mid blue">
+                    <div className="text">Log In</div>
+                  </div>
+                </div>
+                <div className="form clickable a-l">
+                  <h3 className="stack blue">Sign Up</h3>
+                  <p>Not a member? Not a problem!</p>
+                  <div className="icon right blue">
+                    <i className="material-icons"> open_in_new </i>
+                  </div>
+                </div>
+                <div className="button mid teal">
+                  <button onClick={() => this.foo()}>Skip Log In</button>
+                </div>
+              </Login>
+          )}
+        </div>
+  }
 };
-
-export default Home;

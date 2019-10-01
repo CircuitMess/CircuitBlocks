@@ -8,9 +8,11 @@ import './assets/material_icons.css';
 import './assets/poppins.css';
 import './assets/source_code_pro.css';
 import InstallInfo from "./components/InstallInfo";
+import Error from "./layouts/Home/components/Error";
 
 const App = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [error, setError] = useState<string|undefined>(undefined);
   const [filename, setFilename] = useState('');
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -44,8 +46,12 @@ const App = () => {
       {isAlertOpen && (
         <Alert title="Foobar" body="Something......" close={closeAlert} yes={okAlert} />
       )}
+      { error && <Error message={error} dismiss={() => setError(undefined)}  /> }
       <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} />
-      <Home installing={isInstalling} isEditorOpen={isEditorOpen} openEditor={openEditor} />
+      <Home reportError={(error: string) => setError(error)}
+            scrollStop={!!error || isInstalling}
+            isEditorOpen={isEditorOpen}
+            openEditor={openEditor} />
       <Editor
         isEditorOpen={isEditorOpen}
         title={filename}
