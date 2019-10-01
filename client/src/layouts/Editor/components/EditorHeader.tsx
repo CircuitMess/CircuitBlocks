@@ -103,7 +103,7 @@ const EditorHeader: React.FC<Props> = (props) => {
     exportBinary
   } = props;
 
-  const stage = runningStage == "COMPILE" ? "Compiling" : "Uploading";
+  const stage = runningStage == "UPLOAD" ? "Uploading" : "Compiling";
 
   return (
     <StyledHeader>
