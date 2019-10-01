@@ -131,7 +131,7 @@ export default class Installer {
   private installArduinoWindows(file, callback: (err) => void) {
     sudoPrompt.exec(
       file + ' /S',
-      { name: 'Arduino installer', stdio: 'inherit' },
+      { name: 'Arduino installer', stdio: 'inherit', icns: "./resources/icon.icns" },
       (error, stderr, stdout) => {
         if (error) {
           callback(error);
@@ -194,7 +194,7 @@ export default class Installer {
 
         sudoPrompt.exec(
           setup.join(' && '),
-          { name: 'Arduino installer', stdio: 'inherit' },
+          { name: 'Arduino installer', stdio: 'inherit', icns: "./resources/icon.icns" },
           (error, stderr, stdout) => {
             console.log(stderr);
             console.log(stdout);
