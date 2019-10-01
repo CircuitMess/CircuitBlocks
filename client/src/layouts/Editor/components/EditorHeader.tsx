@@ -82,6 +82,7 @@ interface Props {
   connected: boolean;
   isSerialOpen: boolean;
   openSerial: () => void;
+  exportBinary: () => void;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -98,7 +99,8 @@ const EditorHeader: React.FC<Props> = (props) => {
     runningStage,
     runningPercentage,
     isSerialOpen,
-    openSerial
+    openSerial,
+    exportBinary
   } = props;
 
   const stage = runningStage == "COMPILE" ? "Compiling" : "Uploading";
@@ -128,6 +130,9 @@ const EditorHeader: React.FC<Props> = (props) => {
         { null && <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
         </Button> }
+        <Button className={`icon`} onClick={exportBinary}>
+          <i className="material-icons"> save_alt </i>
+        </Button>
         <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
           <i className="material-icons"> call_to_action </i>
         </Button>

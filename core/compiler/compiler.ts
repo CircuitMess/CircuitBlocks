@@ -339,13 +339,13 @@ export default class ArduinoCompiler {
       let resolveObject = undefined;
       let stage = 1;
       function popProgress() {
-        if (stage == 1 && currentProgress >= 90 && !finished) {
+        if (stage == 1 && currentProgress >= 80 && !finished) {
           progPerTenthSec /= 10;
           stage++;
-        } else if (stage == 2 && currentProgress >= 95 && !finished) {
+        } else if (stage == 2 && currentProgress >= 90 && !finished) {
           progPerTenthSec /= 10;
           stage++;
-        } else if (stage == 3 && currentProgress >= 98 && !finished) {
+        } else if (stage == 3 && currentProgress >= 95 && !finished) {
           progPerTenthSec /= 10;
           stage++;
         }

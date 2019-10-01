@@ -2,6 +2,8 @@
 import {ipcMain} from 'electron';
 import ArduinoCompiler from "../compiler/compiler";
 import {ArduinoSerial} from "./arduinoSerial";
+import * as fs from "fs";
+import * as path from "path";
 
 export default class ArduinoCompile {
 
@@ -19,10 +21,33 @@ export default class ArduinoCompile {
                 this.upload(binary, () => event.reply('runprogress', { error: null, stage: 'DONE' }), event);
             }, event);
         });
+
+        ipcMain.on("export", (event, args) => {
+            const { code } = args;
+            let exportPath = args.path;
+
+            const parsed = path.parse(exportPath);
+            if(parsed.ext.toLowerCase() != ".bin"){
+                exportPath += ".bin";
+            }
+
+            event.reply("runprogress", { error: null, stage: "EXPORT", progress: 0 });
+            this.compile(code, (binary) => {
+                fs.copyFile(binary, exportPath, error => {
+                    if(error){
+                        event.reply('runprogress', { error: "Error saving compiled binary. Make sure you have the permissions to write to the specified file.", stage: 'DONE', progress: 0 });
+                    }else{
+                        event.reply('runprogress', { error: "Export successful.", stage: 'DONE', progress: 0 });
+                    }
+                });
+            }, event, "EXPORT");
+        });
     }
 
-    private compile(code: string, callback: (binary) => void, event){
-        ArduinoCompiler.compile(code, progress => event.reply('runprogress', { error: null, stage: 'COMPILE', progress }))
+    private compile(code: string, callback: (binary) => void, event, stage?: string){
+        if(!stage) stage = "COMPILE";
+
+        ArduinoCompiler.compile(code, progress => event.reply('runprogress', { error: null, stage: stage, progress }))
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {

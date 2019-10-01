@@ -107,6 +107,10 @@ interface Notification {
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
+const { dialog } = electron.remote;
+
+console.log("dialog");
+console.log(electron.dialog);
 
 class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
@@ -182,7 +186,12 @@ class Editor extends Component<EditorProps, State> {
       let progress = args.stage == "UPLOAD" ? 50 : 0;
       progress += args.progress / 2;
 
+      if(args.stage == "EXPORT"){
+        progress *= 2;
+      }
+
       if(progress == 0) progress = 0.1;
+      if(progress == 0.5) progress = 0.56;
 
       this.setState({ runningPercentage: progress, runningStage: args.stage })
     });
@@ -319,6 +328,22 @@ class Editor extends Component<EditorProps, State> {
     });
   };
 
+  exportBinary = () => {
+    const path = dialog.showSaveDialogSync({});
+    this.setState({ running: true, runningPercentage: 0 });
+    ipcRenderer.send('export', { code: this.state.code, path });
+  };
+
+  saveExternal = () => {
+    if (this.state.xml) {
+      const blob = new Blob([this.state.xml], {
+        type: 'application/xml;charset=utf-8'
+      });
+      saveAs(blob, 'filename.xml');
+    }
+    this.finishSaveModal();
+  };
+
   toggle = () => {
     this.setState({ isCodeOpen: !this.state.isCodeOpen });
     this.updateDimensions();
@@ -364,16 +389,6 @@ class Editor extends Component<EditorProps, State> {
     console.log(newState);
 
     this.setState(newState);
-  };
-
-  saveExternal = () => {
-    if (this.state.xml) {
-      const blob = new Blob([this.state.xml], {
-        type: 'application/xml;charset=utf-8'
-      });
-      saveAs(blob, 'filename.xml');
-    }
-    this.finishSaveModal();
   };
 
   finishSaveModal = () => {
@@ -481,6 +496,7 @@ class Editor extends Component<EditorProps, State> {
               runningStage={runningStage}
               runningPercentage={runningPercentage}
               connected={makerPhoneConnected}
+              exportBinary={this.exportBinary}
             />
 
             {notifications && (
