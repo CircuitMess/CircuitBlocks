@@ -115,6 +115,8 @@ export default class Sketches {
         const categories: Category[] = [];
 
         const getSketches = this.getSkecthes;
+		
+		if(!fs.existsSync(examplesDir)) return [];
 
         const categoryDirs = fs.readdirSync(examplesDir);
         categoryDirs.forEach(dir => {
