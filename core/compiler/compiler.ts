@@ -296,7 +296,7 @@ export default class ArduinoCompiler {
           ports.filter((port) =>
             thirdParty
               ? port.vendorId && port.productId
-              : port.vendorId === '10c4' && port.productId === 'ea60'
+              : port.vendorId.toLowerCase() === '10c4' && port.productId.toLowerCase() === 'ea60'
           )
         );
       });
