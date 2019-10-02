@@ -8,7 +8,9 @@ import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
 import ArduinoCompile from "./core/files/arduinoCompile";
 
-const reactUrl = process.env.ELECTRON_ENV === 'development' ? 'http://localhost:3000' : null;
+const DEV = process.env.ELECTRON_ENV === 'development';
+
+const reactUrl = DEV ? 'http://localhost:3000' : null;
 
 let win: BrowserWindow;
 
@@ -31,6 +33,12 @@ function createWindow() {
     }
   });
 
+  if(!DEV){
+    win.setMenu(null);
+    win.removeMenu();
+    win.setMenuBarVisibility(false);
+  }
+
   arduinoSetup.setWindow(win);
   arduinoSerial.setWindow(win);
   arduinoCompile.setWindow(win);
@@ -46,7 +54,7 @@ function createWindow() {
   win.loadURL(startUrl);
 
   // Open the DevTools.
-  if (process.env.ELECTRON_ENV === 'development') {
+  if (DEV) {
     win.webContents.openDevTools();
   }
 
