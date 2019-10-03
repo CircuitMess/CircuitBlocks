@@ -155,7 +155,9 @@ export default class ArduinoCompiler {
         }
       });
 
-      info.arduino = install.path;
+      if(info){
+        info.arduino = install.path;
+      }
     }
 
     this.installInfo = info;
