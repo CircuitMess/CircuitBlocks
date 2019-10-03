@@ -217,7 +217,7 @@ export default class Installer {
 
   private installArduinoDarwin(file, callback: (err) => void) {
     const tmp = util.tmpdir('cb-ard-inst');
-    const dest = path.join(os.homedir(), '/Applications');
+    const dest = '/Applications';
 
     util.extract(file, tmp)
     .then(() => {

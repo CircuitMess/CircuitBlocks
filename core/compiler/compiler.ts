@@ -86,8 +86,29 @@ export default class ArduinoCompiler {
   }
 
   public static checkInstall(): InstallInfo | null {
-    let local: string;
+    let home: string;
+    if (os.type() === 'Windows_NT') {
+      home = path.join(os.homedir(), 'AppData', 'Local');
+    } else if (os.type() === 'Linux') {
+      home = os.homedir();
+    } else if (os.type() === 'Darwin') {
+      home = path.join(os.homedir(), 'Library');
+    } else {
+      return null;
+    }
 
+    const installPath = path.join(home, os.type() == 'Windows_NT' ? 'ArduinoCLI' : '.arduino');
+    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null };
+
+    if(os.type() == "Darwin"){
+      let install = path.join("Applications", "Arduino.app");
+
+      if(fs.existsSync(install)){
+        info.arduino = install;
+      }
+    }
+
+    let local: string;
     if (os.type() === 'Windows_NT') {
       local = path.join(os.homedir(), 'AppData', 'Local', 'Arduino15');
 
@@ -99,14 +120,12 @@ export default class ArduinoCompiler {
     } else if (os.type() === 'Darwin') {
       local = path.join(os.homedir(), 'Library', 'Arduino15');
     } else {
-      return null;
+      return info;
     }
 
     if (!fs.existsSync(local)) {
-      return null;
+      return info;
     }
-
-    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: local };
 
     const prefPath = path.join(local, 'preferences.txt');
     const configPath = path.join(local, 'arduino-cli.yaml');
@@ -126,8 +145,6 @@ export default class ArduinoCompiler {
       info.local = config.arduino_data;
       info.sketchbook = config.sketchbook_path;
     }
-
-    const installPath = path.join(local, '..', os.type() == 'Windows_NT' ? 'ArduinoCLI' : '.arduino');
 
     if (!fs.existsSync(installPath)) {
       return info;
