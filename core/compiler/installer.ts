@@ -14,7 +14,8 @@ export default class Installer {
     arduino: {
       Windows_NT: 'https://downloads.arduino.cc/arduino-1.8.10-windows.exe',
       Linux_x32: 'https://downloads.arduino.cc/arduino-1.8.10-linux32.tar.xz',
-      Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.10-linux64.tar.xz'
+      Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.10-linux64.tar.xz',
+      Darwin: 'https://downloads.arduino.cc/arduino-1.8.10-macosx.zip'
     },
 
     arduino_cli: {
@@ -25,7 +26,8 @@ export default class Installer {
       Linux_x32:
         'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_32bit.tar.gz',
       Linux_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_64bit.tar.gz'
+        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_64bit.tar.gz',
+      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_macOS_64bit.tar.gz'
     },
 
     ringo: {
@@ -56,7 +58,8 @@ export default class Installer {
 
   private downloadCli(callback: (string, error) => void) {
     const dlDir = util.tmpdir('cb-cli-dl');
-    const url: string = this.downloads.arduino_cli[os.type() + '_' + os.arch()];
+    const plat = os.type() + (this.PLATFORM === 'Windows_NT' ? os.arch() : '')
+    const url: string = this.downloads.arduino_cli[plat];
 
     util
       .download(url, dlDir)
@@ -90,7 +93,7 @@ export default class Installer {
       });
   }
 
-  private installCliLinux(file, callback: (err) => void) {
+  private installCliUnix(file, callback: (err) => void) {
     const tmp = util.tmpdir('cb-cli-inst');
     const dest = path.join(os.homedir(), '.arduino');
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
@@ -123,8 +126,8 @@ export default class Installer {
   private installCli(file, callback: (err) => void) {
     if (this.PLATFORM == 'Windows_NT') {
       this.installCliWindows(file, callback);
-    } else if (this.PLATFORM.startsWith('Linux')) {
-      this.installCliLinux(file, callback);
+    } else if (this.PLATFORM.startsWith('Linux') || this.PLATFORM === "Darwin") {
+      this.installCliUnix(file, callback);
     }
   }
 
@@ -212,11 +215,38 @@ export default class Installer {
       });
   }
 
+  private installArduinoDarwin(file, callback: (err) => void) {
+    const tmp = util.tmpdir('cb-ard-inst');
+    const dest = path.join(os.homedir(), '/Applications');
+
+    util.extract(file, tmp)
+    .then(() => {
+      const files = fs.readdirSync(tmp);
+        if (files.length == 0) {
+          callback(new Error('Archive extract failed.'));
+          return;
+        }
+
+        const name = files[0];
+        const installPath = path.join(dest, name);
+
+        fs.copySync(path.join(tmp, name), installPath);
+
+        callback(null);
+    })
+    .catch((err) => {
+      callback(err);
+    });
+
+  }
+
   private installArduino(file, callback: (err) => void) {
     if (this.PLATFORM === 'Windows_NT') {
       this.installArduinoWindows(file, callback);
     } else if (this.PLATFORM.startsWith('Linux')) {
       this.installArduinoLinux(file, callback);
+    } else if (this.PLATFORM === "Darwin") {
+      this.installArduinoDarwin(file, callback);
     }
   }
 

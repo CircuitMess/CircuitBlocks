@@ -211,7 +211,7 @@ export default class ArduinoCompiler {
    */
   public static startDaemon(): Promise<null> {
     return new Promise<null>((resolve, reject) => {
-      if (this.installInfo.cli == null) {
+      if (this.installInfo == null || this.installInfo.cli == null) {
         reject(new Error('Paths not set up'));
         return;
       }

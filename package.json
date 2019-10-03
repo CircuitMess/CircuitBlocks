@@ -49,6 +49,7 @@
     }
   },
   "scripts": {
+    "rebuild-electron-mac": "CC=/usr/local/Cellar/gcc@7/7.4.0_2/bin/gcc-7 CXX=/usr/local/Cellar/gcc@7/7.4.0_2/bin/g++-7 yarn electron-rebuild",
     "rebuild-electron": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 yarn electron-rebuild",
     "build": "tsc",
     "clean": "rm -rf node_modules",
