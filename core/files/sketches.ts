@@ -1,4 +1,3 @@
-import { existsSync, mkdirSync, readdir, readdirSync } from 'fs';
 import * as path from 'path';
 import DomParser from 'dom-parser';
 
@@ -6,7 +5,6 @@ import {ipcMain, BrowserWindow} from 'electron';
 
 import homePath from './consts';
 import * as fs from "fs";
-import {StringDecoder} from "string_decoder";
 
 interface Sketch {
     title: string;
