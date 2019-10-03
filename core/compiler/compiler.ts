@@ -127,7 +127,7 @@ export default class ArduinoCompiler {
       info.sketchbook = config.sketchbook_path;
     }
 
-    const installPath = path.join(local, '..', os.type() == 'Windows_NT' ? 'Arduino' : '.arduino');
+    const installPath = path.join(local, '..', os.type() == 'Windows_NT' ? 'ArduinoCLI' : '.arduino');
 
     if (!fs.existsSync(installPath)) {
       return info;

@@ -70,7 +70,7 @@ export default class Installer {
 
   private installCliWindows(file, callback: (err) => void) {
     const tmp = util.tmpdir('cb-cli-inst');
-    const dest = path.join(os.homedir(), 'AppData', 'Local', 'Arduino');
+    const dest = path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI');
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
 
     util
