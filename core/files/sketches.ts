@@ -66,6 +66,8 @@ export default class Sketches {
     private getSkecthes(directory: string): Sketch[] {
         const domParser = Sketches.domParser;
 
+        if(!fs.existsSync(directory)) return [];
+
         const sketches: Sketch[] = [];
 
         const files = fs.readdirSync(directory);
