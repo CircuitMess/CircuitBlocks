@@ -173,7 +173,7 @@ export default class ArduinoCompiler {
         }
       });
 
-      if(info){
+      if(install){
         info.arduino = install.path;
       }
     }
