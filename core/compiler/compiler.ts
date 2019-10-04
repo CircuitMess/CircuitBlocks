@@ -92,7 +92,7 @@ export default class ArduinoCompiler {
     } else if (os.type() === 'Linux') {
       home = os.homedir();
     } else if (os.type() === 'Darwin') {
-      home = path.join(os.homedir(), 'Library');
+      home = os.homedir();
     } else {
       return null;
     }
@@ -101,7 +101,7 @@ export default class ArduinoCompiler {
     let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null };
 
     if(os.type() == "Darwin"){
-      let install = path.join("Applications", "Arduino.app");
+      let install = path.join("/Applications", "Arduino.app");
 
       if(fs.existsSync(install)){
         info.arduino = install;
