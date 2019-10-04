@@ -12,6 +12,7 @@ import { CompileReq, CompileResp } from '../grpc/compile_pb';
 import { Configuration, InitReq, VersionReq } from '../grpc/commands_pb';
 import { Instance } from '../grpc/common_pb';
 import { UploadReq, UploadResp } from '../grpc/upload_pb';
+import { rejects } from 'assert';
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -311,11 +312,16 @@ export default class ArduinoCompiler {
   public static identifyPort(thirdParty: boolean = false): Promise<PortDescriptor[]> {
     return new Promise<any>((resolve, _reject) => {
       SerialPort.list((err, ports) => {
+        if(err){
+          rejects(err);
+          return;
+        }
+
         resolve(
           ports.filter((port) =>
             thirdParty
               ? port.vendorId && port.productId
-              : port.vendorId.toLowerCase() === '10c4' && port.productId.toLowerCase() === 'ea60'
+              : port.vendorId && port.productId && port.vendorId.toLowerCase() === '10c4' && port.productId.toLowerCase() === 'ea60'
           )
         );
       });

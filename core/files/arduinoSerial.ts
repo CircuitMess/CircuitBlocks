@@ -70,6 +70,10 @@ export class ArduinoSerial {
                 }
 
                 this.checking = false;
+            })
+            .catch(err => {
+                console.log("Port identifying failed");
+                console.log(err);
             });
     }
 
