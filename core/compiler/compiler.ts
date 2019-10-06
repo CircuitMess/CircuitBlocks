@@ -107,7 +107,7 @@ export default class ArduinoCompiler {
       if(fs.existsSync(install)){
         info.arduino = install;
       }
-    } else if(os.type() == "Windows_nt"){
+    } else if(os.type() == "Windows_NT"){
       let install = path.join("C:", "Program Files (x86)", "Arduino");
 
       if(fs.existsSync(path.join(install, "arduino.exe"))){
