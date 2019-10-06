@@ -18,6 +18,14 @@ Blockly.Arduino['button_action'] = function(block) {
     return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 };
 
+Blockly.Arduino['button_held'] = function(block) {
+    var button = block.getFieldValue('BUTTON');
+    var duration = Blockly.Arduino.valueToCode(block, 'DURATION', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = 'mp.buttons.held(' + button + ", " + duration + ')';
+    return [ code, Blockly.Arduino.ORDER_ATOMIC ];
+};
+
 Blockly.Arduino['joystick'] = function(block) {
     var axis = block.getFieldValue('AXIS');
 

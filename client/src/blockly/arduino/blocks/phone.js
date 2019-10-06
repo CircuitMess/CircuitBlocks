@@ -221,7 +221,6 @@ Blockly.defineBlocksWithJsonArray([
                 options: [
                     [ "Pressed", "pressed" ],
                     [ "Released", "released" ],
-                    [ "Held", "held" ]
                 ]
             }
         ],
@@ -230,6 +229,45 @@ Blockly.defineBlocksWithJsonArray([
         outputShape: Blockly.OUTPUT_SHAPE_HEXAGONAL,
         colour: Blockly.Msg.IO_HUE,
         tooltip: "Returns TRUE if the selected button has been pressed."
+    },
+    {
+        type: "button_held",
+        message0: "button %1 has been held for %2 milliseconds",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "BUTTON",
+                options: [
+                    [ "Button 1", "BTN_1" ],
+                    [ "Button 2", "BTN_2" ],
+                    [ "Button 3", "BTN_3" ],
+                    [ "Button 4", "BTN_4" ],
+                    [ "Button 5", "BTN_5" ],
+                    [ "Button 6", "BTN_6" ],
+                    [ "Button 7", "BTN_7" ],
+                    [ "Button 8", "BTN_8" ],
+                    [ "Button 9", "BTN_9" ],
+                    [ "Button 0", "BTN_0" ],
+                    [ "Button *", "BTN_ASTERISK" ],
+                    [ "Button #", "BTN_HASHTAG" ],
+                    [ "- Left", "BTN_FUN_LEFT" ],
+                    [ "- Right", "BTN_FUN_RIGHT" ],
+                    [ "Home", "BTN_HOME" ],
+                    [ "A", "BTN_A" ],
+                    [ "B", "BTN_B" ]
+                ]
+            },
+            {
+                type: "input_value",
+                name: "DURATION",
+                check: "Number"
+            }
+        ],
+        extensions: [ "return_boolean" ],
+        output: "Boolean",
+        outputShape: Blockly.OUTPUT_SHAPE_HEXAGONAL,
+        colour: Blockly.Msg.IO_HUE,
+        tooltip: "Returns TRUE if the selected button has been held for the specified duration."
     },
     {
         type: "joystick",
