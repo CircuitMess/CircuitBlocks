@@ -12,6 +12,7 @@ export default class arduinoInstall {
     private setupState: SetupState = { stage: "", error: undefined };
     private window: BrowserWindow;
     private installer: Installer;
+	private installing: boolean = false;
 
     constructor(){
         ipcMain.on("installstate", (event, args) => {
@@ -24,7 +25,8 @@ export default class arduinoInstall {
 
         ipcMain.on("daemoncheck", (event, args) => {
             const stats = ArduinoCompiler.getDaemon();
-            if (!stats.connected && !stats.connecting) {
+            if (!this.installing && !stats.connected && !stats.connecting) {
+				console.log(stats);
                 event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess."});
             }
         });
@@ -55,6 +57,7 @@ export default class arduinoInstall {
     }
 
     public setup(){
+		this.installing = true;
         this.setupState.error = undefined;
         const installInfo = ArduinoCompiler.checkInstall();
         if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
@@ -71,12 +74,16 @@ export default class arduinoInstall {
 
                 if(stage == "DONE"){
                     this.startDaemon();
+					this.installing = false;
                 }
             }, (err) => {
+				this.installing = false;
                 this.setupState.error = err instanceof Error ? err.message : err;
                 this.sendSetupState();
             });
         } else {
+			this.installing = false;
+			
             console.log('All ok');
             this.setupState.stage = "DONE";
             this.sendSetupState();
