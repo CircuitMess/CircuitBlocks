@@ -1031,6 +1031,10 @@ categories.push({
 
     blocks: [
         {
+            name: "update",
+            xml: Blocks.phone.update
+        },
+        {
             name: "vibrate",
             xml: Blocks.phone.vibrate
         },

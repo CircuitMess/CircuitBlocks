@@ -3,6 +3,11 @@ goog.require("Blockly.Arduino");
 
 goog.provide("Blockly.Arduino.phone");
 
+Blockly.Arduino['phone_update'] = function(block) {
+    var code = "mp.update();\n";
+    return code;
+};
+
 Blockly.Arduino['vibrate'] = function(block) {
     var duration = Blockly.Arduino.valueToCode(block, 'DURATION', Blockly.Arduino.ORDER_ATOMIC);
 

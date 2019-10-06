@@ -5,6 +5,16 @@ goog.provide("Blockly.Blocks.phone");
 
 Blockly.defineBlocksWithJsonArray([
     {
+        type: "phone_update",
+        message0: "update",
+        previousStatement: null,
+        nextStatement: null,
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Msg.IO_HUE,
+        tooltip: "Commits changes to display and checks for button presses",
+        helpUrl: ""
+    },
+    {
         type: "led_colour",
         message0: "LED colour %1",
         args0: [
