@@ -31,6 +31,14 @@ Blockly.Arduino['button_held'] = function(block) {
     return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 };
 
+Blockly.Arduino['button_repeat'] = function(block) {
+    var button = block.getFieldValue('BUTTON');
+    var interval = Blockly.Arduino.valueToCode(block, 'INTERVAL', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = 'mp.buttons.repeat(' + button + ", " + interval + ');\n';
+    return code;
+};
+
 Blockly.Arduino['joystick'] = function(block) {
     var axis = block.getFieldValue('AXIS');
 

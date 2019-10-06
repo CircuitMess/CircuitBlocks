@@ -1047,6 +1047,10 @@ categories.push({
             xml: Blocks.phone.button_held
         },
         {
+            name: "button_repeat",
+            xml: Blocks.phone.button_repeat
+        },
+        {
             name: "joystick",
             xml: Blocks.phone.joystick
         },
