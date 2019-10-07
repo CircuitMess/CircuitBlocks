@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "@grpc/proto-loader": "^0.5.2",
+    "dmg": "^0.1.0",
     "dom-parser": "^0.1.6",
     "fs-extra": "^8.1.0",
     "google-protobuf": "^3.10.0-rc.1",

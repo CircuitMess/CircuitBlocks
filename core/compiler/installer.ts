@@ -3,6 +3,7 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+import * as dmg from 'dmg';
 
 import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
@@ -15,7 +16,8 @@ export default class Installer {
       Windows_NT: 'https://downloads.arduino.cc/arduino-1.8.10-windows.exe',
       Linux_x32: 'https://downloads.arduino.cc/arduino-1.8.10-linux32.tar.xz',
       Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.10-linux64.tar.xz',
-      Darwin: 'https://downloads.arduino.cc/arduino-1.8.10-macosx.zip'
+      Darwin: 'https://downloads.arduino.cc/arduino-1.8.10-macosx.zip',
+      Darwin_Driver: 'https://www.ftdichip.com/Drivers/VCP/MacOSX/FTDIUSBSerialDriver_v2_4_2.dmg'
     },
 
     arduino_cli: {
@@ -215,30 +217,64 @@ export default class Installer {
       });
   }
 
-  private installArduinoDarwin(file, callback: (err) => void) {
-    const tmp = util.tmpdir('cb-ard-inst');
-    const dest = '/Applications';
+    private installArduinoDarwin(file, callback: (err) => void) {
+        const tmp = util.tmpdir('cb-ard-inst');
+        const dest = '/Applications';
 
-    util.extract(file, tmp)
-    .then(() => {
-      const files = fs.readdirSync(tmp);
-        if (files.length == 0) {
-          callback(new Error('Archive extract failed.'));
-          return;
-        }
+        util.extract(file, tmp)
+            .then(() => {
+                const files = fs.readdirSync(tmp);
+                if (files.length == 0) {
+                    callback(new Error('Archive extract failed.'));
+                    return;
+                }
 
-        const name = files[0];
-        const installPath = path.join(dest, name);
+                const name = files[0];
+                const installPath = path.join(dest, name);
 
-        fs.copySync(path.join(tmp, name), installPath);
+                fs.copySync(path.join(tmp, name), installPath);
 
-        callback(null);
-    })
-    .catch((err) => {
-      callback(err);
-    });
+                util.download(this.downloads.arduino.Darwin_Driver, tmp)
+                    .then((file) => {
 
-  }
+                        dmg.mount(file, (err, mountPath) => {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+
+                            const filesDriver = fs.readdirSync(mountPath);
+                            if (filesDriver.length == 0) {
+                                callback(new Error('Archive mount failed.'));
+                                return;
+                            }
+
+                            const pkgPath = path.join(mountPath, filesDriver[0]);
+
+                            sudoPrompt.exec(`installer -pkg "${pkgPath}" -target /`, {
+                                    name: 'Arduino installer',
+                                    stdio: 'inherit',
+                                    icns: "./resources/icon.icns"
+                                },
+                                (error, stdout, stderr) => {
+                                    if (error) {
+                                        callback(error);
+                                        return;
+                                    }
+
+                                    callback(null);
+                                });
+                        });
+                    })
+                    .catch((err) => {
+                        callback(err);
+                    });
+            })
+            .catch((err) => {
+                callback(err);
+            });
+
+    }
 
   private installArduino(file, callback: (err) => void) {
     if (this.PLATFORM === 'Windows_NT') {
@@ -260,7 +296,7 @@ export default class Installer {
       [cli, '--additional-urls', this.downloads.ringo.manager, 'core', 'update-index'].join(' ')
     );
     childProcess.execSync(
-      [cli, '--additional-urls', this.downloads.ringo.manager, 'lib   ', 'update-index'].join(' ')
+      [cli, '--additional-urls', this.downloads.ringo.manager, 'lib', 'update-index'].join(' ')
     );
     childProcess.execSync(
       [
