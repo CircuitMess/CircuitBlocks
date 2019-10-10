@@ -233,6 +233,7 @@ export default class Installer {
                 const installPath = path.join(dest, name);
 
                 fs.copySync(path.join(tmp, name), installPath);
+                fs.chmodSync(path.join(installPath, 'Contents', 'MacOS', 'Arduino'), '755');
 
                 util.download(this.downloads.arduino.Darwin_Driver, tmp)
                     .then((file) => {
