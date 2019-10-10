@@ -236,7 +236,6 @@ export default class Installer {
 
                 util.download(this.downloads.arduino.Darwin_Driver, tmp)
                     .then((file) => {
-
                         dmg.mount(file, (err, mountPath) => {
                             if (err) {
                                 callback(err);
@@ -249,8 +248,8 @@ export default class Installer {
                                 return;
                             }
 
-                            const pkgPath = path.join(mountPath, filesDriver[0]);
-
+                            const pkgPath = path.join(mountPath, filesDriver[0] == ".Trashes" ? filesDriver[1] : filesDriver[0]);
+                            
                             sudoPrompt.exec(`installer -pkg "${pkgPath}" -target /`, {
                                     name: 'Arduino installer',
                                     stdio: 'inherit',
