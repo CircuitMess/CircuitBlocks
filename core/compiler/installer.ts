@@ -60,7 +60,7 @@ export default class Installer {
 
   private downloadCli(callback: (string, error) => void) {
     const dlDir = util.tmpdir('cb-cli-dl');
-    const plat = os.type() + (this.PLATFORM === 'Windows_NT' ? "_" + os.arch() : '')
+    const plat = os.type() + (os.type() !== 'Darwin' ? "_" + os.arch() : '');
     const url: string = this.downloads.arduino_cli[plat];
 
     util
