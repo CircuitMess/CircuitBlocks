@@ -525,6 +525,7 @@ export default class ArduinoCompiler {
       req.setImportFile(binary);
       req.setSketchPath(binary);
       req.setPort(port);
+      req.setVerify(true);
 
       const stream = this.client.upload(req);
 
