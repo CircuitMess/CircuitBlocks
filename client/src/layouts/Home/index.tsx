@@ -108,6 +108,10 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send('examples');
   } //, [isEditorOpen]);
 
+  public restoreFirmware(){
+    ipcRenderer.send("firmware");
+  }
+
   public openFile(type: 'NEW' | 'OPEN', sketch?: Sketch){
     const { reportError, openEditor } = this.props;
 
@@ -141,7 +145,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
             }}
         >
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
-          <HeaderSection loggedIn={loggedIn} />
+          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.restoreFirmware()} />
           {loggedIn ? (
               <>
                 <Main>

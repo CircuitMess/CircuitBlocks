@@ -14,6 +14,7 @@ interface InstallInfoProps {
 interface InstallInfoState {
     stage: string;
     error: string | undefined;
+    restoring: boolean | undefined;
 }
 
 export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoState> {
@@ -23,10 +24,12 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
 
         this.state = {
             stage: "",
-            error: undefined
+            error: undefined,
+            restoring: false
         };
 
         ipcRenderer.on("installstate", (event, args) => {
+            console.log(args);
             props.setIsInstalling([ "", "DONE" ].indexOf(args.state.stage || "") == -1); // go figure
             this.setState(args.state);
         });
@@ -35,12 +38,17 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
     }
 
     private retry(){
-        this.setState({ stage: "", error: undefined });
-        ipcRenderer.send("install");
+        const wasRestoring = this.state.restoring;
+
+        this.setState({ stage: "DONE", error: undefined, restoring: false });
+
+        if(!wasRestoring){
+            ipcRenderer.send("install");
+        }
     }
 
     public render(){
-        const { stage, error } = this.state;
+        const { stage, error, restoring } = this.state;
         const loading = stage == "";
 
         if(stage == "DONE"){
@@ -55,9 +63,12 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
 
         let heading, status;
 
-        if(error){
+        if(error) {
             heading = "Error";
             status = error;
+        }else if(restoring){
+            heading = "Restoring Firmware";
+            status = stage;
         }else{
             heading = "Installing...";
             status = stages[stage];
@@ -72,7 +83,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
                     <div className="content">
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
-                        { (error != undefined) && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>Try again</Button> }
+                        { (error != undefined) && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>{ restoring ? "Ok" : "Try again" }</Button> }
                     </div>
                 </ModalBase> }
         </div>

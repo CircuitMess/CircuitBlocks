@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Section from '../../../components/Section';
 import Profile from '../../../components/Profile';
+import {Button} from "semantic-ui-react";
 
 interface StyledHeaderProps {
   loggedIn: boolean;
@@ -37,9 +38,10 @@ export const Header = styled.div<StyledHeaderProps>`
 
 interface HeaderSectionProps {
   loggedIn: boolean;
+  restoreCallback: () => void;
 }
 
-export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn }) => {
+export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn, restoreCallback }) => {
   const username = 'Albert Gajsak';
   return (
     <Section className="bg-image" style={{ boxShadow: "0 0px 5px rgba(0, 0, 0, 0.5)" }}>
@@ -50,6 +52,9 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn }) => {
         {/* <div className="right">
           <Profile username={username} image_url={require('../../../assets/images/profile.png')} />
         </div> */}
+          <div className="right">
+              <Button onClick={() => restoreCallback()}>Restore Ringo Firmware</Button>
+          </div>
       </Header>
     </Section>
   );

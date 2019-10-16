@@ -50,6 +50,10 @@ export default class ArduinoCompiler {
 
   private static daemonConnecting: boolean = false;
 
+  public static getInstallInfo(){
+    return ArduinoCompiler.installInfo;
+  }
+
   public static getDaemon(): { connected: boolean, connecting: boolean }{
     return {
       connecting: this.daemonConnecting,
@@ -313,7 +317,7 @@ export default class ArduinoCompiler {
    * Stops the builder daemon.
    */
   public static stopDaemon() {
-    this.process.kill();
+    if(this.process) this.process.kill();
     this.instance = undefined;
   }
 
