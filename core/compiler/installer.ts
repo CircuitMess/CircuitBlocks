@@ -168,6 +168,7 @@ export default class Installer {
         fs.copySync(path.join(tmp, name), installPath);
 
         fs.chmodSync(path.join(installPath, 'arduino'), '755');
+        fs.chmodSync(path.join(installPath, 'arduino-builder'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-linux-setup.sh'), '755');
 
         const user = os.userInfo().username;
