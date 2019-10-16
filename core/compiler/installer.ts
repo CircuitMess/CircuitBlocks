@@ -17,7 +17,7 @@ export default class Installer {
       Linux_x32: 'https://downloads.arduino.cc/arduino-1.8.10-linux32.tar.xz',
       Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.10-linux64.tar.xz',
       Darwin: 'https://downloads.arduino.cc/arduino-1.8.10-macosx.zip',
-      Darwin_Driver: 'https://www.ftdichip.com/Drivers/VCP/MacOSX/FTDIUSBSerialDriver_v2_4_2.dmg'
+      Darwin_Driver: 'https://www.silabs.com/documents/public/software/Mac_OSX_VCP_Driver.zip'
     },
 
     arduino_cli: {
@@ -235,45 +235,44 @@ export default class Installer {
                 fs.copySync(path.join(tmp, name), installPath);
                 fs.chmodSync(path.join(installPath, 'Contents', 'MacOS', 'Arduino'), '755');
 
-                util.download(this.downloads.arduino.Darwin_Driver, tmp)
-                    .then((file) => {
-                        dmg.mount(file, (err, mountPath) => {
-                            if (err) {
-                                callback(err);
-                                return;
-                            }
-
-                            const filesDriver = fs.readdirSync(mountPath);
-                            if (filesDriver.length == 0) {
-                                callback(new Error('Archive mount failed.'));
-                                return;
-                            }
-
-                            const pkgPath = path.join(mountPath, filesDriver[0] == ".Trashes" ? filesDriver[1] : filesDriver[0]);
-                            
-                            sudoPrompt.exec(`installer -pkg "${pkgPath}" -target /`, {
-                                    name: 'Arduino installer',
-                                    stdio: 'inherit',
-                                    icns: "./resources/icon.icns"
-                                },
-                                (error, stdout, stderr) => {
-                                    if (error) {
-                                        callback(error);
-                                        return;
-                                    }
-
-                                    callback(null);
-                                });
-                        });
-                    })
-                    .catch((err) => {
-                        callback(err);
-                    });
+                this.installDriverDarwin(callback);
             })
             .catch((err) => {
                 callback(err);
             });
 
+    }
+
+    public installDriverDarwin(callback: (err) => void){
+      const tmpDir = util.tmpdir("cb-ard-driver");
+      util.download(this.downloads.arduino.Darwin_Driver, tmpDir)
+          .then((downloadPath) => {
+              util.extract(downloadPath, tmpDir)
+                  .then(() => {
+
+                      const extracted = path.join(tmpDir, "Mac_OSX_VCP_Driver", "Mac_OSX_VCP_Driver", "SiLabsUSBDriverDisk.dmg");
+                      dmg.mount(extracted, (err, mountPath) => {
+                          const pkgPath = path.join(mountPath, "Install CP210x VCP Driver.pkg");
+
+                          sudoPrompt.exec(`installer -pkg "${pkgPath}" -target /`, {
+                                  name: 'Arduino installer',
+                                  stdio: 'inherit',
+                                  icns: "./resources/icon.icns"
+                              },
+                              (error, stdout, stderr) => {
+                                  if (error) {
+                                      callback(error);
+                                      return;
+                                  }
+
+                                  callback(null);
+                              });
+                      });
+
+                  })
+                  .catch((err) => callback(err));
+          })
+          .catch((err) => callback(err));
     }
 
   private installArduino(file, callback: (err) => void) {
