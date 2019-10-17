@@ -81,3 +81,14 @@ export function extract(file: string, directory: string): Promise<null> {
       .on('end', () => resolve());
   });
 }
+
+export function isNewer(newer: string, older: string): boolean {
+    const partsNewer = newer.split('.');
+    const partsOlder = newer.split('.');
+
+    for (let i = 0; i < partsNewer.length; i++) {
+        if (parseInt(partsNewer[i]) > parseInt(partsOlder[i])) return true;
+    }
+
+    return false;
+}

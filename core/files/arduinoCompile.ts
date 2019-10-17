@@ -4,6 +4,7 @@ import ArduinoCompiler from "../compiler/compiler";
 import {ArduinoSerial} from "./arduinoSerial";
 import * as fs from "fs";
 import * as path from "path";
+import * as util from "../compiler/util";
 
 export default class ArduinoCompile {
 
@@ -88,7 +89,17 @@ export default class ArduinoCompile {
                 return;
             }
 
-            const firmware = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", "esp32", "1.0.0", "firmware", "firmware.bin");
+            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", "esp32");
+            let newest = "";
+            fs.readdirSync(hardwareDir).forEach((version) => {
+                const versionDir = path.join(hardwareDir, version);
+                if(!fs.statSync(versionDir).isDirectory()) return;
+
+                if(newest == "" || util.isNewer(version, newest)){
+                    newest = version;
+                }
+            });
+            const firmware = path.join(hardwareDir, newest, "firmware", "firmware.bin");
 
             this.running = true;
             this.send("installstate", { state: { stage: "0%", restoring: true } });

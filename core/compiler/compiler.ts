@@ -13,6 +13,7 @@ import { Configuration, InitReq, VersionReq } from '../grpc/commands_pb';
 import { Instance } from '../grpc/common_pb';
 import { UploadReq, UploadResp } from '../grpc/upload_pb';
 import { rejects } from 'assert';
+import * as util from "./util";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -184,7 +185,7 @@ export default class ArduinoCompiler {
         if (!file.startsWith('arduino-')) return;
         const version = file.substring(8);
 
-        if (install == null || this.isNewer(version, install.version)) {
+        if (install == null || util.isNewer(version, install.version)) {
           install = { version, path: arduinoPath };
         }
       });
@@ -223,21 +224,10 @@ export default class ArduinoCompiler {
     const versions = Object.keys(installs);
     let newest = versions[0];
     for (let i = 1; i < versions.length; i++) {
-      if (this.isNewer(versions[i], newest)) newest = versions[i];
+      if (util.isNewer(versions[i], newest)) newest = versions[i];
     }
 
     return { arduino: installs[newest], sketchbook: home };
-  }
-
-  private static isNewer(newer: string, older: string): boolean {
-    const partsNewer = newer.split('.');
-    const partsOlder = newer.split('.');
-
-    for (let i = 0; i < partsNewer.length; i++) {
-      if (parseInt(partsNewer[i]) > parseInt(partsOlder[i])) return true;
-    }
-
-    return false;
   }
 
   /**
