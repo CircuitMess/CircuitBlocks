@@ -277,16 +277,7 @@ export default class ArduinoCompiler {
         tries++;
         console.log("Connecting to daemon, try " + tries);
 
-        try {
-          context.client
-              .init(req)
-              .on('data', (data) => {
-                context.instance = new Instance();
-                context.instance.setId(data.array[0][0]);
-                context.daemonConnecting = false;
-              })
-              .on('end', (data) => resolve());
-        }catch(e){
+        function onErr(){
           if(tries > 5 && !restarted){
             restarted = true;
             tries = 0;
@@ -296,6 +287,23 @@ export default class ArduinoCompiler {
           }
 
           setTimeout(connect, 2000);
+        }
+
+        try {
+          context.client
+              .init(req)
+              .on('data', (data) => {
+                context.instance = new Instance();
+                context.instance.setId(data.array[0][0]);
+                context.daemonConnecting = false;
+              })
+              .on('error', error => {
+                console.log("race condition");
+                onErr();
+              })
+              .on('end', (data) => resolve());
+        }catch(e){
+          onErr();
         }
       }
 
