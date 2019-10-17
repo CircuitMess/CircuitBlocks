@@ -253,9 +253,16 @@ export default class Installer {
 
                       const extracted = path.join(tmpDir, "Mac_OSX_VCP_Driver", "Mac_OSX_VCP_Driver", "SiLabsUSBDriverDisk.dmg");
                       dmg.mount(extracted, (err, mountPath) => {
-                          const pkgPath = path.join(mountPath, "Install CP210x VCP Driver.pkg");
+                          const kextPath = path.join(mountPath, "Install CP210x VCP Driver.app", "Contents", "Resources", "SiLabsUSBDriver.kext");
 
-                          sudoPrompt.exec(`installer -pkg "${pkgPath}" -target /`, {
+                          const setup: string[] = [
+                            `cp -r '${kextPath}' /Library/Extensions/`,
+                            `chown -R root:wheel /Library/Extensions/SiLabsUSBDriver.kext`,
+                            `chmod -R 755 /Library/Extensions/SiLabsUSBDriver.kext`,
+                            `kextcache -i /`
+                          ];
+
+                          sudoPrompt.exec(setup.join(" && "), {
                                   name: 'Arduino installer',
                                   stdio: 'inherit',
                                   icns: "./resources/icon.icns"
