@@ -58,7 +58,8 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         const stages: any = {
             ARDUINO: "Arduino",
             CLI: "Arduino CLI",
-            RINGO: "Ringo board and libraries"
+            RINGO: "Ringo board and libraries",
+            UPDATE: "Updating Ringo board and libraries"
         };
 
         let heading, status;
@@ -70,7 +71,12 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             heading = "Restoring Firmware";
             status = stage;
         }else{
-            heading = "Installing...";
+            if(stage == "UPDATE"){
+                heading = "Updating...";
+            }else{
+                heading = "Installing...";
+            }
+
             status = stages[stage];
         }
 

@@ -390,4 +390,11 @@ export default class Installer {
       this.installRingo(stageRingo);
     }
   }
+
+  public update(stage: (string) => void){
+      this.installRingo(() => {
+          ArduinoCompiler.checkInstall();
+          stage('DONE');
+      });
+  }
 }

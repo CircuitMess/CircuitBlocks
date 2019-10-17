@@ -60,12 +60,13 @@ export default class arduinoInstall {
 		this.installing = true;
         this.setupState.error = undefined;
         const installInfo = ArduinoCompiler.checkInstall();
+
+        if(this.installer == undefined){
+            this.installer = new Installer();
+        }
+
         if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
             console.log('Installing');
-
-            if(this.installer == undefined){
-                this.installer = new Installer();
-            }
 
             this.installer.install(installInfo, (stage) => {
                 console.log(stage);
@@ -73,8 +74,8 @@ export default class arduinoInstall {
                 this.sendSetupState();
 
                 if(stage == "DONE"){
-                    this.startDaemon();
 					this.installing = false;
+                    this.startDaemon();
                 }
             }, (err) => {
 				this.installing = false;
@@ -83,13 +84,20 @@ export default class arduinoInstall {
                 this.sendSetupState();
             });
         } else {
-			this.installing = false;
-			
-            console.log('All ok');
-            this.setupState.stage = "DONE";
+            console.log('All ok, updating');
+            this.setupState.stage = "UPDATE";
             this.sendSetupState();
 
-            this.startDaemon();
+            // The CLI usually hogs all the IO and doesn't let electron start. We add a delay to the update so
+            // that the app can start and display an "Updating" message to the user
+            setTimeout(() => {
+                this.installer.update((stage) => {
+                    this.setupState.stage = stage;
+                    this.installing = false;
+                    this.sendSetupState();
+                    this.startDaemon();
+                });
+            }, 2000);
         }
     }
 }
