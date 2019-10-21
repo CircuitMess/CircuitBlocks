@@ -96,6 +96,11 @@ export default class arduinoInstall {
                     this.installing = false;
                     this.sendSetupState();
                     this.startDaemon();
+                }, installInfo, (err) => {
+                    this.installing = false;
+                    this.setupState.error = err instanceof Error ? err.message : err;
+                    console.log(err);
+                    this.sendSetupState();
                 });
             }, 2000);
         }

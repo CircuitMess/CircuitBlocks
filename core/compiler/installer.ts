@@ -35,7 +35,8 @@ export default class Installer {
     ringo: {
       manager:
         'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json',
-      fqbn: 'cm:esp32'
+      fqbn: 'cm:esp32',
+      library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip'
     }
   };
 
@@ -293,30 +294,79 @@ export default class Installer {
     }
   }
 
-  private installRingo(callback: () => void) {
+  private installRingo(callback: (err) => void, info: InstallInfo) {
     const cli =
       this.PLATFORM === 'Windows_NT'
         ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI', 'arduino-cli.exe')
         : path.join(os.homedir(), '.arduino', 'arduino-cli');
 
-    childProcess.execSync(
-      [cli, '--additional-urls', this.downloads.ringo.manager, 'core', 'update-index'].join(' ')
-    );
-    childProcess.execSync(
-      [cli, '--additional-urls', this.downloads.ringo.manager, 'lib', 'update-index'].join(' ')
-    );
-    childProcess.execSync(
-      [
-        cli,
-        '--additional-urls',
-        this.downloads.ringo.manager,
-        'core',
-        'install',
-        this.downloads.ringo.fqbn
-      ].join(' ')
-    );
+    try{
+        childProcess.execSync(
+            [cli, '--additional-urls', this.downloads.ringo.manager, 'core', 'update-index'].join(' ')
+        );
+        childProcess.execSync(
+            [cli, '--additional-urls', this.downloads.ringo.manager, 'lib', 'update-index'].join(' ')
+        );
+        childProcess.execSync(
+            [
+                cli,
+                '--additional-urls',
+                this.downloads.ringo.manager,
+                'core',
+                'install',
+                this.downloads.ringo.fqbn
+            ].join(' ')
+        );
+    }catch(e){
+        callback("Library update error. Please check your internet connection.")
+    }
 
-    callback();
+    let libraryPath: string;
+    if(info.sketchbook == null){
+        if(os.type() == "Linux"){
+            libraryPath = path.join(os.homedir(), "Arduino", "libraries");
+        }else{
+            libraryPath = path.join(os.homedir(), "Documents", "Arduino", "libraries");
+        }
+    }else{
+        libraryPath = path.join(info.sketchbook, "libraries");
+    }
+
+    if(!fs.existsSync(libraryPath)){
+        fs.mkdirSync(libraryPath, { recursive: true });
+    }
+
+    const libPath = path.join(libraryPath, "Ringo", "src", "MAKERphone.h");
+    if(fs.existsSync(libPath)){
+        console.log("Library installed");
+        callback(null);
+        return;
+    }
+
+      console.log("Installing library...");
+
+    const tmp = util.tmpdir("cb-lib");
+    util.download(this.downloads.ringo.library, tmp)
+        .then((file) => {
+            util.extract(file, libraryPath)
+                .then(() => {
+                    const lib = path.join(libraryPath, "CircuitMess-Ringo-master");
+                    if(!fs.existsSync(lib) || !fs.existsSync(path.join(lib, "src", "MAKERphone.h"))){
+                        callback("Library extract failed. Please check if your disk isn't full.");
+                        return
+                    }
+
+                    fs.rename(lib, path.join(libraryPath, "Ringo"));
+
+                    callback(null);
+                })
+                .catch((err) => {
+                    callback(err);
+                });
+        })
+        .catch((err) => {
+            callback(err);
+        });
   }
 
   private arduino(callback: (err) => void) {
@@ -346,7 +396,12 @@ export default class Installer {
   }
 
   public install(info: InstallInfo | null, stage: (string) => void, error: (err) => void) {
-    const stageRingo = () => {
+    const stageRingo = (err) => {
+        if (err) {
+            error(err);
+            return;
+        }
+
       ArduinoCompiler.checkInstall();
       stage('DONE');
     };
@@ -358,7 +413,7 @@ export default class Installer {
       }
 
       stage('RINGO');
-      this.installRingo(stageRingo);
+      this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
     };
 
     const stageArduino = (err) => {
@@ -387,14 +442,19 @@ export default class Installer {
         path.join(info.cli, 'arduino-cli' + (this.PLATFORM == 'Windows_NT' ? '.exe' : ''))
       );
       stage('RINGO');
-      this.installRingo(stageRingo);
+      this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
     }
   }
 
-  public update(stage: (string) => void){
-      this.installRingo(() => {
+  public update(stage: (string) => void, info: InstallInfo, error: (err) => void){
+      this.installRingo((err) => {
+          if(err){
+              error(err);
+              return;
+          }
+
           ArduinoCompiler.checkInstall();
           stage('DONE');
-      });
+      }, info);
   }
 }
