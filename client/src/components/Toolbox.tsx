@@ -260,6 +260,11 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         return flyout;
     }
 
+    reflowLayout(cat: ToolboxCategory){
+        if(cat.flyout) cat.flyout.reflow();
+        cat.subcategories.forEach((c) => this.reflowLayout(c));
+    }
+
     setSelectedItem(item: CategoryItem) {
         this.selectedItem = item;
     }
@@ -355,6 +360,8 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
             // No more search
             this.closeFlyout();
         }
+
+        this.categories.forEach((cat) => this.reflowLayout(cat));
     }
 
     componentDidCatch(error: any, info: any) {
