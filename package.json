@@ -47,6 +47,9 @@
         "AppImage",
         "deb"
       ]
+    },
+    "win": {
+      "icon": "resources/icon.ico"
     }
   },
   "scripts": {
