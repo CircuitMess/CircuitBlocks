@@ -93,8 +93,7 @@ Blockly.Arduino['controls_whileUntil'] = function(block) {
  * @return {string} Completed code.
  */
 Blockly.Arduino['controls_for'] = function(block) {
-  var variable0 = Blockly.Arduino.variableDB_.getName(
-      block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+  var variable0 = Blockly.Arduino.valueToCode(block, "VAR", Blockly.Arduino.ORDER_ATOMIC);
   var argument0 = Blockly.Arduino.valueToCode(block, 'FROM',
       Blockly.Arduino.ORDER_ASSIGNMENT) || '0';
   var argument1 = Blockly.Arduino.valueToCode(block, 'TO',

@@ -16,11 +16,11 @@ export class Blocks {
     };
 
     public static loops: any = {
-        controls_repeat_ext: '<block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>',
+        controls_repeat_ext: '<block type="controls_repeat_ext"></block>',
         controls_repeat: '<block type="controls_repeat"></block>',
         controls_whileuntil: '<block type="controls_whileUntil"></block>',
         controls_for_simple: '<block type="pxt_controls_for"><value name="VAR"><shadow type="variables_get_reporter"><field name="VAR">${lf("{id:var}index")}</field></shadow></value><value name="TO"><shadow type="math_whole_number"><field name="NUM">4</field></shadow></value></block>',
-        controls_for: '<block type="controls_for"><value name="VAR"><shadow type="variables_get_reporter"><field name="VAR">index</field></shadow></value><value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>',
+        controls_for: '<block type="controls_for"><value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>',
         controls_foreach: '<block type="controls_forEach"><value name="VAR"><shadow type="variables_get_reporter"><field name="VAR">item</field></shadow></value></block>',
         controls_flow_statements: '<block type="controls_flow_statements"></block>',
     };

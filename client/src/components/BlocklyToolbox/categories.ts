@@ -753,25 +753,14 @@ categories.push({
         {
             name: "loops_for",
             xml: Blocks.loops.controls_for
+        },
+        {
+            name: "loops_flowcontrol",
+            xml: Blocks.loops.controls_flow_statements
         }
     ],
 
-    subcategories: [
-        {
-            ...moreCategory,
-
-            blocks: [
-                {
-                    name: "loops_foreach",
-                    xml: Blocks.loops.controls_foreach
-                },
-                {
-                    name: "loops_flowcontrol",
-                    xml: Blocks.loops.controls_flow_statements
-                },
-            ]
-        }
-    ]
+    subcategories: [ ]
 });
 
 categories.push({
