@@ -24,6 +24,7 @@ export default class Serial {
   }
 
   public stop() {
+    return;
     if (this.com === undefined || !this.com.isOpen) return;
 
     this.com.flush();
@@ -44,6 +45,7 @@ export default class Serial {
   }
 
   public start(port?: PortDescriptor) {
+    return;
     if (this.uploading) return;
     this.stop();
 
