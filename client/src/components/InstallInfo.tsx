@@ -85,7 +85,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             { loading
                 ? <Loader active={true} size={"massive"} />
                 : <ModalBase className={"small"}>
-                    <div className={"title"} style={{ position: "relative", fontSize: 24, top: 0, textAlign: "center", marginBottom: 10 }}>{ heading }</div>
+                    <div className={"title"} style={{ position: "relative", fontSize: 24, top: 0, textAlign: "center", marginBottom: 10, lineHeight: 1.2 }}>{ heading }</div>
                     <div className="content">
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
