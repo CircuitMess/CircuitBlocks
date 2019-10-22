@@ -166,7 +166,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                       /> )}
                 </Main>
                 <Footer>
-                  <p>v1.0.0</p>
+                  <p>v1.0.1</p>
                 </Footer>
               </>
           ) : (
