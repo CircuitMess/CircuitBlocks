@@ -59,7 +59,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             ARDUINO: "Arduino",
             CLI: "Arduino CLI",
             RINGO: "Ringo board and libraries",
-            UPDATE: "Updating Ringo board and libraries"
+            UPDATE: "Checking for updates..."
         };
 
         let heading, status;
