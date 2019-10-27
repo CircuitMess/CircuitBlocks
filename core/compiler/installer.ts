@@ -172,6 +172,7 @@ export default class Installer {
         fs.chmodSync(path.join(installPath, 'arduino-builder'), '755');
         fs.chmodSync(path.join(installPath, 'tools-builder', 'ctags'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-linux-setup.sh'), '755');
+        fs.chmodSync(path.join(installPath, 'install.sh'), '755');
 
         const ctagsDir = path.join(installPath, 'tools-builder', 'ctags');
         let ctagsDirContent = fs.readdirSync(ctagsDir).filter(dirName => {
@@ -188,6 +189,9 @@ export default class Installer {
           if(ppDirContent.length != 0){
               fs.chmodSync(path.join(ppDir, ppDirContent[0], "arduino-preprocessor"), "755");
           }
+
+        const installerPath = path.join(installPath, 'install.sh');
+        const setupPath = path.join(installPath, 'arduino-linux-setup.sh');
 
         const user = os.userInfo().username;
         const rules = util.tmpdir('cm-ard-rules');
@@ -213,7 +217,9 @@ export default class Installer {
           `udevadm control --reload-rules`,
           `udevadm trigger`,
 
-          `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`
+          `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`,
+
+          `sh "${installerPath}"`
         ];
 
         sudoPrompt.exec(
