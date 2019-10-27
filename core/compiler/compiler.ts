@@ -195,6 +195,16 @@ export default class ArduinoCompiler {
       }
     }
 
+    for(var key in info){
+      if(!info.hasOwnProperty(key)) return;
+
+      if(info[key] && info[key] != null){
+        if(!fs.existsSync(info[key])){
+          info[key] = null;
+        }
+      }
+    }
+
     this.installInfo = info;
     return info;
   }
