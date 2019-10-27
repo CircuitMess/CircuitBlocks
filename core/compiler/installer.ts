@@ -170,7 +170,24 @@ export default class Installer {
 
         fs.chmodSync(path.join(installPath, 'arduino'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-builder'), '755');
+        fs.chmodSync(path.join(installPath, 'tools-builder', 'ctags'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-linux-setup.sh'), '755');
+
+        const ctagsDir = path.join(installPath, 'tools-builder', 'ctags');
+        let ctagsDirContent = fs.readdirSync(ctagsDir).filter(dirName => {
+            return fs.statSync(path.join(ctagsDir, dirName)).isDirectory();
+        });
+        if(ctagsDirContent.length != 0){
+            fs.chmodSync(path.join(ctagsDir, ctagsDirContent[0], "ctags"), "755");
+        }
+
+          const ppDir = path.join(installPath, 'tools-builder', 'arduino-preprocessor');
+          let ppDirContent = fs.readdirSync(ppDir).filter(dirName => {
+              return fs.statSync(path.join(ppDir, dirName)).isDirectory();
+          });
+          if(ppDirContent.length != 0){
+              fs.chmodSync(path.join(ppDir, ppDirContent[0], "arduino-preprocessor"), "755");
+          }
 
         const user = os.userInfo().username;
         const rules = util.tmpdir('cm-ard-rules');
