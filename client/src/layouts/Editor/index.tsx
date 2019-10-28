@@ -202,6 +202,12 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.send('ports');
   }
 
+  componentWillUpdate(nextProps: Readonly<EditorProps>, nextState: Readonly<State>, nextContext: any): void {
+    if(this.props.isEditorOpen && !nextProps.isEditorOpen){
+      this.setState({ isSerialOpen: false });
+    }
+  }
+
   injectToolbox() {
     const blockly = ReactDOM.findDOMNode(this.blocklyDiv) as Element;
     const blocklyToolboxDiv = blockly.getElementsByClassName('blocklyToolboxDiv')[0];

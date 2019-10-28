@@ -88,6 +88,8 @@ export default class Home extends React.Component<HomeProps, HomeState> {
   public componentDidUpdate(prevProps: Readonly<HomeProps>, prevState: Readonly<HomeState>, snapshot?: any): void {
     if(prevProps.isEditorOpen == this.props.isEditorOpen) return;
 
+    window.scrollTo(0, 0);
+
     this.loadSketches();
   }
 
