@@ -75,6 +75,7 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
         ipcRenderer.on("serial", (event, args) => {
             this.state.content.push(args.content);
             this.setState({ content: this.state.content });
+            if(this.content && this.contentEnd && this.props.isOpen) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
         });
     }
 
@@ -92,13 +93,12 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
     }
 
     public componentDidMount(): void {
-        if(this.input) this.input.focus();
-        if(this.content && this.contentEnd) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
+        if(this.input && this.props.isOpen) this.input.focus();
+        if(this.content && this.contentEnd && this.props.isOpen) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
     }
 
     public componentDidUpdate(prevProps: Readonly<SerialProps>, prevState: Readonly<SerialState>, snapshot?: any): void {
-        if(this.input) this.input.focus();
-        if(this.content && this.contentEnd) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
+        if(this.input && this.props.isOpen && !prevProps.isOpen) this.input.focus();
     }
 
     public render() {

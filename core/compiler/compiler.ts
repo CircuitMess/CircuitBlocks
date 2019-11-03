@@ -152,7 +152,9 @@ export default class ArduinoCompiler {
       const preferences = this.parsePreferences(prefPath);
 
       if (preferences != null) {
-        info.arduino = preferences.arduino;
+        if(preferences.arduino && fs.existsSync(preferences.arduino)){
+          info.arduino = preferences.arduino;
+        }
         info.sketchbook = preferences.sketchbook;
       }
     }

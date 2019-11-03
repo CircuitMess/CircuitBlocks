@@ -61,7 +61,9 @@ export default class Installer {
 
   private downloadCli(callback: (string, error) => void) {
     const dlDir = util.tmpdir('cb-cli-dl');
-    const plat = os.type() + (os.type() !== 'Darwin' ? "_" + os.arch() : '');
+	let arch = os.arch();
+	if(arch == "ia32") arch = "x32";
+    const plat = os.type() + (os.type() !== 'Darwin' ? "_" + arch : '');
     const url: string = this.downloads.arduino_cli[plat];
 
     util
@@ -170,7 +172,28 @@ export default class Installer {
 
         fs.chmodSync(path.join(installPath, 'arduino'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-builder'), '755');
+        fs.chmodSync(path.join(installPath, 'tools-builder', 'ctags'), '755');
         fs.chmodSync(path.join(installPath, 'arduino-linux-setup.sh'), '755');
+        fs.chmodSync(path.join(installPath, 'install.sh'), '755');
+
+        const ctagsDir = path.join(installPath, 'tools-builder', 'ctags');
+        let ctagsDirContent = fs.readdirSync(ctagsDir).filter(dirName => {
+            return fs.statSync(path.join(ctagsDir, dirName)).isDirectory();
+        });
+        if(ctagsDirContent.length != 0){
+            fs.chmodSync(path.join(ctagsDir, ctagsDirContent[0], "ctags"), "755");
+        }
+
+          const ppDir = path.join(installPath, 'tools-builder', 'arduino-preprocessor');
+          let ppDirContent = fs.readdirSync(ppDir).filter(dirName => {
+              return fs.statSync(path.join(ppDir, dirName)).isDirectory();
+          });
+          if(ppDirContent.length != 0){
+              fs.chmodSync(path.join(ppDir, ppDirContent[0], "arduino-preprocessor"), "755");
+          }
+
+        const installerPath = path.join(installPath, 'install.sh');
+        const setupPath = path.join(installPath, 'arduino-linux-setup.sh');
 
         const user = os.userInfo().username;
         const rules = util.tmpdir('cm-ard-rules');
@@ -196,7 +219,9 @@ export default class Installer {
           `udevadm control --reload-rules`,
           `udevadm trigger`,
 
-          `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`
+          `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`,
+
+          `sh "${installerPath}"`
         ];
 
         sudoPrompt.exec(
