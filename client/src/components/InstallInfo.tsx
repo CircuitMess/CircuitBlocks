@@ -55,6 +55,8 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             return null;
         }
 
+        let subtitle: string | undefined = undefined;
+
         const stages: any = {
             ARDUINO: "Arduino",
             CLI: "Arduino CLI",
@@ -73,8 +75,10 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         }else{
             if(stage == "UPDATE"){
                 heading = "Updating...";
+                subtitle = "Hold on tight. This might take a bit.";
             }else{
                 heading = "Installing...";
+                subtitle = "Hold on tight. This might take up to 10 minutes.";
             }
 
             status = stages[stage];
@@ -89,6 +93,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
                     <div className="content">
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
+                        { subtitle && <div style={{ paddingTop: 5, textAlign: "center" }}>{ subtitle }</div> }
                         { (error != undefined) && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>{ restoring ? "Ok" : "Try again" }</Button> }
                     </div>
                 </ModalBase> }
