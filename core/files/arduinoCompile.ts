@@ -140,7 +140,6 @@ export default class ArduinoCompile {
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
-                logger.log("Compile error", error);
                 console.log(error);
                 this.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
                 this.running = false;
@@ -166,7 +165,6 @@ export default class ArduinoCompile {
                 callback();
             })
             .catch(error => {
-                logger.log("Upload error", error);
                 console.log(error);
                 if(eCallback){
                     eCallback("Upload error. Check your Ringo then try again.")

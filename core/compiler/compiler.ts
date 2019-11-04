@@ -396,7 +396,7 @@ export default class ArduinoCompiler {
 
     const time = 20; // approx. time to compile
 
-    return new Promise((resolve, reject) => {
+    const promise: Promise<{ binary: string; stdout: string[]; stderr: string[] }> = new Promise((resolve, reject) => {
       if (this.instance == undefined) {
         reject(new Error('Daemon not started'));
         return;
@@ -443,6 +443,7 @@ export default class ArduinoCompiler {
       req.setBuildpath(buildPath);
       req.setFqbn('cm:esp32:ringo');
       req.setExportfile(path.join(buildPath, 'export'));
+      req.setVerbose(true);
 
       const stream = this.client.compile(req);
 
@@ -454,7 +455,6 @@ export default class ArduinoCompiler {
 
       stream.on('error', (data) => {
         error = data;
-        logger.log("CLI compile error", data);
       });
 
       stream.on('data', (data: CompileResp) => {
@@ -506,6 +506,14 @@ export default class ArduinoCompiler {
         }
       });
     });
+
+    promise.catch(err => {
+      logger.log("CLI compile error", err);
+
+      throw err;
+    });
+
+    return promise;
   }
 
   /**
@@ -550,7 +558,6 @@ export default class ArduinoCompiler {
 
       stream.on('error', (data) => {
         error = data;
-        logger.log("CLI upload error", data);
       });
 
       stream.on('data', (data: UploadResp) => {
@@ -594,6 +601,7 @@ export default class ArduinoCompiler {
         if (fulfilled) return;
         fulfilled = true;
 
+        error.stdout = stdout;
         error.stderr = stderr;
         reject(error);
       });
@@ -604,10 +612,16 @@ export default class ArduinoCompiler {
         if (data.code === 0) {
           resolve();
         } else {
+          error.stdout = stdout;
           error.stderr = stderr;
           reject(error);
         }
       });
+    });
+
+    promise.catch(err => {
+      logger.log("CLI upload error", err);
+      throw err;
     });
 
     promise.finally(() => { this.getSerial().setUploading(false); this.getSerial().start() });
