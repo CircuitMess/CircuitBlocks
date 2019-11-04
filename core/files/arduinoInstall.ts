@@ -1,6 +1,7 @@
 import ArduinoCompiler from "../compiler/compiler";
 import Installer from "../compiler/installer";
 import {ipcMain, BrowserWindow} from "electron";
+import logger from "./logger";
 
 interface SetupState {
     stage: string;
@@ -39,10 +40,12 @@ export default class arduinoInstall {
     private startDaemon(){
         ArduinoCompiler.startDaemon()
             .then(() => {
+                logger.log("Daemon started");
                 console.log('Daemon started');
             })
             .catch((error) => {
                 console.log(error);
+                logger.log("Daemon start error", error);
 
                 if(this.window){
                     this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess." });
@@ -66,6 +69,7 @@ export default class arduinoInstall {
         }
 
         if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
+            logger.log("Installing");
             console.log('Installing');
 
             this.installer.install(installInfo, (stage) => {
@@ -80,10 +84,12 @@ export default class arduinoInstall {
             }, (err) => {
 				this.installing = false;
 				console.log(err);
+				logger.log("Install error", err);
                 this.setupState.error = err instanceof Error ? err.message : err;
                 this.sendSetupState();
             });
         } else {
+            logger.log("Installed, updating");
             console.log('All ok, updating');
             this.setupState.stage = "UPDATE";
             this.sendSetupState();
@@ -97,6 +103,7 @@ export default class arduinoInstall {
                     this.sendSetupState();
                     this.startDaemon();
                 }, installInfo, (err) => {
+                    logger.log("Update error", err);
                     this.installing = false;
                     this.setupState.error = err instanceof Error ? err.message : err;
                     console.log(err);

@@ -5,6 +5,7 @@ import {ipcMain, BrowserWindow} from 'electron';
 
 import homePath from './consts';
 import * as fs from "fs";
+import logger from "./logger";
 
 interface Sketch {
     title: string;
@@ -38,6 +39,7 @@ export default class Sketches {
         ipcMain.on("load", (event, args) => {
             fs.readFile(args.path, { encoding: "utf-8" }, (err, data) => {
                 if(err){
+                    logger.log("Loading sketch", err);
                     event.reply("load", { error: "Error loading sketch. Please restart or make sure the sketch wasn't deleted." });
                 }else{
                     event.reply("load", { data });
@@ -55,6 +57,7 @@ export default class Sketches {
             const sketchPath = path.join(homePath, title + ".xml");
             fs.writeFile(sketchPath, data, { encoding: "utf-8" }, err => {
                 if(err){
+                    logger.log("Saving sketch", err);
                     event.reply("save", { error: "Error saving sketch." })
                 }else{
                     event.reply("save", { });

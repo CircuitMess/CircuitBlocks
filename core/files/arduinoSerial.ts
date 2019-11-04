@@ -1,6 +1,7 @@
 import {ipcMain, BrowserWindow} from "electron";
 import ArduinoCompiler, {PortDescriptor} from "../compiler/compiler";
 import Serial from "../compiler/serial";
+import logger from "./logger";
 
 export class ArduinoSerial {
     private serial: Serial;
@@ -72,6 +73,8 @@ export class ArduinoSerial {
                 this.checking = false;
             })
             .catch(err => {
+                logger.log("Port identifying error", err);
+
                 console.log("Port identifying failed");
                 console.log(err);
             });

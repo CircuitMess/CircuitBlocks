@@ -3,6 +3,7 @@ import SerialPort from 'serialport';
 import * as path from 'path';
 import * as os from 'os';
 import * as child_process from 'child_process';
+import logger from "../files/logger";
 
 export default class Serial {
   private messageListener: (msg: string) => void;
@@ -52,6 +53,7 @@ export default class Serial {
     const context = this;
 
     function connect(comName){
+      logger.log("conncting " + comName);
       console.log("conncting " + comName);
       context.com = new SerialPort(comName, { baudRate: 9600, hupcl: true, rtscts: true });
       context.com.on('data', (data) => context.data(data));
@@ -63,6 +65,8 @@ export default class Serial {
       ArduinoCompiler.identifyPort().then((ports) => {
         if(ports.length == 0) return;
         connect(ports[0].comName);
+      }).catch(err => {
+        logger.log("Port identify error", err);
       });
     }
   }

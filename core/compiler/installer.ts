@@ -7,6 +7,7 @@ import * as dmg from 'dmg';
 
 import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
+import logger from "../files/logger";
 
 export default class Installer {
   private readonly PLATFORM: string;
@@ -128,7 +129,7 @@ export default class Installer {
         childProcess.execSync([path, 'core', 'update-index'].join(' '));
         childProcess.execSync([path, 'lib', 'update-index'].join(' '));
       }catch(e){
-          //logger.log("CLI init error", e);
+          logger.log("CLI init error", e);
           callback(e);
           return;
       }

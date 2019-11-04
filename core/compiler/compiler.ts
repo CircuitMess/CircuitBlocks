@@ -14,6 +14,7 @@ import { Instance } from '../grpc/common_pb';
 import { UploadReq, UploadResp } from '../grpc/upload_pb';
 import { rejects } from 'assert';
 import * as util from "./util";
+import logger from "../files/logger";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -277,12 +278,15 @@ export default class ArduinoCompiler {
         }
 
         tries++;
+        logger.log("Connecting to daemon, try " + tries);
         console.log("Connecting to daemon, try " + tries);
 
         function onErr(){
           if(tries > 5 && !restarted){
             restarted = true;
             tries = 0;
+
+            logger.log("Reached 6 tries, restarting daemon");
 
             context.stopDaemon();
             context.process = childProcess.execFile(cliPath, ['daemon']);
@@ -300,6 +304,7 @@ export default class ArduinoCompiler {
                 context.daemonConnecting = false;
               })
               .on('error', error => {
+                logger.log("Daemon race condition", error);
                 console.log("race condition");
                 onErr();
               })
@@ -449,6 +454,7 @@ export default class ArduinoCompiler {
 
       stream.on('error', (data) => {
         error = data;
+        logger.log("CLI compile error", data);
       });
 
       stream.on('data', (data: CompileResp) => {
@@ -544,6 +550,7 @@ export default class ArduinoCompiler {
 
       stream.on('error', (data) => {
         error = data;
+        logger.log("CLI upload error", data);
       });
 
       stream.on('data', (data: UploadResp) => {

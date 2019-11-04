@@ -5,6 +5,7 @@ import {ArduinoSerial} from "./arduinoSerial";
 import * as fs from "fs";
 import * as path from "path";
 import * as util from "../compiler/util";
+import logger from "./logger";
 
 export default class ArduinoCompile {
 
@@ -73,6 +74,7 @@ export default class ArduinoCompile {
             this.compile(code, (binary) => {
                 fs.copyFile(binary, exportPath, error => {
                     if(error){
+                        logger.log("Export copy error", error);
                         this.send('runprogress', { error: "Error saving compiled binary. Make sure you have the permissions to write to the specified file.", stage: 'DONE', progress: 0 });
                     }else{
                         this.send('runprogress', { error: "Export successful.", stage: 'DONE', progress: 0 });
@@ -138,6 +140,7 @@ export default class ArduinoCompile {
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
+                logger.log("Compile error", error);
                 console.log(error);
                 this.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
                 this.running = false;
@@ -147,6 +150,7 @@ export default class ArduinoCompile {
 
     private upload(binary: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
         if(this.arduinoSerial.getPort() == undefined){
+            logger.log("Upload error: Ringo disconnected");
             console.log(new Error("Ringo disconnected"));
             if(eCallback){
                 eCallback("Upload error. Check your Ringo then try again.");
@@ -162,6 +166,7 @@ export default class ArduinoCompile {
                 callback();
             })
             .catch(error => {
+                logger.log("Upload error", error);
                 console.log(error);
                 if(eCallback){
                     eCallback("Upload error. Check your Ringo then try again.")

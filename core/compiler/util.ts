@@ -7,6 +7,7 @@ import * as tar from 'tar';
 import * as os from 'os';
 import * as request from 'request';
 import * as unzip from 'unzipper';
+import logger from "../files/logger";
 
 export function tmpdir(prefix: string) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix + '-'));
@@ -27,9 +28,13 @@ export function download(download: string, directory: string): Promise<string> {
             .on('finish', () => {
                 resolve(filepath);
             })
-            .on("error", err => reject(new Error("Download error. " + (err.message || ""))))
+            .on("error", err => {
+                logger.log("Download error: " + download + ", dir: " + directory, err);
+                reject(new Error("Download error. " + (err.message || "")))
+            })
       })
       .on('error', (err) => {
+          logger.log("Download error: " + download + ", dir: " + directory, err);
         reject(new Error("Network error. Please check your internet connection. " + (err.message || "")));
       });
   });
@@ -45,7 +50,7 @@ export function extract(file: string, directory: string): Promise<null> {
         .pipe(unzip.Extract({ path: directory }))
         .on('close', () => resolve())
         .on("error", err => {
-            //logger.log("Extract error: " + file + ", dir: " + directory, err);
+            logger.log("Extract error: " + file + ", dir: " + directory, err);
             reject("Extract error. " + (err.message || ""));
         });
 
@@ -57,13 +62,20 @@ export function extract(file: string, directory: string): Promise<null> {
     } else if (extension === '.xz') {
       handler = lzma.createDecompressor();
     } else {
+      logger.log("Extract error: " + file, "Invalid archive format");
       reject(new Error('Invalid archive format.'));
     }
 
-    handler.on('error', (err) => reject(new Error("Archive unpacking error. " + (err.message || ""))));
+    handler.on('error', (err) => {
+        logger.log("Extract error: " + file + ", dir: " + directory, err);
+        reject(new Error("Archive unpacking error. " + (err.message || "")))
+    });
 
     fs.createReadStream(file)
-      .on('error', (err) => reject(new Error("Archive unpacking error. " + (err.message || ""))))
+      .on('error', (err) => {
+          logger.log("Extract error: " + file + ", dir: " + directory, err);
+          reject(new Error("Archive unpacking error. " + (err.message || "")))
+      })
       .pipe(handler)
       .pipe(new tar.Parse())
       .on('entry', (entry) => {
@@ -80,7 +92,10 @@ export function extract(file: string, directory: string): Promise<null> {
         }
 
         entry.pipe(fs.createWriteStream(filepath))
-            .on("error", err => reject(new Error("Error extracting archive. " + (err.message || ""))));
+            .on("error", err => {
+                logger.log("Extract error: " + file + ", dir: " + directory, err);
+                reject(new Error("Error extracting archive. " + (err.message || "")))
+            });
       })
       .on('end', () => resolve());
   });
