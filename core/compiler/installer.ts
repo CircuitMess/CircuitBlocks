@@ -89,9 +89,9 @@ export default class Installer {
 
         fs.copySync(path.join(tmp, _file), install);
 
-        this.cliInit(install);
-
-        callback(null);
+        this.cliInit(install, (err) => {
+            callback(err);
+        });
       })
       .catch((err) => {
         callback(err);
@@ -113,19 +113,27 @@ export default class Installer {
 
         fs.chmodSync(install, '755');
 
-        this.cliInit(install);
-
-        callback(null);
+        this.cliInit(install, (err) => {
+            callback(err);
+        });
       })
       .catch((err) => {
         callback(err);
       });
   }
 
-  private cliInit(path) {
-    childProcess.execSync([path, 'config', 'init'].join(' '));
-    childProcess.execSync([path, 'core', 'update-index'].join(' '));
-    childProcess.execSync([path, 'lib', 'update-index'].join(' '));
+  private cliInit(path, callback: (error) => void) {
+      try{
+        childProcess.execSync([path, 'config', 'init'].join(' '));
+        childProcess.execSync([path, 'core', 'update-index'].join(' '));
+        childProcess.execSync([path, 'lib', 'update-index'].join(' '));
+      }catch(e){
+          //logger.log("CLI init error", e);
+          callback(e);
+          return;
+      }
+
+      callback(null);
   }
 
   private installCli(file, callback: (err) => void) {
@@ -463,11 +471,15 @@ export default class Installer {
       this.cli(stageCli);
     } else if (info.local == null || info.sketchbook == null) {
       stage('CLI');
-      this.cliInit(
-        path.join(info.cli, 'arduino-cli' + (this.PLATFORM == 'Windows_NT' ? '.exe' : ''))
-      );
-      stage('RINGO');
-      this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
+      this.cliInit(path.join(info.cli, 'arduino-cli' + (this.PLATFORM == 'Windows_NT' ? '.exe' : '')), (err) => {
+          if(err){
+              error(err);
+              return;
+          }
+
+          stage('RINGO');
+          this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
+      });
     }
   }
 

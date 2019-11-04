@@ -43,7 +43,11 @@ export function extract(file: string, directory: string): Promise<null> {
     if (extension === '.zip') {
       fs.createReadStream(file)
         .pipe(unzip.Extract({ path: directory }))
-        .on('close', () => resolve());
+        .on('close', () => resolve())
+        .on("error", err => {
+            //logger.log("Extract error: " + file + ", dir: " + directory, err);
+            reject("Extract error. " + (err.message || ""));
+        });
 
       return;
     }

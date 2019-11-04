@@ -329,7 +329,7 @@ export default class ArduinoCompiler {
     return new Promise<any>((resolve, _reject) => {
       SerialPort.list((err, ports) => {
         if(err){
-          rejects(err);
+          _reject(err);
           return;
         }
 
