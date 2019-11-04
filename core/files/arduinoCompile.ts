@@ -89,6 +89,12 @@ export default class ArduinoCompile {
                 return;
             }
 
+            const stats = ArduinoCompiler.getDaemon();
+            if(!stats.connected && stats.connecting){
+                this.send("installstate", { state: { stage: "0%", error: "Arduino daemon still loading. Please wait a bit and then try again.", restoring: true } });
+                return;
+            }
+
             const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", "esp32");
             let newest = "";
             fs.readdirSync(hardwareDir).forEach((version) => {
