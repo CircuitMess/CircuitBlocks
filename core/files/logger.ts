@@ -1,9 +1,18 @@
 import * as os from "os";
+import * as fs from "fs";
+import * as path from "path";
+import ArduinoCompiler, {InstallInfo} from "../compiler/compiler";
 
 export interface LogEntry {
     message: string;
     error?: any;
     time: Time;
+}
+
+interface DirectoryData {
+    name: string;
+    files: string[];
+    directories: DirectoryData[];
 }
 
 class Time {
@@ -76,16 +85,25 @@ class Logger {
     }
 
     public generateReport(): any {
+        const installInfo = ArduinoCompiler.checkInstall();
 
-        return {
+        const data: any = {
             os: os.type(),
             arch: os.arch(),
             user: os.userInfo().username,
             home: os.homedir(),
             timezone: this.startTime.timezone,
             start: this.startTime.toString(),
-            data: this.entries
+            data: this.entries,
+            info: installInfo,
+            directories: null
         };
+
+        if(installInfo){
+            data.directories = this.directoryTree(installInfo);
+        }
+
+        return data;
     }
 
     public generateJSON(): string {
@@ -102,6 +120,36 @@ class Logger {
         parts.push("Start time: " + data.start + ", timezone: " + data.timezone);
         parts.push("");
 
+        function appendDir(dir: any){
+            parts.push("\tFiles:");
+            dir.files.forEach(file => parts.push("\t" + file));
+            parts.push("\tDirectories:");
+            dir.directories.forEach(directory => {
+                parts.push("\tDirectory " + directory.name + ":");
+                appendDir(directory);
+            })
+        }
+
+        if(data.info){
+            parts.push("Arduino local: " + data.info.local);
+            parts.push("Sketchbook: " + data.info.sketchbook);
+            parts.push("Arduino: " + data.info.arduino);
+            parts.push("CLI: " + data.info.cli);
+            parts.push("");
+        }
+
+        if(data.directories){
+            if(data.directories.sketchbook){
+                parts.push("Sketchbook contents:");
+                appendDir(data.directories.sketchbook);
+            }
+            if(data.directories.cli){
+                parts.push("CLI directory contents:");
+                appendDir(data.directories.cli);
+            }
+            parts.push("");
+        }
+
         data.data.forEach((entry: LogEntry) => {
             const elapsed = Time.elapsed(this.startTime, entry.time);
 
@@ -112,6 +160,47 @@ class Logger {
         });
 
         return parts.join("\n");
+    }
+
+    private directoryTree(info: InstallInfo){
+        const data: any = { };
+
+        if(info.sketchbook){
+            data.sketchbook = this.walkDirectory(info.sketchbook);
+        }
+
+        if(info.cli){
+            data.cli = this.walkDirectory(info.cli, undefined, 2);
+        }
+
+        return data;
+    }
+
+    private walkDirectory(start: string, context?: any, depth?: number): DirectoryData {
+        if(depth == 0) return null;
+        const content: DirectoryData = { name: "", files: [], directories: [] };
+
+        if(context === undefined) context = this;
+
+        fs.readdirSync(start).forEach(file => {
+            const filePath = path.join(start, file);
+            const stat = fs.statSync(filePath);
+
+            if(stat.isDirectory()){
+                const dirData = context.walkDirectory(filePath, context, depth-1);
+                if(dirData == null) return;
+                dirData.name = file;
+                content.directories.push(dirData);
+            }else{
+                content.files.push(file);
+            }
+        });
+
+        return content;
+    }
+
+    private generateFullReport(){
+
     }
 }
 
