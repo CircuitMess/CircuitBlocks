@@ -7,6 +7,7 @@ import arduinoInstall from "./core/files/arduinoInstall";
 import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
 import ArduinoCompile from "./core/files/arduinoCompile";
+import ErrorReport from "./core/files/errorReport";
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
@@ -20,6 +21,7 @@ arduinoSetup.setup();
 const arduinoSerial = new ArduinoSerial();
 const arduinoCompile = new ArduinoCompile(arduinoSerial);
 const sketches = new Sketches();
+const report = new ErrorReport();
 
 function createWindow() {
   // Create the browser window.

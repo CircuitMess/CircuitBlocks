@@ -8,6 +8,7 @@ import './assets/material_icons.css';
 import './assets/poppins.css';
 import './assets/source_code_pro.css';
 import InstallInfo from "./components/InstallInfo";
+import ErrorReport from "./components/ErrorReport";
 import Error from "./layouts/Home/components/Error";
 
 import { IpcRenderer, AllElectron } from 'electron';
@@ -70,6 +71,7 @@ const App = () => {
       )}
       { error && <Error message={error} dismiss={errorFatal ? undefined : () => setError(undefined)}  /> }
       <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} reportError={(message, fatal) => reportError(message, fatal)} />
+      <ErrorReport />
       <Home reportError={(message, fatal) => reportError(message, fatal)}
             scrollStop={!!error || isInstalling}
             isEditorOpen={isEditorOpen}

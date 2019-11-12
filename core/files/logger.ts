@@ -2,6 +2,7 @@ import * as os from "os";
 import * as fs from "fs";
 import * as path from "path";
 import ArduinoCompiler, {InstallInfo} from "../compiler/compiler";
+import * as request from 'request';
 
 export interface LogEntry {
     message: string;
@@ -84,6 +85,38 @@ class Logger {
         this.entries.push({ message, error, time: new Time() });
     }
 
+    public sendReport(report: any, fatal: boolean): Promise<number> {
+        const data = JSON.stringify(report);
+
+        return new Promise<number>((resolve, reject) => {
+            request.post("http://localhost:8080/submit.php", { form: { data, fatal: fatal ? "1" : "0" } }, (err, res, body) => {
+                    if(err){
+                        reject(new Error("Network error. Please check your internet connection. " + (err.message || "")));
+                        return;
+                    }
+
+                    if(res.statusCode != 200){
+                        reject(new Error("Error submitting report. Please contact us at contact@circuitmess.com"));
+                        return;
+                    }
+
+                    if(body == "" || body == "0"){
+                        reject(new Error("Error submitting report. Please contact us at contact@circuitmess.com"));
+                        return;
+                    }
+
+                    const id = parseInt(body);
+
+                    if(isNaN(id)){
+                        reject(new Error("Error submitting report. Please contact us at contact@circuitmess.com"));
+                        return;
+                    }
+
+                    resolve(id);
+                });
+        });
+    }
+
     public generateReport(): any {
         const installInfo = ArduinoCompiler.checkInstall();
 
@@ -106,18 +139,12 @@ class Logger {
         return data;
     }
 
-    public generateJSON(): string {
-        return JSON.stringify(this.generateReport());
-    }
-
-    public generateLog(): string {
-        const data = this.generateReport();
-
+    public stringifyReport(report: any): string {
         const parts: string[] = [];
 
-        parts.push("OS: " + data.os + ", arch: " + data.arch);
-        parts.push("User: " + data.user + ", home: " + data.home);
-        parts.push("Start time: " + data.start + ", timezone: " + data.timezone);
+        parts.push("OS: " + report.os + ", arch: " + report.arch);
+        parts.push("User: " + report.user + ", home: " + report.home);
+        parts.push("Start time: " + report.start + ", timezone: " + report.timezone);
         parts.push("");
 
         function appendDir(dir: any){
@@ -130,27 +157,27 @@ class Logger {
             })
         }
 
-        if(data.info){
-            parts.push("Arduino local: " + data.info.local);
-            parts.push("Sketchbook: " + data.info.sketchbook);
-            parts.push("Arduino: " + data.info.arduino);
-            parts.push("CLI: " + data.info.cli);
+        if(report.info){
+            parts.push("Arduino local: " + report.info.local);
+            parts.push("Sketchbook: " + report.info.sketchbook);
+            parts.push("Arduino: " + report.info.arduino);
+            parts.push("CLI: " + report.info.cli);
             parts.push("");
         }
 
-        if(data.directories){
-            if(data.directories.sketchbook){
+        if(report.directories){
+            if(report.directories.sketchbook){
                 parts.push("Sketchbook contents:");
-                appendDir(data.directories.sketchbook);
+                appendDir(report.directories.sketchbook);
             }
-            if(data.directories.cli){
+            if(report.directories.cli){
                 parts.push("CLI directory contents:");
-                appendDir(data.directories.cli);
+                appendDir(report.directories.cli);
             }
             parts.push("");
         }
 
-        data.data.forEach((entry: LogEntry) => {
+        report.data.forEach((entry: LogEntry) => {
             const elapsed = Time.elapsed(this.startTime, entry.time);
 
             parts.push("[ " + elapsed.getPreciseTimeString() + " ] " + entry.message);
@@ -160,6 +187,19 @@ class Logger {
         });
 
         return parts.join("\n");
+    }
+
+    public saveReport(report: any){
+        let reportDir = os.homedir();
+        if(os.type() == "Windows_NT" || os.type() == "Darwin"){
+            reportDir = path.join(reportDir, "Documents");
+        }
+
+        const reportPath = path.join(reportDir, "CircuitBlocksReport.txt");
+
+        fs.writeFileSync(reportPath, JSON.stringify(report));
+
+        return reportPath;
     }
 
     private directoryTree(info: InstallInfo){

@@ -114,6 +114,10 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send("firmware");
   }
 
+  public openErrorReport(){
+    ipcRenderer.send("report");
+  }
+
   public openFile(type: 'NEW' | 'OPEN', sketch?: Sketch){
     const { reportError, openEditor } = this.props;
 
@@ -168,7 +172,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                       /> )}
                 </Main>
                 <Footer>
-                  <p>v1.0.1</p>
+                  <p>v1.0.1 <span style={{ padding: "0 10px" }}>|</span> <a style={{ cursor: "pointer" }} onClick={ () => this.openErrorReport() }>Send error report</a></p>
                 </Footer>
               </>
           ) : (
