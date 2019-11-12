@@ -54,6 +54,11 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
         this.setState({ content: undefined, collecting: false, sending: false, id: undefined, path: undefined, shown: false });
     }
 
+    private done(){
+        ipcRenderer.send("reportdone");
+        this.close();
+    }
+
     public render(){
         const { sending, collecting, id, path, content, shown } = this.state;
 
@@ -96,7 +101,7 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
                                             <p>You can contact us with your problem at <b>contact@circuitmess.com</b>. Don't forget to attach your report ID!</p>
                                         </div>
                                     }
-                                    <Button onClick={ () => this.close() } primary fluid style={{ marginTop: 20 }}>Ok</Button>
+                                    <Button onClick={ () => this.done() } primary fluid style={{ marginTop: 20 }}>Ok</Button>
                                 </div> }
                         </div>
                     }

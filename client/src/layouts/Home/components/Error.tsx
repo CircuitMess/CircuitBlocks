@@ -1,6 +1,10 @@
 import React from 'react';
 import {Button, Dimmer, Modal, ModalActions, ModalContent, ModalHeader} from "semantic-ui-react";
 import {ModalBase} from "../../../components/Modal/Common";
+import {AllElectron, IpcRenderer} from "electron";
+
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 interface ErrorProps {
     message: string;
@@ -13,6 +17,10 @@ export default class Error extends React.Component<ErrorProps, {}> {
         super(props);
     }
 
+    private report(){
+        ipcRenderer.send("report", { fatal: true });
+    }
+
     public render(){
         const { message, dismiss } = this.props;
 
@@ -20,9 +28,10 @@ export default class Error extends React.Component<ErrorProps, {}> {
             <ModalBase className={"small"}>
                 <div className={"title"}>Error</div>
                 <div className={"content"}><p>{message}</p></div>
-                { dismiss && <div className={"buttons"}>
-                    <Button primary onClick={dismiss}>Ok</Button>
-                </div> }
+                <div className={"buttons"}>
+                    { dismiss ? <Button secondary onClick={dismiss}>Ok</Button>
+                        : <Button primary onClick={() => this.report()}>Send error report</Button> }
+                </div>
             </ModalBase>
         </Dimmer>
     }

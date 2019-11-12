@@ -271,7 +271,7 @@ export default class ArduinoCompiler {
       let restarted = false;
 
       function connect(){
-        if (tries > 5 && restarted) {
+        if (tries > 2 && restarted) {
           context.daemonConnecting = false;
           reject(new Error('Unable to connect to CLI. Please restart the program.'));
           return;
@@ -282,7 +282,7 @@ export default class ArduinoCompiler {
         console.log("Connecting to daemon, try " + tries);
 
         function onErr(){
-          if(tries > 5 && !restarted){
+          if(tries > 2 && !restarted){
             restarted = true;
             tries = 0;
 
