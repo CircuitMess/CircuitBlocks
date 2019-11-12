@@ -89,8 +89,13 @@ class Logger {
         const data = JSON.stringify(report);
 
         return new Promise<number>((resolve, reject) => {
-            request.post("http://localhost:8080/submit.php", { form: { data, fatal: fatal ? "1" : "0" } }, (err, res, body) => {
+            request.post("https://repman.circuitmess.com/submit.php", {
+                form: { data, fatal: fatal ? "1" : "0" },
+                rejectUnauthorized: false,
+                requestCert: true
+                }, (err, res, body) => {
                     if(err){
+                        console.log(err);
                         reject(new Error("Network error. Please check your internet connection. " + (err.message || "")));
                         return;
                     }
