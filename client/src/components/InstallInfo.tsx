@@ -94,7 +94,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
                         { subtitle && <div style={{ paddingTop: 5, textAlign: "center" }}>{ subtitle }</div> }
-                        { (error != undefined) && <Button onClick={ () => this.retry() } primary fluid style={{ marginTop: 20 }}>{ restoring ? "Ok" : "Try again" }</Button> }
+                        { (error != undefined) && <Button onClick={ () => this.retry() } primary style={{ margin: "0 auto", display: "block", marginTop: 20 }}>{ restoring ? "Ok" : "Try again" }</Button> }
                     </div>
                 </ModalBase> }
         </div>

@@ -101,7 +101,7 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
                                             <p>You can contact us with your problem at <b>contact@circuitmess.com</b>. Don't forget to attach your report ID!</p>
                                         </div>
                                     }
-                                    <Button onClick={ () => this.done() } primary fluid style={{ marginTop: 20 }}>Ok</Button>
+                                    <Button onClick={ () => this.done() } primary style={{ display: "block", margin: "0 auto", marginTop: 20 }}>Ok</Button>
                                 </div> }
                         </div>
                     }

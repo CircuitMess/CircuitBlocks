@@ -29,7 +29,7 @@ export default class Error extends React.Component<ErrorProps, {}> {
                 <div className={"title"}>Error</div>
                 <div className={"content"}><p>{message}</p></div>
                 <div className={"buttons"}>
-                    { dismiss ? <Button secondary onClick={dismiss}>Ok</Button>
+                    { dismiss ? <Button primary onClick={dismiss}>Ok</Button>
                         : <Button primary onClick={() => this.report()}>Send error report</Button> }
                 </div>
             </ModalBase>
