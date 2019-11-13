@@ -23,6 +23,7 @@ const App = () => {
   const [filename, setFilename] = useState('');
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isErrorReportOpen, setIsErrorReportOpen] = useState(false);
 
   const monacoRef = React.createRef();
   const blocklyRef = React.createRef<Editor>();
@@ -71,9 +72,9 @@ const App = () => {
       )}
       { error && <Error message={error} dismiss={errorFatal ? undefined : () => setError(undefined)}  /> }
       <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} reportError={(message, fatal) => reportError(message, fatal)} />
-      <ErrorReport />
+      <ErrorReport setIsOpen={(open) => setIsErrorReportOpen(open) } />
       <Home reportError={(message, fatal) => reportError(message, fatal)}
-            scrollStop={!!error || isInstalling}
+            scrollStop={(error != undefined) || isInstalling || isErrorReportOpen}
             isEditorOpen={isEditorOpen}
             openEditor={openEditor} />
       <Editor

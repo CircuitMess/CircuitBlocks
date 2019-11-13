@@ -8,7 +8,7 @@ const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
 interface ErrorReportProps {
-
+    setIsOpen: (isOpen: boolean) => void
 }
 
 interface ErrorReportState {
@@ -41,9 +41,9 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
             const { collecting, sending, content, id, path } = args;
 
             this.setState({ collecting, sending, content, id, path, shown: true });
-        });
 
-        //ipcRenderer.send("bar", null);
+            this.props.setIsOpen(true);
+        });
     }
 
     private send(){
@@ -52,6 +52,7 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
 
     private close(){
         this.setState({ content: undefined, collecting: false, sending: false, id: undefined, path: undefined, shown: false });
+        this.props.setIsOpen(false);
     }
 
     private done(){
