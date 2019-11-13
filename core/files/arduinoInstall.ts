@@ -28,7 +28,7 @@ export default class arduinoInstall {
             const stats = ArduinoCompiler.getDaemon();
             if (!this.installing && !stats.connected && !stats.connecting) {
 				console.log(stats);
-                event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess."});
+                event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks."});
             }
         });
     }
@@ -48,7 +48,7 @@ export default class arduinoInstall {
                 logger.log("Daemon start error", error);
 
                 if(this.window){
-                    this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitMess." });
+                    this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
                 }
             });
     }

@@ -2,7 +2,6 @@ import React from 'react';
 import {ModalBase} from "./Modal/Common";
 import {Loader, Dimmer, Button} from "semantic-ui-react";
 import {AllElectron, IpcRenderer} from "electron";
-import escape from "escape-html";
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
@@ -82,7 +81,7 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
                                     <div>
                                         <p>The following data will be sent and stored on our servers. You can contact us at contact@circuitmess.com if you wish we remove your data from our server.</p>
                                         <div style={{ maxHeight: 200, overflowY: "auto", whiteSpace: "pre", padding: "5px 10px", boxShadow: "0 0 3px rgba(0, 0, 0, 0.5) inset" }}>
-                                            { content != undefined ? escape(content) : "" }
+                                            { content != undefined ? content : "" }
                                         </div>
                                     </div>
                                     <div>
