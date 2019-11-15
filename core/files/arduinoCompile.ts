@@ -12,9 +12,42 @@ export default class ArduinoCompile {
     private arduinoSerial: ArduinoSerial;
     private running: boolean = false;
     private window: BrowserWindow;
+    private cancel: boolean = false;
 
     public constructor(arduinoSerial: ArduinoSerial){
         this.arduinoSerial = arduinoSerial;
+
+        ipcMain.on("stop", (event, args) => {
+            if(!this.running){
+                this.send('runprogress', { error: null, stage: 'DONE' });
+                return;
+            }
+
+            this.cancel = true;
+
+            logger.log("Force stopping compile/upload");
+            ArduinoCompiler.stopDaemon(true);
+
+            this.running = false;
+
+            const context = this;
+
+            setTimeout(() => {
+                ArduinoCompiler.startDaemon()
+                    .then(() => {
+                        logger.log("Daemon started");
+                        console.log('Daemon started');
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        logger.log("Daemon start error", error);
+
+                        this.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
+                    });
+
+                context.send('runprogress', { error: null, stage: 'DONE', cancel: true });
+            }, 1000);
+        });
 
         ipcMain.on("run", (event, args) => {
             const stats = ArduinoCompiler.getDaemon();
@@ -41,7 +74,7 @@ export default class ArduinoCompile {
                 this.upload(binary, () => {
                     this.send('runprogress', { error: null, stage: 'DONE' });
                     this.running = false;
-                    });
+                });
             });
         });
 
@@ -140,6 +173,10 @@ export default class ArduinoCompile {
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
+                if(this.cancel){
+                    this.cancel = false;
+                    return;
+                }
                 console.log(error);
                 this.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
                 this.running = false;
@@ -165,6 +202,10 @@ export default class ArduinoCompile {
                 callback();
             })
             .catch(error => {
+                if(this.cancel){
+                    this.cancel = false;
+                    return;
+                }
                 console.log(error);
                 if(eCallback){
                     eCallback("Upload error. Check your Ringo then try again.")

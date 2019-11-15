@@ -171,6 +171,10 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.on("runprogress", (event: any, args: any) => {
       if(!this.state.running) return;
 
+      if(args.cancel){
+        this.addNotification("Run operation cancelled.");
+      }
+
       if(args.stage == "DONE"){
         if(args.error){
           this.props.reportError(args.error, args.fatal);
@@ -226,8 +230,11 @@ class Editor extends Component<EditorProps, State> {
   }
 
   run = () => {
-    this.setState({ running: true, runningPercentage: 0 });
-    ipcRenderer.send('run', { code: this.state.code });
+    if(this.state.running){
+      ipcRenderer.send('stop', { code: this.state.code });
+    }else{
+      this.setState({ running: true, runningPercentage: 0 });
+      ipcRenderer.send('run', { code: this.state.code });}
   };
 
   openLoadModal = () => {

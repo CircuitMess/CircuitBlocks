@@ -321,9 +321,15 @@ export default class ArduinoCompiler {
   /**
    * Stops the builder daemon.
    */
-  public static stopDaemon() {
+  public static stopDaemon(toBeReconnected?: boolean) {
     if(this.process) this.process.kill();
     this.instance = undefined;
+
+    if(toBeReconnected){
+      this.daemonConnecting = true;
+    }else{
+      this.daemonConnecting = false;
+    }
   }
 
   /**
