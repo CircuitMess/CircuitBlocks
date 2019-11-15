@@ -6,11 +6,11 @@ interface Props {
 
 const ProgressBar = styled.div<Props>`
   position: absolute;
-  top: 56px;
+  top: 54px;
   left: 0;
-  height: 4px;
+  height: 6px;
   width: ${(props) => `${props.percentage}%`};
-  background-color: green;
+  background-color: #ffc52d;
   transition-duration: 0.2s;
 `;
 
