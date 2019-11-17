@@ -8,6 +8,11 @@ Installation guide for the CircuitBlocks can be found on our website [here](http
 
 When first started, the app will try to identify an already existing Arduino installation. If one isn't found it will download and install the Arduino IDE along with all the required drivers and libraries required for the CircuitMess Ringo board.
 
+
+________________________________________________________________________________________________________________________________________
+
+**NOTE: You can skip these steps if you just want to use CircuitBlocks. Find the installation guide and the tutorial [here](https://www.circuitmess.com/circuitblocks-tutorial/).**
+
 ## Running a dev environtment
 
 Clone the repository, install all core and client dependencies and run with yarn:
