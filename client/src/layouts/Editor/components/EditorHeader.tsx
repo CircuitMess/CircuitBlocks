@@ -133,9 +133,9 @@ const EditorHeader: React.FC<Props> = (props) => {
         <Button className={`icon`} onClick={exportBinary}>
           <i className="material-icons"> save_alt </i>
         </Button>
-        {/*<Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
+        <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
           <i className="material-icons"> call_to_action </i>
-        </Button>*/}
+        </Button>
         <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
