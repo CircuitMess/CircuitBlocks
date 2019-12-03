@@ -134,6 +134,7 @@ export class Blocks {
         button_repeat: '<block type="button_repeat"></block>',
         joystick: '<block type="joystick"></block>',
         led_colour: '<block type="led_colour"></block>',
+        led_rgb: '<block type="led_colour_rgb"><value name="R"><shadow type="math_number"><field name="NUM">112</field></shadow></value><value name="G"><shadow type="math_number"><field name="NUM">27</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">254</field></shadow></value></block>',
         led_on: '<block type="led_on"></block>',
         led_off: '<block type="led_off"></block>'
     };

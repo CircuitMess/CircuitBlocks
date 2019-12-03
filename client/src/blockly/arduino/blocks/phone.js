@@ -180,6 +180,32 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     },
     {
+        type: "led_colour_rgb",
+        message0: "LED colour R %1 G %2 B %3",
+        args0: [
+            {
+                "type": "input_value",
+                "name": "R",
+                "check": "Number"
+            },
+            {
+                "type": "input_value",
+                "name": "G",
+                "check": "Number"
+            },
+            {
+                "type": "input_value",
+                "name": "B",
+                "check": "Number"
+            },
+        ],
+        output: "LED_Colour",
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Msg.IO_HUE,
+        tooltip: "RGB Colour",
+        helpUrl: ""
+    },
+    {
         type: "vibrate",
         message0: "vibrate for %1 second(s)",
         args0: [

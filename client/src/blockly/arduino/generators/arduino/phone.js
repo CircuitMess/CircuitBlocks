@@ -52,6 +52,14 @@ Blockly.Arduino['led_colour'] = function(block) {
     return [ COLOUR, Blockly.Arduino.ORDER_ATOMIC ];
 };
 
+Blockly.Arduino['led_colour_rgb'] = function(block) {
+    var r = Blockly.Arduino.valueToCode(block, 'R', Blockly.Arduino.ORDER_ATOMIC);
+    var g = Blockly.Arduino.valueToCode(block, 'G', Blockly.Arduino.ORDER_ATOMIC);
+    var b = Blockly.Arduino.valueToCode(block, 'B', Blockly.Arduino.ORDER_ATOMIC);
+
+    return [ "CRGB(" + r + ", " + g + ", " + b + ")", Blockly.Arduino.ORDER_ATOMIC ];
+};
+
 Blockly.Arduino['led_on'] = function(block) {
     var led = Blockly.Arduino.valueToCode(block, 'LED', Blockly.Arduino.ORDER_ATOMIC);
     var colour = Blockly.Arduino.valueToCode(block, 'COLOUR', Blockly.Arduino.ORDER_ATOMIC);

@@ -1048,6 +1048,10 @@ categories.push({
             xml: Blocks.phone.led_colour
         },
         {
+            name: "led_colour_rgb",
+            xml: Blocks.phone.led_rgb
+        },
+        {
             name: "led_on",
             xml: Blocks.phone.led_on
         },
