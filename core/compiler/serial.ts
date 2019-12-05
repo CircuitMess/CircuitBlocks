@@ -16,8 +16,17 @@ export default class Serial {
   private flush() {
     if (this.buffer == '') return;
 
-    this.messageListener(this.buffer);
-    this.buffer = '';
+    let lastnl = this.buffer.lastIndexOf("\n");
+
+    let message = this.buffer.substring(0, lastnl);
+
+    if(lastnl != this.buffer.length-1){
+      this.buffer = this.buffer.substr(lastnl+1);
+    }else{
+      this.buffer = "";
+    }
+
+    this.messageListener(message);
   }
 
   public setUploading(uploading: boolean) {
@@ -35,12 +44,12 @@ export default class Serial {
   }
 
   private data(buffer) {
-    const char = buffer.toString();
+    const data = buffer.toString();
 
-    if (char == '\n') {
+    this.buffer += data;
+
+    if (data.indexOf("\n") != -1) {
       this.flush();
-    } else {
-      this.buffer += char;
     }
   }
 
