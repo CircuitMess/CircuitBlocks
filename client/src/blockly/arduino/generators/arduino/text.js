@@ -166,7 +166,7 @@ Blockly.Arduino['text_trim'] = function(block) {
  */
 Blockly.Arduino['text_print'] = function(block) {
   var serialId = Blockly.Arduino.Boards.selected.serial[0][1];
-  var setupCode = serialId + '.begin(9600);';
+  var setupCode = serialId + '.begin(115200);';
   Blockly.Arduino.addSetup('serial_' + serialId, setupCode, false);
   var argument0 = Blockly.Arduino.valueToCode(block, 'TEXT',
       Blockly.Arduino.ORDER_NONE);

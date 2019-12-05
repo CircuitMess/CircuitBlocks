@@ -53,7 +53,7 @@ export default class Serial {
     function connect(comName){
       logger.log("conncting " + comName);
       console.log("conncting " + comName);
-      context.com = new SerialPort(comName, { baudRate: 9600, hupcl: true, rtscts: true });
+      context.com = new SerialPort(comName, { baudRate: 115200, hupcl: true, rtscts: true });
       context.com.on('data', (data) => context.data(data));
     }
 
