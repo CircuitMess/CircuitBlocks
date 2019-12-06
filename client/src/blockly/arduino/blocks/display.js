@@ -5,7 +5,7 @@ goog.provide("Blockly.Blocks.display");
 
 Blockly.defineBlocksWithJsonArray([
     {
-        type: "screen_colour",
+        type: "display_colour",
         message0: "screen colour %1",
         args0: [
             {
