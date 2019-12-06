@@ -206,23 +206,6 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     },
     {
-        type: "vibrate",
-        message0: "vibrate for %1 second(s)",
-        args0: [
-            {
-                type: "input_value",
-                name: "DURATION",
-                check: "Number"
-            }
-        ],
-        previousStatement: null,
-        nextStatement: null,
-        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
-        colour: Blockly.Msg.IO_HUE,
-        tooltip: "Vibrate the MAKERphone.",
-        helpUrl: ""
-    },
-    {
         type: "button_action",
         message0: "button %1 has been %2",
         args0: [

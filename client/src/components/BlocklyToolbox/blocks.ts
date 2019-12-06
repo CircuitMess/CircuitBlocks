@@ -128,7 +128,6 @@ export class Blocks {
 
     public static phone: any = {
         update: '<block type="phone_update"></block>',
-        vibrate: '<block type="vibrate"></block>',
         button_action: '<block type="button_action"></block>',
         button_held: '<block type="button_held"></block>',
         button_repeat: '<block type="button_repeat"></block>',

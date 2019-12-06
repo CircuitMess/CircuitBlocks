@@ -1024,10 +1024,6 @@ categories.push({
             xml: Blocks.phone.update
         },
         {
-            name: "vibrate",
-            xml: Blocks.phone.vibrate
-        },
-        {
             name: "button_action",
             xml: Blocks.phone.button_action
         },
