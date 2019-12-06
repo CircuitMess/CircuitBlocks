@@ -139,7 +139,7 @@ export class Blocks {
     };
 
     public static display: any = {
-        colour: '<block type="display_colour"></block>',
+        colour: '<block type="screen_colour"></block>',
         popup: '<block type="display_popup"></block>',
         clear: '<block type="display_clear"></block>',
         invert: '<block type="display_invert"></block>',

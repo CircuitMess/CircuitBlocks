@@ -5,7 +5,7 @@ goog.provide("Blockly.Arduino.display");
 
 let goog = Blockly.goog;
 
-Blockly.Arduino['display_colour'] = function(block) {
+Blockly.Arduino['screen_colour'] = function(block) {
     var COLOUR = block.getFieldValue('COLOUR');
 
     return [ COLOUR, Blockly.Arduino.ORDER_ATOMIC ];

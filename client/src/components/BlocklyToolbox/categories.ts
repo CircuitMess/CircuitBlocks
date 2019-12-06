@@ -1066,7 +1066,7 @@ categories.push({
 
     blocks: [
         {
-            name: "display_colour",
+            name: "screen_colour",
             xml: Blocks.display.colour
         },
         {
