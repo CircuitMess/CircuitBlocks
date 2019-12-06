@@ -21,7 +21,7 @@ export function download(download: string, directory: string): Promise<string> {
     const output = fs.createWriteStream(filepath);
 
     request
-      .get(download)
+      .get(download, { timeout: 10000 })
       .on('response', (response) => {
         response.pipe(output);
         output
