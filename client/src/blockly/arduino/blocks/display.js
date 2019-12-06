@@ -81,7 +81,7 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "display_invert",
-        message0: "invert display colours %1",
+        message0: "screen colours inverted %1",
         args0: [
             {
                 type: "input_value",
