@@ -733,10 +733,6 @@ categories.push({
             xml: Blocks.loops.controls_repeat_ext
         },
         {
-            name: "loops_repeat",
-            xml: Blocks.loops.controls_repeat
-        },
-        {
             name: "loops_while",
             xml: Blocks.loops.controls_whileuntil
         },
