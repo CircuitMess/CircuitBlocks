@@ -42,7 +42,7 @@ export default class ArduinoCompiler {
   private static process: childProcess.ChildProcess;
   private static instance: Instance;
 
-  private static readonly CB_TMP: string = path.join(os.tmpdir(), 'circuitblocks');
+  private static readonly CB_TMP: string = path.join(os.tmpdir(), 'circuitblocks' + (os.type() != "Windows_NT" ? "-proj-" + os.userInfo().username : ""));
   private static ARDUINO_INSTALL: string = '';
   private static ARDUINO_HOME: string = '';
   private static ARDUINO_LOCAL: string = '';
