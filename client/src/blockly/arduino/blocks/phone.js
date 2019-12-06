@@ -346,7 +346,7 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "led_on",
-        message0: "set led %1 to colour %2",
+        message0: "set led #%1 to colour %2",
         args0: [
             {
                 type: "input_value",
@@ -367,7 +367,7 @@ Blockly.defineBlocksWithJsonArray([
     },
     {
         type: "led_off",
-        message0: "turn off led %1",
+        message0: "turn off led #%1",
         args0: [
             {
                 type: "input_value",
@@ -379,6 +379,6 @@ Blockly.defineBlocksWithJsonArray([
         nextStatement: null,
         outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
         colour: Blockly.Msg.IO_HUE,
-        tooltip: "Lights the led"
+        tooltip: "Turns the led off"
     },
 ]);
