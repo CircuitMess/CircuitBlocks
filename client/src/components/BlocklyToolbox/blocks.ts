@@ -107,6 +107,7 @@ export class Blocks {
     public static time: any = {
         time_delay: '<block type="time_delay"><value name="DELAY_TIME_MILI"><block type="math_number"><field name="NUM">1000</field></value></block>',
         time_delaymicros: '<block type="time_delaymicros"><value name="DELAY_TIME_MICRO"><block type="math_number"><field name="NUM">100</field></value></block>',
+        time_delayseconds: '<block type="time_delayseconds"><value name="DELAY_TIME_SEC"><block type="math_number"><field name="NUM">2</field></value></block>',
         time_millis: '<block type="time_millis"></block>',
         time_micros: '<block type="time_micros"></block>',
         infinite_loop: '<block type="infinite_loop"></block>',

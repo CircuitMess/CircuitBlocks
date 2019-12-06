@@ -40,6 +40,13 @@ goog.provide('Blockly.Arduino.time');
   return code;
 };
 
+Blockly.Arduino['time_delayseconds'] = function(block) {
+ var delayTime = Blockly.Arduino.valueToCode(
+     block, 'DELAY_TIME_SEC', Blockly.Arduino.ORDER_ATOMIC) || '0';
+ var code = 'delay(' + delayTime + ' * 1000);\n';
+ return code;
+};
+
 /**
  * Code generator for the elapsed time in milliseconds block.
  * Arduino code: loop { millis() }

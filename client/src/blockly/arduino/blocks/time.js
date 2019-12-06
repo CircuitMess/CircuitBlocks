@@ -55,6 +55,26 @@ Blockly.Blocks['time_delaymicros'] = {
   }
 };
 
+Blockly.Blocks['time_delayseconds'] = {
+  /**
+   * Delay block definition
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.setHelpUrl('http://arduino.cc/en/Reference/Delay');
+    this.setColour(Blockly.Msg.TIME_HUE);
+    this.appendValueInput('DELAY_TIME_SEC')
+        .setCheck(Blockly.Types.NUMBER.checkList)
+        .appendField(Blockly.Msg.ARD_TIME_DELAY);
+    this.appendDummyInput()
+        .appendField(Blockly.Msg.ARD_TIME_S);
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip(Blockly.Msg.ARD_TIME_DELAY_TIP_S);
+  }
+};
+
 Blockly.Blocks['time_millis'] = {
   /**
    * Elapsed time in milliseconds block definition

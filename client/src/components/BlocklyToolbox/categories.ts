@@ -1153,6 +1153,10 @@ categories.push({
             xml: Blocks.time.time_delaymicros
         },
         {
+            name: "time_delay_seconds",
+            xml: Blocks.time.time_delayseconds
+        },
+        {
             name: "time_micros",
             xml: Blocks.time.time_micros
         },
