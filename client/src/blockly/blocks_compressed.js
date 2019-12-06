@@ -832,11 +832,11 @@ Blockly.defineBlocksWithJsonArray([{
   output: null, colour: "%{BKY_LOGIC_HUE}", tooltip: "%{BKY_LOGIC_NULL_TOOLTIP}", helpUrl: "%{BKY_LOGIC_NULL_HELPURL}"
 }, {
   type: "logic_ternary",
-  message0: "%{BKY_LOGIC_TERNARY_CONDITION} %1",
+  message0: "if %1",
   args0: [{type: "input_value", name: "IF", check: "Boolean"}],
-  message1: "%{BKY_LOGIC_TERNARY_IF_TRUE} %1",
+  message1: "then %1",
   args1: [{type: "input_value", name: "THEN"}],
-  message2: "%{BKY_LOGIC_TERNARY_IF_FALSE} %1",
+  message2: "else %1",
   args2: [{type: "input_value", name: "ELSE"}],
   output: null,
   colour: "%{BKY_LOGIC_HUE}",

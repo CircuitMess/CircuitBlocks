@@ -672,6 +672,11 @@ categories.push({
             group: "Conditionals"
         },
         {
+            name: "logic_ternary",
+            xml: Blocks.logic.logic_ternary,
+            group: "Conditionals"
+        },
+        {
             name: "logic_compare_eq",
             xml: Blocks.logic.logic_compare_eq,
             group: "Comparison"
@@ -713,22 +718,7 @@ categories.push({
         },
     ],
 
-    subcategories: [
-        {
-            ...moreCategory,
-
-            blocks: [
-                {
-                    name: "logic_null",
-                    xml: Blocks.logic.logic_null
-                },
-                {
-                    name: "logic_ternary",
-                    xml: Blocks.logic.logic_ternary
-                }
-            ]
-        }
-    ], // ToolboxCategory
+    subcategories: [ ], // ToolboxCategory
     advanced: false
 });
 
