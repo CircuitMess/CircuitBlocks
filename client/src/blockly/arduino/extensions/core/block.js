@@ -16,6 +16,12 @@ Blockly.Block.prototype.getVars = function() {
     for (var j = 0, field; field = input.fieldRow[j]; j++) {
       if (field instanceof Blockly.FieldVariable) {
         vars.push(field.getValue());
+      }else if(input.connection && input.connection.isConnected()){
+        var varBlock = input.connection.targetBlock();
+
+        if(varBlock.type == "variables_get"){
+          vars.push(varBlock.getVarModels()[0].id_);
+        }
       }
     }
   }
