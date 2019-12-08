@@ -19,7 +19,7 @@ export class Blocks {
         controls_repeat_ext: '<block type="controls_repeat_ext"><value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>',
         controls_whileuntil: '<block type="controls_whileUntil"></block>',
         controls_for_simple: '<block type="pxt_controls_for"><value name="VAR"><shadow type="variables_get_reporter"><field name="VAR">${lf("{id:var}index")}</field></shadow></value><value name="TO"><shadow type="math_whole_number"><field name="NUM">4</field></shadow></value></block>',
-        controls_for: '<block type="controls_for"><value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>',
+        controls_for: '<block type="controls_for"><value name="VAR"><shadow type="variables_get"><field name="VAR">i</field></shadow></value><value name="FROM"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="TO"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="BY"><shadow type="math_number"><field name="NUM">1</field></shadow></value></block>',
         controls_foreach: '<block type="controls_forEach"><value name="VAR"><shadow type="variables_get_reporter"><field name="VAR">item</field></shadow></value></block>',
         controls_flow_statements: '<block type="controls_flow_statements"></block>',
     };
@@ -129,31 +129,31 @@ export class Blocks {
     public static phone: any = {
         update: '<block type="phone_update"></block>',
         button_action: '<block type="button_action"></block>',
-        button_held: '<block type="button_held"></block>',
-        button_repeat: '<block type="button_repeat"></block>',
+        button_held: '<block type="button_held"><value name="DURATION"><shadow type="math_number"><field name="NUM">100</field></shadow></value></block>',
+        button_repeat: '<block type="button_repeat"><value name="INTERVAL"><shadow type="math_number"><field name="NUM">10</field></shadow></value></block>',
         joystick: '<block type="joystick"></block>',
         led_colour: '<block type="led_colour"></block>',
         led_rgb: '<block type="led_colour_rgb"><value name="R"><shadow type="math_number"><field name="NUM">112</field></shadow></value><value name="G"><shadow type="math_number"><field name="NUM">27</field></shadow></value><value name="B"><shadow type="math_number"><field name="NUM">254</field></shadow></value></block>',
-        led_on: '<block type="led_on"></block>',
-        led_off: '<block type="led_off"></block>'
+        led_on: '<block type="led_on"><value name="LED"><shadow type="math_number"><field name="NUM">2</field></shadow></value><value name="COLOUR"><shadow type="led_colour"><field name="COLOUR">CRGB::Blue</field></shadow></value></block>',
+        led_off: '<block type="led_off"><value name="LED"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block>'
     };
 
     public static display: any = {
         colour: '<block type="display_colour"></block>',
-        popup: '<block type="display_popup"></block>',
-        clear: '<block type="display_clear"></block>',
-        invert: '<block type="display_invert"></block>',
+        popup: '<block type="display_popup"><value name="MESSAGE"><shadow type="text"></shadow></value><value name="DURATION"><shadow type="math_number"><field name="NUM">2</field></shadow></value></block>',
+        clear: '<block type="display_clear"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_BLACK</field></shadow></value></block>',
+        invert: '<block type="display_invert"><value name="INVERT"><block type="logic_boolean"><field name="BOOL">FALSE</field></block></block>',
 
-        fontsize: '<block type="display_fontsize"></block>',
+        fontsize: '<block type="display_fontsize"><value name="SIZE"><shadow type="math_number"><field name="NUM">6</field></shadow></value></block>',
         fonttype: '<block type="display_fonttype"></block>',
-        fontcolour: '<block type="display_fontcolour"></block>',
-        println: '<block type="display_println"></block>',
-        drawtext: '<block type="draw_text"></block>',
+        fontcolour: '<block type="display_fontcolour"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value></block>',
+        println: '<block type="display_println"><value name="TEXT"><shadow type="text"></shadow></value></block>',
+        drawtext: '<block type="draw_text"><value name="TEXT"><shadow type="text"></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
 
-        drawrect: '<block type="draw_rect"></block>',
-        drawcircle: '<block type="draw_circle"></block>',
-        drawellipse: '<block type="draw_ellipse"></block>',
-        drawtriangle: '<block type="draw_triangle"></block>',
+        drawrect: '<block type="draw_rect"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="W"><shadow type="math_number"><field name="NUM">25</field></shadow></value><value name="H"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block>',
+        drawcircle: '<block type="draw_circle"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block>',
+        drawellipse: '<block type="draw_ellipse"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="RX"><shadow type="math_number"><field name="NUM">15</field></shadow></value><value name="RY"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
+        drawtriangle: '<block type="draw_triangle"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="X1"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y1"><shadow type="math_number"><field name="NUM">20</field></shadow></value><value name="X2"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y2"><shadow type="math_number"><field name="NUM">60</field></shadow></value></block>',
 
     };
 
