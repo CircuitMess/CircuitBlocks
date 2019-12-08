@@ -92,7 +92,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         this.Blockly.addChangeListener((e: any) => {
             this.rebuildFunctionsFlyout();
-            if(e.type == "var_create"){
+            if([ "var_create", "var_delete", "var_rename" ].indexOf(e.type) != -1){
                 this.rebuildVariablesFlyout();
             }else if(e.type == "create"){
                 if(!this.workspace.toolbox_.flyout_.isVisible()) this.clearSelection();
@@ -113,7 +113,7 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
     }
 
 
-    rebuildVariablesFlyout(){
+    public rebuildVariablesFlyout(){
         if(!this.variablesCat) return;
 
         this.variablesCat.flyout = this.buildFlyout(this.variablesCat, this, undefined, true);

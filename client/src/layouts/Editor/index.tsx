@@ -215,6 +215,8 @@ class Editor extends Component<EditorProps, State> {
   injectToolbox() {
     const blockly = ReactDOM.findDOMNode(this.blocklyDiv) as Element;
     const blocklyToolboxDiv = blockly.getElementsByClassName('blocklyToolboxDiv')[0];
+    ReactDOM.unmountComponentAtNode(blocklyToolboxDiv);
+
 
     const blocklyToolbox = (
       <div className="blocklyToolbox">
@@ -274,6 +276,7 @@ class Editor extends Component<EditorProps, State> {
     const xml = Blockly.Xml.textToDom(data);
     this.workspace.clear();
     Blockly.Xml.domToWorkspace(xml, this.workspace);
+    this.injectToolbox();
   };
 
   private generateSketch(): string {
