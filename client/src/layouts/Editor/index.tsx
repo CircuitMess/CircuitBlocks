@@ -273,6 +273,7 @@ class Editor extends Component<EditorProps, State> {
   };
 
   load = (data: string) => {
+    if(data === "") data = `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`;
     const xml = Blockly.Xml.textToDom(data);
     this.workspace.clear();
     Blockly.Xml.domToWorkspace(xml, this.workspace);
