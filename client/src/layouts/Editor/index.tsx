@@ -143,7 +143,7 @@ class Editor extends Component<EditorProps, State> {
     };
 
     (window as any).Blockly = Blockly;
-    this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox });
+    this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox, trashcan: false, zoom: { wheel: true, controls: true } });
     this.workspace.addChangeListener((e: any) => {
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
       if (this.state.code !== code) {
