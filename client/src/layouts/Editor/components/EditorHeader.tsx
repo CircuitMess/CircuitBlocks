@@ -121,7 +121,7 @@ const EditorHeader: React.FC<Props> = (props) => {
 
       <div className="center">
         <div className="row">
-          <h3>Makerphone {connected ? 'connected' : 'disconnected'}</h3>
+          <h3>Ringo {connected ? 'connected' : 'disconnected'}</h3>
           <div className={`circle ${connected ? 'green' : 'red'}`}></div>
         </div>
       </div>

@@ -160,10 +160,10 @@ class Editor extends Component<EditorProps, State> {
       const { port } = args;
 
       if(port && !this.state.makerPhoneConnected){
-        this.addNotification('Makerphone connected');
+        this.addNotification('Ringo connected');
         this.setState({ makerPhoneConnected: true });
       }else if(!port && this.state.makerPhoneConnected){
-        this.addNotification(`Makerphone disconnected`);
+        this.addNotification(`Ringo disconnected`);
         this.setState({ makerPhoneConnected: false });
       }
     });
