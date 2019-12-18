@@ -24,3 +24,5 @@ html {
   height: 100%;
   width: 100%;
 }
+
+.blocklyFlyout .blocklyZoom { display: none; }
