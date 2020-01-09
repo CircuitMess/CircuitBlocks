@@ -148,11 +148,20 @@ export default class Installer {
   private installArduinoWindows(file, callback: (err) => void) {
     sudoPrompt.exec(
       file + ' /S',
-      { name: 'Arduino installer', stdio: 'inherit', icns: "./resources/icon.icns" },
+      { name: 'Arduino installer', icns: "./resources/icon.icns" },
       (error, stderr, stdout) => {
         if (error) {
-          callback(error);
-          return;
+            var err;
+            if(error instanceof Error){
+                err = error as any;
+                err.stdout = stdout;
+                err.stderr = stderr;
+                callback(error);
+            }else{
+                err = error;
+            }
+            callback(err);
+            return;
         }
 
         callback(null);
@@ -235,12 +244,21 @@ export default class Installer {
 
         sudoPrompt.exec(
           setup.join(' && '),
-          { name: 'Arduino installer', stdio: 'inherit', icns: "./resources/icon.icns" },
+          { name: 'Arduino installer', icns: "./resources/icon.icns" },
           (error, stderr, stdout) => {
             console.log(stderr);
             console.log(stdout);
             if (error) {
-              callback(error);
+                var err;
+                if(error instanceof Error){
+                    err = error as any;
+                    err.stdout = stdout;
+                    err.stderr = stderr;
+                    callback(error);
+                }else{
+                    err = error;
+                }
+                callback(err);
               return;
             }
 
@@ -299,14 +317,22 @@ export default class Installer {
 
                           sudoPrompt.exec(setup.join(" && "), {
                                   name: 'Arduino installer',
-                                  stdio: 'inherit',
                                   icns: "./resources/icon.icns"
                               },
                               (error, stdout, stderr) => {
-                                  if (error) {
+                                if(error){
+                                  var err;
+                                  if(error instanceof Error){
+                                      err = error as any;
+                                      err.stdout = stdout;
+                                      err.stderr = stderr;
                                       callback(error);
-                                      return;
+                                  }else{
+                                      err = error;
                                   }
+                                  callback(err);
+                                  return;
+                                }
 
                                   callback(null);
                               });
