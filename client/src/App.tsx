@@ -12,6 +12,7 @@ import ErrorReport from "./components/ErrorReport";
 import Error from "./layouts/Home/components/Error";
 
 import { IpcRenderer, AllElectron } from 'electron';
+import MessengerModal from "./components/MessengerModal";
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
@@ -71,6 +72,7 @@ const App = () => {
         <Alert title="Foobar" body="Something......" close={closeAlert} yes={okAlert} />
       )}
       { error && <Error message={error} dismiss={errorFatal ? undefined : () => setError(undefined)}  /> }
+      <MessengerModal />
       <InstallInfo setIsInstalling={installing => setIsInstalling(installing)} reportError={(message, fatal) => reportError(message, fatal)} />
       <ErrorReport setIsOpen={(open) => setIsErrorReportOpen(open) } />
       <Home reportError={(message, fatal) => reportError(message, fatal)}

@@ -8,6 +8,7 @@ import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
 import ArduinoCompile from "./core/files/arduinoCompile";
 import ErrorReport from "./core/files/errorReport";
+import messenger, {MessageType} from "./core/files/messenger";
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
@@ -47,6 +48,7 @@ function createWindow() {
   arduinoSerial.setWindow(win);
   arduinoCompile.setWindow(win);
   report.setWindow(win);
+  messenger.setWindow(win);
 
   // and load the index.html of the app.
   const startUrl =

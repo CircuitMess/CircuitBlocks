@@ -1,11 +1,11 @@
-
-import {ipcMain, BrowserWindow} from 'electron';
+import {BrowserWindow, ipcMain} from 'electron';
 import ArduinoCompiler from "../compiler/compiler";
 import {ArduinoSerial} from "./arduinoSerial";
 import * as fs from "fs";
 import * as path from "path";
 import * as util from "../compiler/util";
 import logger from "./logger";
+import messenger, {MessageType} from "./messenger";
 
 export default class ArduinoCompile {
 
@@ -19,7 +19,7 @@ export default class ArduinoCompile {
 
         ipcMain.on("stop", (event, args) => {
             if(!this.running){
-                this.send('runprogress', { error: null, stage: 'DONE' });
+                this.send('runprogress', { stage: 'DONE' });
                 return;
             }
 
@@ -45,34 +45,38 @@ export default class ArduinoCompile {
                         this.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
                     });
 
-                context.send('runprogress', { error: null, stage: 'DONE', cancel: true });
+                context.send('runprogress', { stage: 'DONE', cancel: true });
             }, 1000);
         });
 
         ipcMain.on("run", (event, args) => {
             const stats = ArduinoCompiler.getDaemon();
             if(!stats.connected){
+                this.send('runprogress', { stage: 'DONE' });
+
                 if(stats.connecting){
-                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
+                    messenger.report(MessageType.DAEMON, [ "Arduino daemon still loading. Please wait a bit and then try again." ], [{ title: "Ok", action: "installstate" }]);
                 }else{
-                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
+                    messenger.reportFatal();
+                    //this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
                 }
                 return;
             }
 
             if(this.running){
-                this.send("runprogress", { stage: "DONE", error: "A compile operation is already running. Please wait or restart CircuitBlocks.", running: true });
+                this.send("runprogress", { stage: "DONE", running: true });
+                messenger.report(MessageType.RUN, [ "A compile operation is already running. Please wait or restart CircuitBlocks." ], [{ title: "Ok" }]);
                 return;
             }
             this.running = true;
 
             const code = args.code;
 
-            this.send("runprogress", { error: null, stage: "COMPILE", progress: 0 });
+            this.send("runprogress", { stage: "COMPILE", progress: 0 });
             this.compile(code, (binary) => {
-                this.send('runprogress', { error: null, stage: 'UPLOAD', progress: 0 });
+                this.send('runprogress', { stage: 'UPLOAD', progress: 0 });
                 this.upload(binary, () => {
-                    this.send('runprogress', { error: null, stage: 'DONE' });
+                    this.send('runprogress', { stage: 'DONE' });
                     this.running = false;
                 });
             });
@@ -82,15 +86,18 @@ export default class ArduinoCompile {
             const stats = ArduinoCompiler.getDaemon();
             if(!stats.connected){
                 if(stats.connecting){
-                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
+                    messenger.report(MessageType.DAEMON, [ "Arduino daemon still loading. Please wait a bit and then try again." ], [{ title: "Ok", action: "installstate" }]);
+                    //this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
                 }else{
-                    this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
+                    messenger.reportFatal();
+                    //this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
                 }
                 return;
             }
 
             if(this.running){
-                this.send("runprogress", { stage: "DONE", error: "A compile operation is already running. Please wait or restart CircuitBlocks.", running: true });
+                this.send("runprogress", { stage: "DONE", running: true });
+                messenger.report(MessageType.RUN, [ "A compile operation is already running. Please wait or restart CircuitBlocks." ], [{ title: "Ok" }]);
                 return;
             }
             this.running = true;
@@ -108,9 +115,11 @@ export default class ArduinoCompile {
                 fs.copyFile(binary, exportPath, error => {
                     if(error){
                         logger.log("Export copy error", error);
-                        this.send('runprogress', { error: "Error saving compiled binary. Make sure you have the permissions to write to the specified file.", stage: 'DONE', progress: 0 });
+                        this.send('runprogress', { stage: 'DONE', progress: 0 });
+                        messenger.report(MessageType.EXPORT, [ "Error saving compiled binary. Make sure you have the permissions to write to the specified file." ], [{ title: "Ok" }])
                     }else{
-                        this.send('runprogress', { error: "Export successful.", stage: 'DONE', progress: 0 });
+                        this.send('runprogress', { stage: 'DONE', progress: 0 });
+                        messenger.report(MessageType.EXPORT, [ "Export successful" ], [{ title: "Ok" }]);
                     }
 
                     this.running = false;
@@ -120,13 +129,15 @@ export default class ArduinoCompile {
 
         ipcMain.on("firmware", (event, args) => {
             if(this.running){
-                this.send("installstate", { state: { stage: "DONE", error: "Firmware is already uploading", restoring: true } });
+                //this.send("installstate", { state: { stage: "DONE", error: "Firmware is already uploading", restoring: true } });
+                messenger.report(MessageType.EXPORT, [ "Firmware is already uploading" ], [{ title: "Ok" }]);
                 return;
             }
 
             const stats = ArduinoCompiler.getDaemon();
             if(!stats.connected && stats.connecting){
-                this.send("installstate", { state: { stage: "0%", error: "Arduino daemon still loading. Please wait a bit and then try again.", restoring: true } });
+                messenger.report(MessageType.DAEMON, [ "Arduino daemon still loading. Please wait a bit and then try again." ], [{ title: "Ok" }]);
+                //this.send("installstate", { state: { stage: "0%", error: "Arduino daemon still loading. Please wait a bit and then try again.", restoring: true } });
                 return;
             }
 
@@ -151,7 +162,8 @@ export default class ArduinoCompile {
             }, (progress => {
                 this.send("installstate", { state: { stage: "" + progress + "%", restoring: true } });
             }), (error) => {
-                this.send("installstate", { state: { error, restoring: true } });
+                this.send("installstate", { state: { stage: "DONE", restoring: true } });
+                messenger.report(MessageType.RESTORE, [ error ], [{ title: "Ok" }]);
                 this.running = false;
             });
         });
@@ -169,7 +181,7 @@ export default class ArduinoCompile {
     private compile(code: string, callback: (binary) => void, stage?: string){
         if(!stage) stage = "COMPILE";
 
-        ArduinoCompiler.compile(code, progress => this.send('runprogress', { error: null, stage: stage, progress }))
+        ArduinoCompiler.compile(code, progress => this.send('runprogress', { stage: stage, progress }))
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
@@ -178,7 +190,8 @@ export default class ArduinoCompile {
                     return;
                 }
                 console.log(error);
-                this.send('runprogress', { error: "Compile error. Check your code then try again.", stage: 'DONE' });
+                messenger.report(MessageType.RUN, [ "Compile error. Check your code then try again." ], [{ title: "Ok" }]);
+                this.send('runprogress', { stage: 'DONE' });
                 this.running = false;
             }
         );
@@ -191,13 +204,14 @@ export default class ArduinoCompile {
             if(eCallback){
                 eCallback("Upload error. Check your Ringo then try again.");
             }else{
-                this.send('runprogress', { error: "Upload error. Check your Ringo then try again.", stage: 'DONE' });
+                this.send('runprogress', { stage: 'DONE' });
+                messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
             }
             return;
         }
 
         ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName,
-            pCallback ? pCallback : progress => this.send("runprogress", { error: null, stage: "UPLOAD", progress }))
+            pCallback ? pCallback : progress => this.send("runprogress", { stage: "UPLOAD", progress }))
             .then(() => {
                 callback();
             })
@@ -210,7 +224,8 @@ export default class ArduinoCompile {
                 if(eCallback){
                     eCallback("Upload error. Check your Ringo then try again.")
                 }else{
-                    this.send('runprogress', { error: "Upload error. Check your Ringo then try again.", stage: 'DONE' });
+                    this.send('runprogress', { stage: 'DONE' });
+                    messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
                 }
                 this.running = false;
             });

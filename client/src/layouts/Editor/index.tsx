@@ -169,6 +169,11 @@ class Editor extends Component<EditorProps, State> {
     });
 
     ipcRenderer.on("runprogress", (event: any, args: any) => {
+      if(args.stage == "DONE" && args.running){
+        this.setState({ running: true, runningPercentage: 0 });
+        return;
+      }
+
       if(!this.state.running) return;
 
       if(args.cancel){
@@ -176,17 +181,7 @@ class Editor extends Component<EditorProps, State> {
       }
 
       if(args.stage == "DONE"){
-        if(args.error){
-          this.props.reportError(args.error, args.fatal);
-
-          if(args.running){
-            this.setState({ running: true, runningPercentage: 0 });
-            return;
-          }
-        }
-
         this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
-
         return;
       }
 

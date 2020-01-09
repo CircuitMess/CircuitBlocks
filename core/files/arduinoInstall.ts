@@ -2,6 +2,7 @@ import ArduinoCompiler from "../compiler/compiler";
 import Installer from "../compiler/installer";
 import {ipcMain, BrowserWindow} from "electron";
 import logger from "./logger";
+import messenger from "./messenger";
 
 interface SetupState {
     stage: string;
@@ -28,7 +29,8 @@ export default class arduinoInstall {
             const stats = ArduinoCompiler.getDaemon();
             if (!this.installing && !stats.connected && !stats.connecting) {
 				console.log(stats);
-                event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks."});
+				messenger.reportFatal();
+                //event.reply("daemonfatal", {error: "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks."});
             }
         });
     }
@@ -48,7 +50,8 @@ export default class arduinoInstall {
                 logger.log("Daemon start error", error);
 
                 if(this.window){
-                    this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
+                    messenger.reportFatal();
+                    //this.window.webContents.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
                 }
             });
     }
