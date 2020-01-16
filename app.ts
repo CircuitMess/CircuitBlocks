@@ -16,9 +16,8 @@ const reactUrl = DEV ? 'http://localhost:3000' : null;
 
 let win: BrowserWindow;
 
-const arduinoSetup = new arduinoInstall();
-arduinoSetup.setup();
 
+const arduinoSetup = new arduinoInstall();
 const arduinoSerial = new ArduinoSerial();
 const arduinoCompile = new ArduinoCompile(arduinoSerial);
 const sketches = new Sketches();

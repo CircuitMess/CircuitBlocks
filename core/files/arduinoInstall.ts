@@ -16,13 +16,13 @@ export default class arduinoInstall {
     private installer: Installer;
 	private installing: boolean = false;
 
-    constructor(){
+    constructor(callback?: () => void){
         ipcMain.on("installstate", (event, args) => {
             event.reply("installstate", { state: this.setupState });
         });
 
-        ipcMain.on("install", (event, args) => {
-            this.setup();
+        ipcMain.once("install", (event, args) => {
+            this.setup(callback);
         });
 
         ipcMain.on("daemoncheck", (event, args) => {
@@ -62,7 +62,7 @@ export default class arduinoInstall {
         this.window.webContents.send("installstate", { state: this.setupState });
     }
 
-    public setup(){
+    public setup(callback?: () => void){
 		this.installing = true;
         this.setupState.error = undefined;
         const installInfo = ArduinoCompiler.checkInstall();
@@ -83,6 +83,7 @@ export default class arduinoInstall {
                 if(stage == "DONE"){
 					this.installing = false;
                     this.startDaemon();
+                    if(callback) callback();
                 }
             }, (err) => {
 				this.installing = false;
@@ -90,6 +91,7 @@ export default class arduinoInstall {
 				logger.log("Install error", err);
                 this.setupState.error = err instanceof Error ? err.message : err;
                 this.sendSetupState();
+                if(callback) callback();
             });
         } else {
             logger.log("Installed, updating");
@@ -105,12 +107,14 @@ export default class arduinoInstall {
                     this.installing = false;
                     this.sendSetupState();
                     this.startDaemon();
+                    if(callback) callback();
                 }, installInfo, (err) => {
                     logger.log("Update error", err);
                     this.installing = false;
                     this.setupState.error = err instanceof Error ? err.message : err;
                     console.log(err);
                     this.sendSetupState();
+                    if(callback) callback();
                 });
             }, 2000);
         }

@@ -34,7 +34,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             this.setState(args.state);
         });
 
-        ipcRenderer.send("installstate", null);
+        ipcRenderer.send("install", null);
     }
 
     private retry(){
