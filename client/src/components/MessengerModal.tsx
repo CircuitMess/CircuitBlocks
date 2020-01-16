@@ -78,7 +78,33 @@ export class MessengerModal extends React.Component<MessengerModalProps, Messeng
         const title = this.titles[type];
 
         let textDom: ReactElement[] = [];
-        text.forEach(t => textDom.push(<div style={{ paddingTop: 0, paddingBottom: 5, textAlign: "center" }}>{ t }</div>));
+        text.forEach(t => {
+            let dom: ReactElement;
+
+            let start;
+            if((start = t.indexOf("[[")) != -1){
+                let end = t.indexOf("]]", start+2);
+                let href = t.substring(start+2, end);
+
+                let domain = href.indexOf("/", 10);
+                domain = href.indexOf("/", domain);
+
+                let file = href.lastIndexOf("/");
+
+                let text;
+                if(file - domain > 30){
+                    text = href.substring(0, domain+1) + "..." + href.substring(file);
+                }
+
+                let link = <a href={ href }>{ text }</a>;
+
+                dom = <div style={{ paddingTop: 0, paddingBottom: 5, textAlign: "center" }}>{ t.substring(0, start) }{ link }{ t.substring(end+2) }</div>
+            }else{
+                dom = <div style={{ paddingTop: 0, paddingBottom: 5, textAlign: "center" }}>{ t }</div>;
+            }
+
+            textDom.push(dom);
+        });
 
         let callbackDom: ReactElement[] = [];
         if(callback){
