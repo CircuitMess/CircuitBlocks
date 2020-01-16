@@ -38,13 +38,13 @@ export default class Update {
     }
 
     public check(){
-        console.log("checking");
         autoUpdater.checkForUpdates().then(result => {
             if(!result) return;
 
-            if(true || os.type() == "Linux"){
+            if(os.type() == "Linux"){
                 messenger.report(MessageType.UPDATE,
-                    [ "Version " + result.updateInfo.version + " is available. You can download it at", "[[" + result.updateInfo.path + "]]", "Compiling sketches might not work until you update." ],
+                    [ "Version " + result.updateInfo.version + " is available. You can download it at",
+                        "[[" + result.updateInfo.path + "]]", "Compiling sketches might not work until you update." ],
                     [{ title: "Ok" }]);
 
                 return;
@@ -58,7 +58,10 @@ export default class Update {
                 autoUpdater.quitAndInstall(false, true);
             }).catch(dlError => {
                 messenger.report(MessageType.ERROR,
-                    [ "Update failed to download.", "Compiling sketches might not work until you can update.", "Consider sending an error report and contacting our support." ],
+                    [ "Update failed to download. You can download it manually at",
+                        "[[" + result.updateInfo.path + "]]",
+                        "Compiling sketches might not work until you update.",
+                        "If this continues, please send an error report and contact our support." ],
                     [{ title: "Ok" }, { title: "Send error report", action: "report", secondary: true }]);
 
                 logger.log("Update download error", dlError);
