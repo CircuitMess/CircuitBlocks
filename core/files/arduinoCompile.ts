@@ -42,7 +42,7 @@ export default class ArduinoCompile {
                         console.log(error);
                         logger.log("Daemon start error", error);
 
-                        this.send("daemonfatal", { error:  "Arduino daemon couldn't load. Please restart the app. If this problem persists, please reinstall CircuitBlocks." });
+                        messenger.reportFatal();
                     });
 
                 context.send('runprogress', { stage: 'DONE', cancel: true });
