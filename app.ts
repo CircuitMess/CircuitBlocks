@@ -8,7 +8,10 @@ import {ArduinoSerial} from "./core/files/arduinoSerial";
 import Sketches from "./core/files/sketches";
 import ArduinoCompile from "./core/files/arduinoCompile";
 import ErrorReport from "./core/files/errorReport";
+import * as os from "os";
+const { autoUpdater } = require("electron-updater");
 import messenger, {MessageType} from "./core/files/messenger";
+import Update from "./core/files/update";
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
@@ -16,8 +19,8 @@ const reactUrl = DEV ? 'http://localhost:3000' : null;
 
 let win: BrowserWindow;
 
-
-const arduinoSetup = new arduinoInstall();
+const update = new Update();
+const arduinoSetup = new arduinoInstall(() => { update.check() });
 const arduinoSerial = new ArduinoSerial();
 const arduinoCompile = new ArduinoCompile(arduinoSerial);
 const sketches = new Sketches();
