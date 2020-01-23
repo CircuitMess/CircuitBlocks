@@ -6,6 +6,7 @@ import {ipcMain, BrowserWindow} from 'electron';
 import homePath from './consts';
 import * as fs from "fs";
 import logger from "./logger";
+import ArduinoCompiler from "../compiler/compiler";
 
 interface Sketch {
     title: string;
@@ -16,8 +17,10 @@ interface Sketch {
 
 interface Category {
     title: string;
-    sketches: Sketch[];
+    sketches: { code: Sketch[], block: Sketch[] };
 }
+
+enum SketchType { BLOCK, CODE }
 
 export default class Sketches {
 
@@ -27,7 +30,12 @@ export default class Sketches {
         Sketches.domParser = new DomParser();
 
         ipcMain.on("sketches", (event, args) => {
-            const sketches = this.getSkecthes(homePath);
+            const installInfo = ArduinoCompiler.checkInstall();
+
+            const sketches = {
+                block: this.getBlockSketches(homePath),
+                code: this.getCodeSketches(installInfo.sketchbook)
+            };
             event.reply("sketches", { sketches });
         });
 
@@ -37,24 +45,51 @@ export default class Sketches {
         });
 
         ipcMain.on("load", (event, args) => {
+            const parsed = path.parse(args.path);
+            let type: SketchType;
+            if(parsed.ext.toLowerCase() == ".ino"){
+                type = SketchType.CODE;
+            }else if(parsed.ext.toLowerCase() == ".xml"){
+                type = SketchType.BLOCK;
+            }else{
+                event.reply("load", { error: "Invalid sketch." });
+                return;
+            }
+
             fs.readFile(args.path, { encoding: "utf-8" }, (err, data) => {
                 if(err){
                     logger.log("Loading sketch", err);
                     event.reply("load", { error: "Error loading sketch. Please restart or make sure the sketch wasn't deleted." });
                 }else{
-                    event.reply("load", { data });
+                    event.reply("load", { data, type });
                 }
             });
         });
 
         ipcMain.on("save", (event, args) => {
-            const { title, data } = args;
+            const { title, data, type } = args;
 
-            if(!fs.existsSync(homePath)){
-                fs.mkdirSync(homePath);
+            let sketchDir: string;
+            let ext: string;
+            if(type == SketchType.BLOCK){
+                sketchDir = homePath;
+                ext = ".xml";
+            }else{
+                if(title.toLowerCase() == "libraries"){
+                    event.reply("save", { error: "Sketch cannot be named 'libraries'." });
+                    return;
+                }
+
+                const installInfo = ArduinoCompiler.checkInstall();
+                sketchDir = path.join(installInfo.sketchbook, title);
+                ext = ".ino";
             }
 
-            const sketchPath = path.join(homePath, title + ".xml");
+            if(!fs.existsSync(sketchDir)){
+                fs.mkdirSync(sketchDir);
+            }
+
+            const sketchPath = path.join(sketchDir, title + ext);
             fs.writeFile(sketchPath, data, { encoding: "utf-8" }, err => {
                 if(err){
                     logger.log("Saving sketch", err);
@@ -66,7 +101,7 @@ export default class Sketches {
         });
     }
 
-    private getSkecthes(directory: string): Sketch[] {
+    private getBlockSketches(directory: string): Sketch[] {
         const domParser = Sketches.domParser;
 
         if(!fs.existsSync(directory)) return [];
@@ -113,11 +148,34 @@ export default class Sketches {
         return sketches;
     }
 
+    private getCodeSketches(directory: string){
+        if(!fs.existsSync(directory)) return [];
+
+        const sketches: Sketch[] = [];
+
+        const files = fs.readdirSync(directory);
+        files.forEach(file => {
+            if(file.toLowerCase() == "libraries") return;
+
+            const sketchPath = path.join(directory, file, file + ".ino");
+            if(!fs.existsSync(sketchPath)) return;
+
+            const sketch: Sketch = {
+                title: file,
+                path: sketchPath
+            };
+
+            sketches.push(sketch);
+        });
+
+        return sketches;
+    }
+
     private getExamples(): Category[] {
         const examplesDir = path.join(".", "examples");
         const categories: Category[] = [];
 
-        const getSketches = this.getSkecthes;
+        const getSketches = this.getBlockSketches;
 		
 		if(!fs.existsSync(examplesDir)) return [];
 
@@ -132,7 +190,7 @@ export default class Sketches {
 
             const category: Category = {
                 title: parsed.name,
-                sketches: getSketches(categoryPath)
+                sketches: { block: getSketches(categoryPath), code: [] }
             };
 
             categories.push(category);

@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { AllElectron, IpcRenderer, IpcRendererEvent } from 'electron';
+import React from 'react';
+import {AllElectron, IpcRenderer, IpcRendererEvent} from 'electron';
 import styled from 'styled-components';
 
-import { ProjectSection } from '../../components/Section';
-import { HeaderImage, HeaderSection } from './components/Header';
-import { Footer } from './components/Footer';
-import { Login } from './components/Login';
+import {ProjectSection} from '../../components/Section';
+import {HeaderImage, HeaderSection} from './components/Header';
+import {Footer} from './components/Footer';
+import {Login} from './components/Login';
 import {Loader} from "semantic-ui-react";
-import Error from "./components/Error";
+import {SketchLoadInfo, SketchType} from "../Editor";
+import {NewSketch} from "./components/NewSketch";
 
 // const projects = [
 //   {
@@ -31,7 +32,7 @@ const Main = styled.div`
 
 interface HomeProps {
   isEditorOpen: boolean;
-  openEditor: (data: string, filename?: string) => void;
+  openEditor: (data: SketchLoadInfo, filename?: string) => void;
   scrollStop: boolean;
   reportError: (error: string, fatal?: boolean) => void;
 }
@@ -39,10 +40,11 @@ interface HomeProps {
 interface HomeState {
   animation: boolean;
   loggedIn: boolean;
-  sketches: Sketch[];
+  sketches: { block: Sketch[], code: Sketch[] };
   examples: Category[];
   projectsLoading: boolean;
   examplesLoading: boolean;
+  newSketchOpen: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -57,7 +59,7 @@ export interface Sketch {
 
 export interface Category {
   title: string;
-  sketches: Sketch[]
+  sketches: { code: Sketch[], block: Sketch[] };
 }
 
 export default class Home extends React.Component<HomeProps, HomeState> {
@@ -73,14 +75,15 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     this.state = {
       loggedIn: true,
       animation: false,
-      sketches: [],
+      sketches: { code: [], block: [] },
       examples: [],
       projectsLoading: true,
-      examplesLoading: true
+      examplesLoading: true,
+      newSketchOpen: false
     };
 
     ipcRenderer.on('sketches', (event: IpcRendererEvent, args) => {
-      this.setState({ sketches: args.sketches || [], projectsLoading: false });
+      this.setState({ sketches: args.sketches || { code: [], block: [] }, projectsLoading: false });
     });
 
     ipcRenderer.on('examples', (event: IpcRendererEvent, args) => {
@@ -120,17 +123,20 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send("report");
   }
 
-  public openFile(type: 'NEW' | 'OPEN', sketch?: Sketch){
+  public openFile(type: 'NEW' | 'NEWTYPE' | 'OPEN', sketch?: Sketch, sketchType?: SketchType){
     const { reportError, openEditor } = this.props;
 
     if (type === 'NEW') {
-      openEditor('', undefined);
+      this.setState({ newSketchOpen: true });
+    } else if(type == "NEWTYPE" && sketchType != undefined) {
+      this.setState({ newSketchOpen: false });
+      openEditor({ type: sketchType, data: "" }, undefined);
     } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
           reportError(args.error);
         } else {
-          openEditor(args.data, sketch.title);
+          openEditor({ type: args.type, data: args.data }, sketch.title);
         }
       });
 
@@ -140,7 +146,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
-    const { animation, loggedIn, sketches, examples, projectsLoading, examplesLoading } = this.state;
+    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading } = this.state;
 
     return <div
             className={isEditorOpen ? 'd-none' : 'h-open'}
@@ -149,9 +155,11 @@ export default class Home extends React.Component<HomeProps, HomeState> {
               backgroundSize: 'cover',
               backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
               zIndex: 10,
-              overflow: (scrollStop) ? "hidden" : undefined
+              overflow: (scrollStop || newSketchOpen) ? "hidden" : undefined
             }}
         >
+
+          <NewSketch open={newSketchOpen} callback={ (type: SketchType) => { this.openFile("NEWTYPE", undefined, type) } } />
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
           <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.restoreFirmware()} />
           {loggedIn ? (

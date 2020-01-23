@@ -6,6 +6,7 @@ interface Props {
   code?: string;
   ref: React.RefObject<typeof monacoTypes>;
   theme?: string;
+  editing?: boolean;
 }
 
 class Monaco extends React.Component<Props, any> {
@@ -14,11 +15,11 @@ class Monaco extends React.Component<Props, any> {
   }
 
   render() {
-    const { code, theme } = this.props;
+    const { code, theme, editing } = this.props;
 
     const options: monacoTypes.IEditorConstructionOptions = {
       selectOnLineNumbers: true,
-      readOnly: true,
+      readOnly: !editing,
       fontFamily: 'Source Code Pro',
       fontWeight: '400',
       fontSize: 13,

@@ -13,6 +13,7 @@ import Error from "./layouts/Home/components/Error";
 
 import { IpcRenderer, AllElectron } from 'electron';
 import MessengerModal from "./components/MessengerModal";
+import {SketchLoadInfo} from "./layouts/Editor";
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
@@ -34,7 +35,7 @@ const App = () => {
     setIsEditorOpen(false);
   };
 
-  const openEditor = (data: string, filename?: string) => {
+  const openEditor = (data: SketchLoadInfo, filename?: string) => {
     (blocklyRef.current as any).load(data);
     setFilename(filename || '');
     setIsEditorOpen(true);

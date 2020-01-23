@@ -58,6 +58,18 @@ const Card = styled.div`
       height: 100%;
       pointer-events: none;
     }
+    
+    &.code {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        i {
+            color: #595959;
+            font-size: 120px;
+        }
+    }
   }
   
   &.descriptive:hover .image {

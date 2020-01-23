@@ -31,26 +31,31 @@ interface Props {
   fullScreenToggle: () => void;
   toggleTheme: () => void;
   theme: string;
+  extendedHeader: boolean;
 }
 
 const CodeHeader: React.FC<Props> = (props) => {
-  const { closeCode, fullScreenToggle, toggleTheme } = props;
+  const {closeCode, fullScreenToggle, toggleTheme, extendedHeader} = props;
 
   return (
-    <Wrapper>
-      <div className="title"> Code </div>
-      <div className="icons">
-        <i className="material-icons" onClick={toggleTheme}>
-          lightbulb
-        </i>
-        <i className="material-icons" onClick={fullScreenToggle}>
-          fullscreen
-        </i>
-        <i className="material-icons" onClick={closeCode}>
-          close
-        </i>
-      </div>
-    </Wrapper>
+      <Wrapper>
+        <div className="title"> Code</div>
+        <div className="icons">
+          <i className="material-icons" onClick={toggleTheme}>
+            lightbulb
+          </i>
+          {extendedHeader &&
+          <div>
+            <i className="material-icons" onClick={fullScreenToggle}>
+              fullscreen
+            </i>
+            <i className="material-icons" onClick={closeCode}>
+              close
+            </i>
+          </div>
+          }
+        </div>
+      </Wrapper>
   );
 };
 

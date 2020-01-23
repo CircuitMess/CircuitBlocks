@@ -17,28 +17,32 @@ import Notification, { NotificationWrapper } from '../../components/Notification
 import Serial from "./components/Serial";
 import { Sketch } from "../Home/index";
 
-const xml = `<xml xmlns="http://www.w3.org/1999/xhtml">
-  <variables></variables>
-  <block type="controls_repeat_ext" id="GjRfTgQ%?xU(rWxi%pl+" x="201" y="165">
-    <value name="TIMES">
-      <block type="math_number" id="K;jtzgt3E9*pzyW(Tz_=">
-        <field name="NUM">10</field>
-      </block>
-    </value>
-    <statement name="DO">
-      <block type="io_digitalwrite" id="~xaStXz~,~#~Z9S*v(h4">
-        <field name="PIN">0</field>
-        <value name="STATE">
-          <block type="io_highlow" id="f\`UziPkNCW*S-VOoNtQc">
-            <field name="STATE">LOW</field>
-          </block>
-        </value>
-      </block>
-    </statement>
-  </block>
-</xml>`;
+const StartSketch = {
+  block: `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`,
+  code: `#include <MAKERphone.h>
+
+MAKERphone mp;
+
+void setup() {
+  mp.begin(1);
+  mp.display.fillScreen(TFT_BLACK);
+}
+
+void loop() {
+  mp.update();
+
+  // Write your code here
+}`
+};
 
 const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
+
+export enum SketchType { BLOCK, CODE }
+
+export interface SketchLoadInfo {
+  data: string;
+  type: SketchType;
+}
 
 interface EditorProps {
   isEditorOpen: boolean;
@@ -75,9 +79,9 @@ interface State {
   filenames?: string[];
   filenameError?: string;
   xml?: string;
+  type: SketchType;
 }
 
-const CODE = `// Code goes here\n`;
 const NAV_BAR_HEIGHT = 64;
 
 const INIT_STATE: State = {
@@ -87,7 +91,7 @@ const INIT_STATE: State = {
   },
   isCodeOpen: true,
   isCodeFull: false,
-  code: CODE,
+  code: "",
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
   running: false,
@@ -96,7 +100,8 @@ const INIT_STATE: State = {
   filename: '',
   runningPercentage: 0,
   serial: '',
-  isSerialOpen: false
+  isSerialOpen: false,
+  type: SketchType.BLOCK
 };
 
 interface Notification {
@@ -123,39 +128,6 @@ class Editor extends Component<EditorProps, State> {
     };
 
     this.updateDimensions = this.updateDimensions.bind(this);
-  }
-
-  updateDimensions() {
-    const { innerWidth, innerHeight } = window;
-    this.setState({
-      width: innerWidth,
-      height: innerHeight - NAV_BAR_HEIGHT
-    });
-
-    Blockly.svgResize(this.workspace);
-  }
-
-  componentDidMount() {
-    Blockly.prompt = (a, b, c) => {
-      const initState = a.split("'")[1];
-      this.callback = c;
-      this.setState({ initState: initState, isPromptOpen: true, promptText: a });
-    };
-
-    (window as any).Blockly = Blockly;
-    this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox, trashcan: false, zoom: { wheel: true, controls: true } });
-    this.workspace.addChangeListener((e: any) => {
-      // @ts-ignore
-      const code = Blockly.Arduino. workspaceToCode(this.workspace);
-      if (this.state.code !== code) {
-        this.setState({ code });
-      }
-    });
-
-    this.load(xml);
-    this.updateDimensions();
-    this.injectToolbox();
-    window.addEventListener('resize', this.updateDimensions);
 
     ipcRenderer.on('ports', (event: any, args: any) => {
       const { port } = args;
@@ -198,6 +170,37 @@ class Editor extends Component<EditorProps, State> {
 
       this.setState({ runningPercentage: progress, runningStage: args.stage })
     });
+  }
+
+  updateDimensions() {
+    const { innerWidth, innerHeight } = window;
+    this.setState({
+      width: innerWidth,
+      height: innerHeight - NAV_BAR_HEIGHT
+    });
+
+    Blockly.svgResize(this.workspace);
+  }
+
+  componentDidMount() {
+    Blockly.prompt = (a, b, c) => {
+      const initState = a.split("'")[1];
+      this.callback = c;
+      this.setState({ initState: initState, isPromptOpen: true, promptText: a });
+    };
+
+    (window as any).Blockly = Blockly;
+    this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox, trashcan: false, zoom: { wheel: true, controls: true } });
+    this.workspace.addChangeListener((e: any) => {
+      // @ts-ignore
+      const code = Blockly.Arduino. workspaceToCode(this.workspace);
+      if (this.state.code !== code) {
+        this.setState({ code });
+      }
+    });
+
+    this.updateDimensions();
+    window.addEventListener('resize', this.updateDimensions);
 
     ipcRenderer.send('ports');
   }
@@ -268,12 +271,26 @@ class Editor extends Component<EditorProps, State> {
     }
   };
 
-  load = (data: string) => {
-    if(data === "") data = `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`;
-    const xml = Blockly.Xml.textToDom(data);
-    this.workspace.clear();
-    Blockly.Xml.domToWorkspace(xml, this.workspace);
-    this.injectToolbox();
+  load = (sketch: SketchLoadInfo) => {
+
+    if(sketch.type == SketchType.CODE){
+      let startCode: string;
+
+      if(sketch.data === ""){
+        startCode = StartSketch.code;
+      }else{
+        startCode = sketch.data;
+      }
+      this.setState({ code: startCode, type: sketch.type });
+    }else{
+      if(sketch.data === "") sketch.data = StartSketch.block;
+      const xml = Blockly.Xml.textToDom(sketch.data);
+      this.workspace.clear();
+      Blockly.Xml.domToWorkspace(xml, this.workspace);
+      this.injectToolbox();
+
+      this.setState({ type: sketch.type });
+    }
   };
 
   private generateSketch(): string {
@@ -298,7 +315,14 @@ class Editor extends Component<EditorProps, State> {
       }
     });
 
-    ipcRenderer.send('save', { title: this.props.title, data: this.generateSketch() });
+    let data: string | undefined;
+    if(this.state.type == SketchType.BLOCK){
+      data = this.generateSketch();
+    }else{
+      data = "";
+    }
+
+    ipcRenderer.send('save', { title: this.props.title, data, type: this.state.type });
   };
 
   onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -315,20 +339,26 @@ class Editor extends Component<EditorProps, State> {
       }
     });
 
-    ipcRenderer.send('save', { title: filename, data: this.state.xml });
+    let data: string | undefined;
+    if(this.state.type == SketchType.BLOCK){
+      data = this.generateSketch();
+    }else{
+      data = "";
+    }
+
+    ipcRenderer.send('save', { title: filename, data, type: this.state.type });
   };
 
   openSaveModal = () => {
-    if (this.workspace.getAllBlocks().length === 0) {
+    if (this.state.type == SketchType.BLOCK && this.workspace.getAllBlocks().length === 0) {
       this.props.reportError("You can't save an empty sketch.");
       return;
     }
 
-    this.setState({ xml: this.generateSketch() });
-
     ipcRenderer.once('sketches', (event, arg) => {
       if (!arg.sketches) return;
-      const filenames = arg.sketches.map((sketch: Sketch) => sketch.title);
+      const relevantSketches = this.state.type == SketchType.BLOCK ? arg.sketches.block : arg.sketches.code;
+      const filenames = relevantSketches.map((sketch: Sketch) => sketch.title);
       this.setState({filenames});
     });
 
@@ -442,7 +472,8 @@ class Editor extends Component<EditorProps, State> {
       filename,
       filenameError,
       serial,
-      isSerialOpen
+      isSerialOpen,
+      type
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -515,6 +546,7 @@ class Editor extends Component<EditorProps, State> {
               runningPercentage={runningPercentage}
               connected={makerPhoneConnected}
               exportBinary={this.exportBinary}
+              codeButton={type == SketchType.BLOCK}
             />
 
             {notifications && (
@@ -535,20 +567,21 @@ class Editor extends Component<EditorProps, State> {
           isCodeOpen={isCodeOpen}
           setRef={this.setRef}
           ws={this.workspace}
-
+          disabled={type == SketchType.CODE}
         />
 
         <Serial connected={this.state.makerPhoneConnected && runningStage != "UPLOAD"} isOpen={isSerialOpen} />
 
         {isCodeOpen && isEditorOpen && (
-          <EditorPopup className={isCodeFull ? 'fullscreen' : ''} theme={theme}>
+          <EditorPopup className={(isCodeFull || type == SketchType.CODE) ? 'fullscreen' : ''} theme={theme}>
             <EditorPopupHeader
               closeCode={this.closeCode}
               fullScreenToggle={this.fullScreenToggle}
               toggleTheme={this.toggleTheme}
               theme={theme}
+              extendedHeader={type == SketchType.BLOCK}
             />
-            <Monaco ref={monacoRef} code={code} theme={theme} />
+            <Monaco ref={monacoRef} code={code} theme={theme} editing={type == SketchType.CODE} />
           </EditorPopup>
         )}
       </div>

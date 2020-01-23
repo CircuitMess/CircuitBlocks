@@ -6,7 +6,7 @@ import { Sketch } from '../../layouts/Home';
 
 interface ProjectSectionProps {
   title: string;
-  projects: Sketch[];
+  projects: { block: Sketch[], code: Sketch[] };
   onPress: (type: 'NEW' | 'OPEN', sketch?: Sketch) => void;
   createNew?: boolean;
 }
@@ -27,7 +27,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
           </Card>
         )}
 
-        {projects.map((sketch: Sketch, index) => (
+        {projects.block.map((sketch: Sketch, index) => (
           <Card key={`section-${title}-${index}`} className={ sketch.description ? "descriptive" : undefined }
             onClick={() => onPress('OPEN', sketch)}>
               <div className="image"><svg dangerouslySetInnerHTML={{ __html: sketch.snapshot || "" }} /></div>
@@ -37,6 +37,17 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
             </div>
           </Card>
         ))}
+
+          {projects.code.map((sketch: Sketch, index) => (
+              <Card key={`section-${title}-${index}`} className={ sketch.description ? "descriptive" : undefined }
+                    onClick={() => onPress('OPEN', sketch)}>
+                  <div className="image code"><i className="material-icons"> code </i></div>
+                  <div className="cover">
+                      <div className="title">{sketch.title}</div>
+                      {sketch.description && <div className="description">{sketch.description}</div>}
+                  </div>
+              </Card>
+          ))}
       </CardContainer>
     </Section>
   );

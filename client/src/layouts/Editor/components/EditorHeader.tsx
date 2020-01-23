@@ -83,6 +83,7 @@ interface Props {
   isSerialOpen: boolean;
   openSerial: () => void;
   exportBinary: () => void;
+  codeButton: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -100,7 +101,8 @@ const EditorHeader: React.FC<Props> = (props) => {
     runningPercentage,
     isSerialOpen,
     openSerial,
-    exportBinary
+    exportBinary,
+    codeButton
   } = props;
 
   const stage = runningStage == "UPLOAD" ? "Uploading" : "Compiling";
@@ -136,10 +138,10 @@ const EditorHeader: React.FC<Props> = (props) => {
         <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
           <i className="material-icons"> call_to_action </i>
         </Button>
-        <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
+        { codeButton && <Button className={`icon-text ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
-        </Button>
+        </Button> }
         <Button
           className={`icon-text ${running ? 'running' : ''} ${!connected ? 'disabled' : ''}`}
           color="red"

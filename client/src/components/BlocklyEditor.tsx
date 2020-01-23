@@ -11,6 +11,7 @@ interface BlocklyEditorProps {
   setRef: (instance: HTMLDivElement | null) => void;
   running: boolean;
   runStage: string | undefined;
+  disabled?: boolean;
 }
 
 class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
@@ -23,13 +24,14 @@ class BlocklyEditor extends React.Component<BlocklyEditorProps, {}> {
   }
 
   render() {
-    const { setRef, height, width, isCodeOpen, running, runStage } = this.props;
+    const { setRef, height, width, isCodeOpen, running, runStage, disabled } = this.props;
 
     let style: any = {
       height,
       width: isCodeOpen ? width && width / 2 : width,
       position: "relative",
-      zIndex: 50
+      zIndex: 50,
+      display: disabled ? "none" : "block"
     };
 
     if(running){
