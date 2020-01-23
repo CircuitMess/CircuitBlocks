@@ -78,6 +78,14 @@ export default class Home extends React.Component<HomeProps, HomeState> {
       projectsLoading: true,
       examplesLoading: true
     };
+
+    ipcRenderer.on('sketches', (event: IpcRendererEvent, args) => {
+      this.setState({ sketches: args.sketches || [], projectsLoading: false });
+    });
+
+    ipcRenderer.on('examples', (event: IpcRendererEvent, args) => {
+      this.setState({ examples: args.categories || [], examplesLoading: false });
+    });
   }
 
   private foo(){
@@ -98,13 +106,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
   }
 
   public loadSketches(){
-    ipcRenderer.once('sketches', (event: IpcRendererEvent, args) => {
-      this.setState({ sketches: args.sketches || [], projectsLoading: false });
-    });
-
-    ipcRenderer.once('examples', (event: IpcRendererEvent, args) => {
-      this.setState({ examples: args.categories || [], examplesLoading: false });
-    });
+    this.setState({ projectsLoading: true, examplesLoading: true });
 
     ipcRenderer.send('sketches');
     ipcRenderer.send('examples');

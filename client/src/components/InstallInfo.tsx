@@ -23,7 +23,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         super(props);
 
         this.state = {
-            stage: "",
+            stage: "DONE",
             error: undefined,
             restoring: false
         };
