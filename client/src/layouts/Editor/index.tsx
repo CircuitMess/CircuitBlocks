@@ -1,4 +1,4 @@
-import React, {Component, DOMElement} from 'react';
+import React, {Component, DOMElement, RefObject} from 'react';
 import ReactDOM from 'react-dom';
 import Blockly from '../../blockly/blockly';
 import { IpcRenderer, AllElectron } from 'electron';
@@ -65,7 +65,6 @@ interface State {
   isCodeFull: boolean;
   width?: number;
   height?: number;
-  code?: string;
   theme: 'vs-light' | 'vs-dark';
   initState?: string;
   isPromptOpen?: boolean;
@@ -80,6 +79,7 @@ interface State {
   filenameError?: string;
   xml?: string;
   type: SketchType;
+  code: string;
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -91,7 +91,6 @@ const INIT_STATE: State = {
   },
   isCodeOpen: true,
   isCodeFull: false,
-  code: "",
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
   running: false,
@@ -101,7 +100,8 @@ const INIT_STATE: State = {
   runningPercentage: 0,
   serial: '',
   isSerialOpen: false,
-  type: SketchType.BLOCK
+  type: SketchType.BLOCK,
+  code: ""
 };
 
 interface Notification {
@@ -172,6 +172,22 @@ class Editor extends Component<EditorProps, State> {
     });
   }
 
+  getCode(){
+    let code: string;
+
+    if(this.state.type == SketchType.CODE){
+      if(this.props.monacoRef == undefined || this.props.monacoRef.current == null) return "";
+
+      code = this.props.monacoRef.current.getCode();
+    }else{
+      // @ts-ignore
+      code = Blockly.Arduino.workspaceToCode(this.workspace);
+    }
+
+    this.setState({ code });
+    return code;
+  }
+
   updateDimensions() {
     const { innerWidth, innerHeight } = window;
     this.setState({
@@ -194,9 +210,7 @@ class Editor extends Component<EditorProps, State> {
     this.workspace.addChangeListener((e: any) => {
       // @ts-ignore
       const code = Blockly.Arduino. workspaceToCode(this.workspace);
-      if (this.state.code !== code) {
-        this.setState({ code });
-      }
+      this.setState({ code });
     });
 
     this.updateDimensions();
@@ -232,10 +246,10 @@ class Editor extends Component<EditorProps, State> {
 
   run = () => {
     if(this.state.running){
-      ipcRenderer.send('stop', { code: this.state.code });
+      ipcRenderer.send('stop', { code: this.getCode() });
     }else{
       this.setState({ running: true, runningPercentage: 0 });
-      ipcRenderer.send('run', { code: this.state.code });}
+      ipcRenderer.send('run', { code: this.getCode() });}
   };
 
   openLoadModal = () => {
@@ -272,7 +286,6 @@ class Editor extends Component<EditorProps, State> {
   };
 
   load = (sketch: SketchLoadInfo) => {
-
     if(sketch.type == SketchType.CODE){
       let startCode: string;
 
@@ -281,6 +294,7 @@ class Editor extends Component<EditorProps, State> {
       }else{
         startCode = sketch.data;
       }
+
       this.setState({ code: startCode, type: sketch.type });
     }else{
       if(sketch.data === "") sketch.data = StartSketch.block;
@@ -319,7 +333,7 @@ class Editor extends Component<EditorProps, State> {
     if(this.state.type == SketchType.BLOCK){
       data = this.generateSketch();
     }else{
-      data = "";
+      data = this.getCode();
     }
 
     ipcRenderer.send('save', { title: this.props.title, data, type: this.state.type });
@@ -379,7 +393,7 @@ class Editor extends Component<EditorProps, State> {
     if(path == undefined) return;
 
     this.setState({ running: true, runningPercentage: 0 });
-    ipcRenderer.send('export', { code: this.state.code, path });
+    ipcRenderer.send('export', { code: this.getCode(), path });
   };
 
   saveExternal = () => {
@@ -459,7 +473,6 @@ class Editor extends Component<EditorProps, State> {
       isCodeFull,
       height,
       width,
-      code,
       theme,
       isPromptOpen,
       initState,
@@ -473,7 +486,8 @@ class Editor extends Component<EditorProps, State> {
       filenameError,
       serial,
       isSerialOpen,
-      type
+      type,
+      code
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 

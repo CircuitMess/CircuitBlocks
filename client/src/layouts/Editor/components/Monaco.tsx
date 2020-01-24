@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {RefObject} from 'react';
 import { editor as monacoTypes } from 'monaco-editor';
 import MonacoEditor from 'react-monaco-editor';
 
@@ -9,13 +9,26 @@ interface Props {
   editing?: boolean;
 }
 
-class Monaco extends React.Component<Props, any> {
+class Monaco extends React.Component<Props> {
+  private monacoRef: RefObject<MonacoEditor>;
+
+  constructor(props: Props){
+    super(props);
+
+    this.monacoRef = React.createRef();
+  }
+
   editorDidMount(editor: monacoTypes.IStandaloneCodeEditor, monaco: any) {
     // console.log('editorDidMount', editor);
   }
 
+  public getCode(){
+    if(this.monacoRef.current == undefined || this.monacoRef.current.editor == null) return "";
+    return this.monacoRef.current.editor.getValue();
+  }
+
   render() {
-    const { code, theme, editing } = this.props;
+    const { theme, editing, code } = this.props;
 
     const options: monacoTypes.IEditorConstructionOptions = {
       selectOnLineNumbers: true,
@@ -39,6 +52,7 @@ class Monaco extends React.Component<Props, any> {
         value={code}
         options={options}
         editorDidMount={this.editorDidMount}
+        ref={this.monacoRef}
       />
     );
   }
