@@ -30,7 +30,7 @@ export default class Sketches {
         Sketches.domParser = new DomParser();
 
         ipcMain.on("sketches", (event, args) => {
-            const installInfo = ArduinoCompiler.checkInstall();
+            const installInfo = ArduinoCompiler.getInstallInfo();
 
             const sketches = {
                 block: this.getBlockSketches(homePath),
@@ -80,7 +80,7 @@ export default class Sketches {
                     return;
                 }
 
-                const installInfo = ArduinoCompiler.checkInstall();
+                const installInfo = ArduinoCompiler.getInstallInfo();
                 sketchDir = path.join(installInfo.sketchbook, title);
                 ext = ".ino";
             }

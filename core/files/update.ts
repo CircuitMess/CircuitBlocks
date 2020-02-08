@@ -21,7 +21,6 @@ export default class Update {
         });
 
         autoUpdater.on("download-progress", (progress) => {
-            console.log(progress);
             let text = "kb/s";
             let speed = Math.round(progress.bytesPerSecond / 1024);
             if(speed > 1000){
