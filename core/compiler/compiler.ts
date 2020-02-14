@@ -32,6 +32,7 @@ export interface InstallInfo {
 
   sketchbook: string | null;
   local: string | null;
+  arduinoVersion: string | null;
 }
 
 export default class ArduinoCompiler {
@@ -105,7 +106,7 @@ export default class ArduinoCompiler {
     }
 
     const installPath = path.join(home, os.type() == 'Windows_NT' ? 'ArduinoCLI' : '.arduino');
-    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null };
+    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null, arduinoVersion: null };
 
     if(os.type() == "Darwin"){
       let install = path.join("/Applications", "Arduino.app");
@@ -157,6 +158,7 @@ export default class ArduinoCompiler {
           info.arduino = preferences.arduino;
         }
         info.sketchbook = preferences.sketchbook;
+        info.arduinoVersion = preferences.version;
       }
     }
 
@@ -207,7 +209,7 @@ export default class ArduinoCompiler {
     return info;
   }
 
-  private static parsePreferences(prefPath): { arduino: string; sketchbook: string } | null {
+  private static parsePreferences(prefPath): { arduino: string; sketchbook: string; version: string } | null {
     const preferences = fs
       .readFileSync(prefPath)
       .toString()
@@ -239,7 +241,7 @@ export default class ArduinoCompiler {
       if (util.isNewer(versions[i], newest)) newest = versions[i];
     }
 
-    return { arduino: installs[newest], sketchbook: home };
+    return { arduino: installs[newest], sketchbook: home, version: newest };
   }
 
   /**

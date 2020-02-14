@@ -494,10 +494,7 @@ export default class Installer {
   }
 
     private checkArduinoUpdate(callback: (err) => void, info: InstallInfo){
-        const pathParts = info.arduino.split("-");
-        const version = pathParts[pathParts.length-1];
-
-        if(isNewer(this.versions.arduino, version)){
+        if(isNewer(this.versions.arduino, info.arduinoVersion)){
             console.log("Updating Arduino");
             this.arduino(callback);
         }else{
