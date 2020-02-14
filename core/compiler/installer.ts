@@ -25,14 +25,14 @@ export default class Installer {
 
     arduino_cli: {
       Windows_NT_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Windows_32bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Windows_32bit.zip',
       Windows_NT_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Windows_64bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Windows_64bit.zip',
       Linux_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Linux_32bit.tar.gz',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Linux_32bit.tar.gz',
       Linux_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Linux_64bit.tar.gz',
-      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_macOS_64bit.tar.gz'
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Linux_64bit.tar.gz',
+      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_macOS_64bit.tar.gz'
     },
 
     ringo: {
