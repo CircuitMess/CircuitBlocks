@@ -66,7 +66,7 @@ export default class Update {
                 logger.log("Update download error", dlError);
             });
         }).catch(error => {
-            logger.log("Update check error", error);
+            logger.log("CB Update check error", error);
         });
     }
 }

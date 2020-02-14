@@ -16,10 +16,10 @@ export default class Installer {
 
   private readonly downloads = {
     arduino: {
-      Windows_NT: 'https://downloads.arduino.cc/arduino-1.8.10-windows.exe',
-      Linux_x32: 'https://downloads.arduino.cc/arduino-1.8.10-linux32.tar.xz',
-      Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.10-linux64.tar.xz',
-      Darwin: 'https://downloads.arduino.cc/arduino-1.8.10-macosx.zip',
+      Windows_NT: 'https://downloads.arduino.cc/arduino-1.8.12-windows.exe',
+      Linux_x32: 'https://downloads.arduino.cc/arduino-1.8.12-linux32.tar.xz',
+      Linux_x64: 'https://downloads.arduino.cc/arduino-1.8.12-linux64.tar.xz',
+      Darwin: 'https://downloads.arduino.cc/arduino-1.8.12-macosx.zip',
       Darwin_Driver: 'https://www.silabs.com/documents/public/software/Mac_OSX_VCP_Driver.zip'
     },
 
@@ -45,7 +45,8 @@ export default class Installer {
 
   private readonly versions = {
       library: 'https://raw.githubusercontent.com/CircuitMess/CircuitMess-Ringo/master/library.properties',
-      cli: '0.8.0'
+      cli: '0.8.0',
+      arduino: '1.8.12'
   };
 
   constructor() {
@@ -492,6 +493,18 @@ export default class Installer {
     });
   }
 
+    private checkArduinoUpdate(callback: (err) => void, info: InstallInfo){
+        const pathParts = info.arduino.split("-");
+        const version = pathParts[pathParts.length-1];
+
+        if(isNewer(this.versions.arduino, version)){
+            console.log("Updating Arduino");
+            this.arduino(callback);
+        }else{
+            callback(null);
+        }
+    }
+
   private cli(callback: (err) => void) {
     this.downloadCli((file, err) => {
       if (err) {
@@ -587,13 +600,24 @@ export default class Installer {
           }, info);
       };
 
-      this.checkCliUpdate((err) => {
+      const cli = () => {
+          this.checkCliUpdate((err) => {
+              if(err){
+                  error(err);
+                  return;
+              }
+
+              ringo();
+          }, info);
+      };
+
+      this.checkArduinoUpdate((err) => {
           if(err){
               error(err);
               return;
           }
 
-          ringo();
+          cli();
       }, info);
   }
 }

@@ -224,7 +224,11 @@ export default class ArduinoCompiler {
         home = val;
       } else if (prop.startsWith('last.ide') && prop.endsWith('.hardwarepath')) {
         let version = prop.substring(9, prop.length - 13);
-        installs[version] = val.substring(0, val.length - 9);
+        const versionPath = val.substring(0, val.length - 9);
+
+        if(fs.existsSync(versionPath)){
+          installs[version] = versionPath;
+        }
       }
     });
 
