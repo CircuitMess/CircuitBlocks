@@ -102,8 +102,8 @@ export function extract(file: string, directory: string): Promise<null> {
 }
 
 export function isNewer(newer: string, older: string): boolean {
-    const partsNewer = newer.split('.');
-    const partsOlder = older.split('.');
+    const partsNewer = newer.split("-")[0].split('.');
+    const partsOlder = older.split("-")[0].split('.');
 
     for (let i = 0; i < partsNewer.length; i++) {
         if (parseInt(partsNewer[i]) > parseInt(partsOlder[i])) return true;

@@ -165,6 +165,11 @@ export default class ArduinoCompiler {
 
       info.local = config.arduino_data;
       info.sketchbook = config.sketchbook_path;
+
+      if(config.directories && config.directories.user){
+        info.local = config.directories.data;
+        info.sketchbook = config.directories.user;
+      }
     }
 
     if (!fs.existsSync(installPath)) {

@@ -9,6 +9,7 @@ import rimraf from 'rimraf';
 import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
 import logger from "../files/logger";
+import {isNewer} from "./util";
 
 export default class Installer {
   private readonly PLATFORM: string;
@@ -24,23 +25,27 @@ export default class Installer {
 
     arduino_cli: {
       Windows_NT_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Windows_32bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Windows_32bit.zip',
       Windows_NT_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Windows_64bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Windows_64bit.zip',
       Linux_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_32bit.tar.gz',
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Linux_32bit.tar.gz',
       Linux_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_Linux_64bit.tar.gz',
-      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.5.0-showports/arduino-cli_0.5.0-showports_macOS_64bit.tar.gz'
+        'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_Linux_64bit.tar.gz',
+      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.8.0-rc3/arduino-cli_0.8.0-rc3_macOS_64bit.tar.gz'
     },
 
     ringo: {
       manager:
         'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json',
       fqbn: 'cm:esp32',
-      library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip',
-      props: 'https://raw.githubusercontent.com/CircuitMess/CircuitMess-Ringo/master/library.properties'
+      library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip'
     }
+  };
+
+  private readonly versions = {
+      library: 'https://raw.githubusercontent.com/CircuitMess/CircuitMess-Ringo/master/library.properties',
+      cli: '0.8.0'
   };
 
   constructor() {
@@ -369,7 +374,7 @@ export default class Installer {
       }
 
       const tmp = util.tmpdir("cb-lib");
-      util.download(this.downloads.ringo.props, tmp).then((path: string) => {
+      util.download(this.versions.library, tmp).then((path: string) => {
           const newProps = util.parsePropsFile(path);
 
           if(util.isNewer(newProps.version, props.version)){
@@ -500,6 +505,20 @@ export default class Installer {
     });
   }
 
+  private checkCliUpdate(callback: (err) => void, info: InstallInfo){
+      const cliPath = path.join(info.cli, "arduino-cli" + (os.type() == "Windows_NT" ? ".exe" : ""));
+
+      const cliData = JSON.parse(childProcess.execSync([ cliPath, "--format json", "version" ].join(" "), { encoding: "utf8" }));
+
+      if(isNewer(this.versions.cli, cliData.VersionString)){
+          console.log("Updating CLI");
+          fs.unlinkSync(cliPath);
+          this.cli(callback);
+      }else{
+          callback(null);
+      }
+  }
+
   public install(info: InstallInfo | null, stage: (string) => void, error: (err) => void) {
     const stageRingo = (err) => {
         if (err) {
@@ -556,14 +575,25 @@ export default class Installer {
   }
 
   public update(stage: (string) => void, info: InstallInfo, error: (err) => void){
-      this.installRingo((err) => {
+      const ringo = () => {
+          this.installRingo((err) => {
+              if(err){
+                  error(err);
+                  return;
+              }
+
+              ArduinoCompiler.checkInstall();
+              stage('DONE');
+          }, info);
+      };
+
+      this.checkCliUpdate((err) => {
           if(err){
               error(err);
               return;
           }
 
-          ArduinoCompiler.checkInstall();
-          stage('DONE');
+          ringo();
       }, info);
   }
 }
