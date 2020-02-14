@@ -20,6 +20,7 @@
     "js-yaml": "^3.13.1",
     "lzma-native": "^4.0.5",
     "request": "^2.88.0",
+    "rimraf": "^3.0.2",
     "serialport": "^7.1.5",
     "sudo-prompt": "https://github.com/filipbudisa/sudo-prompt#add-env-to-options-type",
     "unzipper": "^0.10.5"

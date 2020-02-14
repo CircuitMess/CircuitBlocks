@@ -4,6 +4,7 @@ import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as dmg from 'dmg';
+import rimraf from 'rimraf';
 
 import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
@@ -37,7 +38,8 @@ export default class Installer {
       manager:
         'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json',
       fqbn: 'cm:esp32',
-      library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip'
+      library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip',
+      props: 'https://raw.githubusercontent.com/CircuitMess/CircuitMess-Ringo/master/library.properties'
     }
   };
 
@@ -354,6 +356,94 @@ export default class Installer {
     }
   }
 
+  private ringoLibNeedsUpdate(dataCallback: (needs: boolean) => void, errorCallback: (err) => void, libraryPath: string){
+      const propsFilePath = path.join(libraryPath, "library.properties");
+      if(!fs.existsSync(propsFilePath)){
+          dataCallback(true);
+      }
+
+      const props = util.parsePropsFile(propsFilePath);
+      if(!props.hasOwnProperty("version")){
+          dataCallback(true);
+          return;
+      }
+
+      const tmp = util.tmpdir("cb-lib");
+      util.download(this.downloads.ringo.props, tmp).then((path: string) => {
+          const newProps = util.parsePropsFile(path);
+
+          if(util.isNewer(newProps.version, props.version)){
+              dataCallback(true);
+          }else{
+              dataCallback(false);
+          }
+      }).catch((err) => {
+          errorCallback(err);
+      });
+  }
+
+  private installRingoLib(callback: (err) => void, info: InstallInfo){
+      let librariesPath: string;
+      if(info.sketchbook == null){
+          if(os.type() == "Linux"){
+              info.sketchbook = path.join(os.homedir(), "Arduino");
+          }else{
+              info.sketchbook = path.join(os.homedir(), "Documents", "Arduino");
+          }
+      }
+
+      librariesPath = path.join(info.sketchbook, "libraries");
+      if(!fs.existsSync(librariesPath)){
+          fs.mkdirSync(librariesPath, { recursive: true });
+      }
+
+      this.ringoLibNeedsUpdate((needs: boolean) => {
+          if(!needs){
+              callback(null);
+              return;
+          }
+
+          console.log("Installing library");
+
+          let rf = 0;
+          const instCont = (err) => {
+              if(err){
+                  callback("Error deleting old library.");
+                  rf = -2;
+              }
+
+              if(++rf != 2) return;
+
+              const tmp = util.tmpdir("cb-lib");
+              util.download(this.downloads.ringo.library, tmp)
+                  .then((file) => {
+                      util.extract(file, librariesPath)
+                          .then(() => {
+                              const lib = path.join(librariesPath, "CircuitMess-Ringo-master");
+                              if(!fs.existsSync(lib) || !fs.existsSync(path.join(lib, "src", "MAKERphone.h"))){
+                                  callback("Library extract failed. Please check if your disk isn't full.");
+                                  return
+                              }
+
+                              fs.rename(lib, path.join(librariesPath, "Ringo"));
+
+                              callback(null);
+                          })
+                          .catch((err) => {
+                              callback(err);
+                          });
+                  })
+                  .catch((err) => {
+                      callback(err);
+                  });
+          };
+
+          rimraf(path.join(librariesPath, "Ringo"), {}, instCont);
+          rimraf(path.join(librariesPath, "MAKERphone"), {}, instCont);
+
+      }, callback, path.join(librariesPath, "Ringo"));
+  }
+
   private installRingo(callback: (err) => void, info: InstallInfo) {
     const cli =
       this.PLATFORM === 'Windows_NT'
@@ -381,52 +471,7 @@ export default class Installer {
         callback("Library update error. Please check your internet connection.")
     }
 
-    let libraryPath: string;
-    if(info.sketchbook == null){
-        if(os.type() == "Linux"){
-            libraryPath = path.join(os.homedir(), "Arduino", "libraries");
-        }else{
-            libraryPath = path.join(os.homedir(), "Documents", "Arduino", "libraries");
-        }
-    }else{
-        libraryPath = path.join(info.sketchbook, "libraries");
-    }
-
-    if(!fs.existsSync(libraryPath)){
-        fs.mkdirSync(libraryPath, { recursive: true });
-    }
-
-    const libPath = path.join(libraryPath, "Ringo", "src", "MAKERphone.h");
-    if(fs.existsSync(libPath)){
-        console.log("Library installed");
-        callback(null);
-        return;
-    }
-
-      console.log("Installing library...");
-
-    const tmp = util.tmpdir("cb-lib");
-    util.download(this.downloads.ringo.library, tmp)
-        .then((file) => {
-            util.extract(file, libraryPath)
-                .then(() => {
-                    const lib = path.join(libraryPath, "CircuitMess-Ringo-master");
-                    if(!fs.existsSync(lib) || !fs.existsSync(path.join(lib, "src", "MAKERphone.h"))){
-                        callback("Library extract failed. Please check if your disk isn't full.");
-                        return
-                    }
-
-                    fs.rename(lib, path.join(libraryPath, "Ringo"));
-
-                    callback(null);
-                })
-                .catch((err) => {
-                    callback(err);
-                });
-        })
-        .catch((err) => {
-            callback(err);
-        });
+    this.installRingoLib(callback, info);
   }
 
   private arduino(callback: (err) => void) {

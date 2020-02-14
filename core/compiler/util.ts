@@ -111,3 +111,23 @@ export function isNewer(newer: string, older: string): boolean {
 
     return false;
 }
+
+export function parseProps(contents: string) {
+    const lines = contents.split(os.EOL);
+
+    let props: any = {};
+
+    for(let line of lines){
+        const lineParts = line.split("=");
+        if(lineParts.length != 2) continue;
+
+        props[lineParts[0]] = lineParts[1];
+    }
+
+    return props;
+}
+
+export function parsePropsFile(path: string){
+    const contents = fs.readFileSync(path, { encoding: "utf-8", flag: "r" });
+    return parseProps(contents);
+}
