@@ -8,6 +8,8 @@ import * as os from 'os';
 import * as request from 'request';
 import * as unzip from 'unzipper';
 import logger from "../files/logger";
+import * as child_process from "child_process";
+import {ExecException} from "child_process";
 
 export function tmpdir(prefix: string) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix + '-'));
@@ -130,4 +132,30 @@ export function parseProps(contents: string) {
 export function parsePropsFile(path: string){
     const contents = fs.readFileSync(path, { encoding: "utf-8", flag: "r" });
     return parseProps(contents);
+}
+
+const HDI_VOL_REGEX = /\/Volumes\/(.*)/m;
+export function mountDmg(path: string, callback: (error: ExecException | Error | null, mountPoint?: string) => void, rw?: boolean){
+    let command = [
+        "hdiutil",
+        "attach",
+        "-nobrowse"
+    ];
+
+    if(rw){
+        command.push("-readwrite");
+    }
+
+    command.push(`'${path}'`);
+
+    child_process.exec(command.join(" "), (err, stdout, stderr) => {
+        if(err) return callback(err);
+
+        var match = stdout.match(HDI_VOL_REGEX);
+        if(!match){
+            return callback(new Error("Could not mount dmg archive."));
+        }
+
+        callback(null, match[0]);
+    });
 }

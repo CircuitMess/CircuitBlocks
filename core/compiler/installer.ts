@@ -3,7 +3,6 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import * as dmg from 'dmg';
 import rimraf from 'rimraf';
 
 import ArduinoCompiler, { InstallInfo } from './compiler';
@@ -292,10 +291,36 @@ export default class Installer {
                 }
 
                 const name = files[0];
-                const installPath = path.join(dest, name);
+                const arduinoPath = path.join(tmp, name);
+                const installerPath = path.join(".", "resources", "ArduinoInstallerRO.dmg");
 
-                fs.copySync(path.join(tmp, name), installPath);
-                fs.chmodSync(path.join(installPath, 'Contents', 'MacOS', 'Arduino'), '755');
+                util.mountDmg(installerPath, (err, mountPath) => {
+                    if(err){
+                        callback(err);
+                        return;
+                    }
+
+                    const dmgTmp = util.tmpdir("cb-ard-dmg");
+                    const dmgTmpPath = path.join(dmgTmp, "ArduinoInstaller.dmg");
+                    const dmgTmpContent = path.join(dmgTmp, "content");
+                    fs.copySync(mountPath, dmgTmpContent);
+                    fs.copySync(arduinoPath, path.join(dmgTmpContent, name));
+
+                    console.log("Creating new dmg");
+
+                    childProcess.execSync(["hdiutil",
+                        "create",
+                        "-volname 'Arduino Installer'",
+                        "-srcfolder " + `'${dmgTmpContent}'`,
+                        "-ov",
+                        "-format UDZO",
+                        dmgTmpPath
+                    ].join(" "));
+
+                    childProcess.execSync(["umount", `'${mountPath}'`].join(" "));
+                    childProcess.exec(["open", dmgTmpPath].join(" "));
+
+                });
 
                 this.installDriverDarwin(callback);
             })
@@ -313,7 +338,7 @@ export default class Installer {
                   .then(() => {
 
                       const extracted = path.join(tmpDir, "Mac_OSX_VCP_Driver", "Mac_OSX_VCP_Driver", "SiLabsUSBDriverDisk.dmg");
-                      dmg.mount(extracted, (err, mountPath) => {
+                      util.mountDmg(extracted, (err, mountPath) => {
                           const kextPath = path.join(mountPath, "Install CP210x VCP Driver.app", "Contents", "Resources", "SiLabsUSBDriver.kext");
 
                           const setup: string[] = [
