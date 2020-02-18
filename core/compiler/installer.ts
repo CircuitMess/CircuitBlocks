@@ -519,6 +519,11 @@ export default class Installer {
   }
 
     private checkArduinoUpdate(callback: (err) => void, info: InstallInfo){
+      if(info.arduinoVersion == ""){
+          callback(null);
+          return;
+      }
+
         if(isNewer(this.versions.arduino, info.arduinoVersion)){
             console.log("Updating Arduino");
             this.arduino(callback);

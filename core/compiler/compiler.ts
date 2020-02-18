@@ -106,7 +106,7 @@ export default class ArduinoCompiler {
     }
 
     const installPath = path.join(home, os.type() == 'Windows_NT' ? 'ArduinoCLI' : '.arduino');
-    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null, arduinoVersion: null };
+    let info: InstallInfo = { arduino: null, cli: null, sketchbook: null, local: null, arduinoVersion: "" };
 
     if(os.type() == "Darwin"){
       let install = path.join("/Applications", "Arduino.app");
