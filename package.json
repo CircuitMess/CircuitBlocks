@@ -28,7 +28,8 @@
     "appId": "com.circuitmess.circuitblocks",
     "productName": "CircuitBlocks",
     "copyright": "Copyright © 2019 CircuitMess",
-    "buildDependenciesFromSource": "true",
+    "buildDependenciesFromSource": true,
+    "afterSign": "scripts/notarize.js",
     "files": [
       "client/build/**/*",
       "build/**/*",
@@ -40,8 +41,16 @@
       "buildResources": "resources"
     },
     "mac": {
+      "helperBundleId": "com.circuitmess.circuitblocks",
       "category": "public.app-category.developer-tools",
-      "icon": "resources/icon.icns"
+      "icon": "resources/icon.icns",
+      "hardenedRuntime": true,
+      "entitlements": "resources/Entitlements.plist",
+      "entitlementsInherit": "resources/Entitlements.plist",
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "sign": false
     },
     "linux": {
       "target": [
@@ -92,6 +101,7 @@
     "concurrently": "^4.1.1",
     "electron": "^6.0.0",
     "electron-builder": "^21.2.0",
+    "electron-notarize": "^0.2.1",
     "electron-rebuild": "^1.8.6",
     "eslint": "^6.2.0",
     "eslint-config-airbnb": "^17.1.1",
