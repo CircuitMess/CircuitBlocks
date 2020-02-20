@@ -20,7 +20,7 @@ export default class Update {
         autoUpdater.autoInstallOnAppQuit = false;
         autoUpdater.autoDownload = false;
         autoUpdater.setFeedURL({
-            url: `http://192.168.0.31:8080/update/${plat}/${arch}/${ver}/`,
+            url: `https://repman.circuitmess.com/update/${plat}/${arch}/${ver}/`,
             provider: "generic",
             serverType: "json"
         });
@@ -28,6 +28,7 @@ export default class Update {
         autoUpdater.on("download-progress", (progress) => this.onData(progress));
 
         autoUpdater.on("error", (error) => {
+            logger.log("Update check error", error);
             if(!this.uInfo) return;
 
             messenger.report(MessageType.ERROR,
