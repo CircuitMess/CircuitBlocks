@@ -3,6 +3,8 @@ import {app, ipcMain} from "electron"
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
 import {UpdateInfo} from "electron-updater";
+import * as util from "../compiler/util";
+import * as child_process from "child_process";
 
 const { autoUpdater } = require("electron-updater");
 
@@ -23,20 +25,7 @@ export default class Update {
             serverType: "json"
         });
 
-        autoUpdater.on("download-progress", (progress) => {
-            let text = "kb/s";
-            let speed = Math.round(progress.bytesPerSecond / 1024);
-            if(speed > 1000){
-                speed /= 1024;
-                speed = Math.round(speed * 10) / 10;
-                text = "mb/s";
-            }
-
-            messenger.report(MessageType.UPDATE,
-                [ "" + (Math.round(progress.percent * 100) / 100) + "%, " + speed + " " + text,
-                    "A new update is downloading.", "When finished, CircuitBlocks will restart." ],
-                undefined, true);
-        });
+        autoUpdater.on("download-progress", (progress) => this.onData(progress));
 
         autoUpdater.on("error", (error) => {
             let text: string[];
@@ -62,6 +51,21 @@ export default class Update {
         });
     }
 
+    private onData(progress){
+        let text = "kb/s";
+        let speed = Math.round(progress.bytesPerSecond / 1024);
+        if(speed > 1000){
+            speed /= 1024;
+            speed = Math.round(speed * 10) / 10;
+            text = "mb/s";
+        }
+
+        messenger.report(MessageType.UPDATE,
+            [ "" + (Math.round(progress.percent * 100) / 100) + "%, " + speed + " " + text,
+                "A new update is downloading.", "When finished, CircuitBlocks will restart." ],
+            undefined, true);
+    }
+
     public check(){
         this.uInfo = undefined;
 
@@ -82,6 +86,26 @@ export default class Update {
                 undefined, true);
 
             this.uInfo = result.updateInfo;
+
+            if(os.type() == "Darwin"){
+                const tmpDir = util.tmpdir("cb-update");
+                util.download(result.updateInfo.path, tmpDir, (progress) => this.onData(progress))
+                .then((path) => {
+                    child_process.execSync(["open", path].join(" "));
+                    process.exit(0);
+                }).catch((error) => {
+                    messenger.report(MessageType.ERROR,
+                        [ "Update failed to download. You can download it manually at",
+                            "[[" + result.updateInfo.path + "]]",
+                            "Compiling sketches might not work until you update.",
+                            "If this continues, please send an error report and contact our support." ],
+                        [{ title: "Ok" }, { title: "Send error report", action: "report", secondary: true }]);
+
+                    logger.log("Update download error", error);
+                });
+
+                return;
+            }
 
             autoUpdater.downloadUpdate(result.cancellationToken).then(dlResult => {
 

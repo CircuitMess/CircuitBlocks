@@ -15,16 +15,42 @@ export function tmpdir(prefix: string) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix + '-'));
 }
 
-export function download(download: string, directory: string): Promise<string> {
+export function download(download: string, directory: string, callback?: ({ percent, bytesPerSecond }) => void): Promise<string> {
   return new Promise<string>((resolve, reject) => {
     const filename = path.posix.basename(url.parse(download).pathname);
     const filepath = path.join(directory, filename);
 
     const output = fs.createWriteStream(filepath);
 
+    let total: number = 1;
+    let transferred: number = 0;
+
+    let writes: number = 0;
+    let lastTransferred: number = 0;
+    let time = process.hrtime();
+
     request
       .get(download, { timeout: 10000 })
+      .on('data', (chunk) => {
+          transferred += chunk.length;
+
+          writes++;
+          if(callback && writes == 200){
+              let timeNow = process.hrtime();
+              let speed = (transferred-lastTransferred)
+                  / (timeNow[0] + timeNow[1] * Math.pow(10, -9) - (time[0] + time[1] * Math.pow(10, -9)));
+
+              callback({ percent: 100 * transferred / total, bytesPerSecond: speed });
+
+              writes = 0;
+              time = timeNow;
+              lastTransferred = transferred;
+
+          }
+      })
       .on('response', (response) => {
+        total = response.headers["content-length"];
+
         response.pipe(output);
         output
             .on('finish', () => {
