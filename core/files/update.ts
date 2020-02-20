@@ -2,10 +2,13 @@ import * as os from "os";
 import {app, ipcMain} from "electron"
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
+import {UpdateInfo} from "electron-updater";
 
 const { autoUpdater } = require("electron-updater");
 
 export default class Update {
+
+    private uInfo: UpdateInfo | undefined = undefined;
 
     public constructor(){
         const plat = os.type();
@@ -15,7 +18,7 @@ export default class Update {
         autoUpdater.autoInstallOnAppQuit = false;
         autoUpdater.autoDownload = false;
         autoUpdater.setFeedURL({
-            url: `http://10.0.2.2:8080/update/${plat}/${arch}/${ver}/`,
+            url: `http://192.168.0.31:8080/update/${plat}/${arch}/${ver}/`,
             provider: "generic",
             serverType: "json"
         });
@@ -34,9 +37,34 @@ export default class Update {
                     "A new update is downloading.", "When finished, CircuitBlocks will restart." ],
                 undefined, true);
         });
+
+        autoUpdater.on("error", (error) => {
+            let text: string[];
+            if(this.uInfo){
+                text = [ "Update failed to download. You can download it manually at",
+                    "[[" + this.uInfo.path + "]]",
+                    "Compiling sketches might not work until you update.",
+                    "If this continues, please send an error report and contact our support." ];
+            }else{
+                text = [ "Update failed to download.",
+                    "Compiling sketches might not work until you update.",
+                    "If this continues, please send an error report and contact our support." ];
+            }
+
+            messenger.report(MessageType.ERROR, text,
+                [{ title: "Ok" }, { title: "Send error report", action: "report", secondary: true }]);
+
+            logger.log("Update download error", error);
+        });
+
+        autoUpdater.on("update-downloaded", (info: UpdateInfo) => {
+            autoUpdater.quitAndInstall(false, true);
+        });
     }
 
     public check(){
+        this.uInfo = undefined;
+
         autoUpdater.checkForUpdates().then(result => {
             if(!result) return;
 
@@ -53,8 +81,10 @@ export default class Update {
                 [ "A new update is downloading.", "When finished, CircuitBlocks will restart." ],
                 undefined, true);
 
+            this.uInfo = result.updateInfo;
+
             autoUpdater.downloadUpdate(result.cancellationToken).then(dlResult => {
-                autoUpdater.quitAndInstall(false, true);
+
             }).catch(dlError => {
                 messenger.report(MessageType.ERROR,
                     [ "Update failed to download. You can download it manually at",
