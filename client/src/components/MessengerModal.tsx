@@ -94,6 +94,8 @@ export class MessengerModal extends React.Component<MessengerModalProps, Messeng
                 let text;
                 if(file - domain > 30){
                     text = href.substring(0, domain+1) + "..." + href.substring(file);
+                }else{
+                    text = href;
                 }
 
                 let link = <a href={ href }>{ text }</a>;
