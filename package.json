@@ -6,7 +6,7 @@
     "email": "filip@circuitmess.com",
     "name": "Filip Budiša"
   },
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "build/app.js",
   "private": true,
   "dependencies": {
@@ -27,7 +27,7 @@
   "build": {
     "appId": "com.circuitmess.circuitblocks",
     "productName": "CircuitBlocks",
-    "copyright": "Copyright © 2019 CircuitMess",
+    "copyright": "Copyright © 2020 CircuitMess",
     "buildDependenciesFromSource": true,
     "afterSign": "scripts/notarize.js",
     "files": [
