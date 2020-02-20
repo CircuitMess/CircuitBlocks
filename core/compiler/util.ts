@@ -10,6 +10,7 @@ import * as unzip from 'unzipper';
 import logger from "../files/logger";
 import * as child_process from "child_process";
 import {ExecException} from "child_process";
+import {ipcMain, BrowserWindow} from "electron";
 
 export function tmpdir(prefix: string) {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix + '-'));
@@ -183,5 +184,24 @@ export function mountDmg(path: string, callback: (error: ExecException | Error |
         }
 
         callback(null, match[0]);
+    });
+}
+
+export function clientUtil(){
+    ipcMain.on("openlink", (event, args) => {
+        let app: string = "";
+        let type = os.type();
+
+        if(type == "Windows_NT"){
+            app = "start";
+        }else if(type == "Darwin"){
+            app = "open";
+        }else if(type == "Linux"){
+            app = "xdg-open";
+        }else{
+            return;
+        }
+
+        child_process.exec([app, args.href].join(" "));
     });
 }

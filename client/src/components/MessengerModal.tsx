@@ -69,6 +69,10 @@ export class MessengerModal extends React.Component<MessengerModalProps, Messeng
         this.setState({ data: undefined });
     }
 
+    private openExternal(href: string){
+        ipcRenderer.send("openlink", { href });
+    }
+
     public render(){
         const { data } = this.state;
         if(!data) return null;
@@ -98,7 +102,7 @@ export class MessengerModal extends React.Component<MessengerModalProps, Messeng
                     text = href;
                 }
 
-                let link = <a href={ href }>{ text }</a>;
+                let link = <a onClick={() => { this.openExternal(href) }} style={{ cursor: "pointer" }}>{ text }</a>;
 
                 dom = <div style={{ paddingTop: 0, paddingBottom: 5, textAlign: "center" }}>{ t.substring(0, start) }{ link }{ t.substring(end+2) }</div>
             }else{

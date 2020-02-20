@@ -434,7 +434,7 @@ export default class Installer {
               return;
           }
 
-          console.log("Installing library");
+          console.log("Updating library");
 
           let rf = 0;
           const instCont = (err) => {

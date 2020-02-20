@@ -10,6 +10,7 @@ import ArduinoCompile from "./core/files/arduinoCompile";
 import ErrorReport from "./core/files/errorReport";
 import messenger, {MessageType} from "./core/files/messenger";
 import Update from "./core/files/update";
+import * as util from "./core/compiler/util";
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
@@ -49,6 +50,7 @@ function createWindow() {
   arduinoCompile.setWindow(win);
   report.setWindow(win);
   messenger.setWindow(win);
+  util.clientUtil();
 
   // and load the index.html of the app.
   const startUrl =

@@ -75,7 +75,7 @@ export default class Update {
             if(os.type() == "Linux"){
                 messenger.report(MessageType.UPDATE,
                     [ "Version " + result.updateInfo.version + " is available. You can download it at",
-                        "[[" + result.updateInfo.path + "]]", "Compiling sketches might not work until you update." ],
+                        "[[https://github.com/CircuitMess/CircuitBlocks/releases/latest]]", "Compiling sketches might not work until you update." ],
                     [{ title: "Ok" }]);
 
                 return;
