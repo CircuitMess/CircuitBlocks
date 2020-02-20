@@ -142,14 +142,13 @@ export function isNewer(newer: string, older: string): boolean {
 }
 
 export function parseProps(contents: string) {
-    const lines = contents.split(os.EOL);
+    const lines = contents.split("\n");
 
     let props: any = {};
 
     for(let line of lines){
         const lineParts = line.split("=");
         if(lineParts.length != 2) continue;
-
         props[lineParts[0]] = lineParts[1];
     }
 

@@ -28,19 +28,13 @@ export default class Update {
         autoUpdater.on("download-progress", (progress) => this.onData(progress));
 
         autoUpdater.on("error", (error) => {
-            let text: string[];
-            if(this.uInfo){
-                text = [ "Update failed to download. You can download it manually at",
+            if(!this.uInfo) return;
+
+            messenger.report(MessageType.ERROR,
+                [ "Update failed to download. You can download it manually at",
                     "[[" + this.uInfo.path + "]]",
                     "Compiling sketches might not work until you update.",
-                    "If this continues, please send an error report and contact our support." ];
-            }else{
-                text = [ "Update failed to download.",
-                    "Compiling sketches might not work until you update.",
-                    "If this continues, please send an error report and contact our support." ];
-            }
-
-            messenger.report(MessageType.ERROR, text,
+                    "If this continues, please send an error report and contact our support." ],
                 [{ title: "Ok" }, { title: "Send error report", action: "report", secondary: true }]);
 
             logger.log("Update download error", error);

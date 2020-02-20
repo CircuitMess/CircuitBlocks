@@ -32,6 +32,11 @@ export default class Sketches {
         ipcMain.on("sketches", (event, args) => {
             const installInfo = ArduinoCompiler.getInstallInfo();
 
+            if(!installInfo || !installInfo.sketchbook){
+                event.reply("sketches", { sketches: { block: [], code: [] } });
+                return;
+            }
+
             const sketches = {
                 block: this.getBlockSketches(homePath),
                 code: this.getCodeSketches(installInfo.sketchbook)

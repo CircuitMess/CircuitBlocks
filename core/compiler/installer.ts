@@ -391,6 +391,7 @@ export default class Installer {
       const propsFilePath = path.join(libraryPath, "library.properties");
       if(!fs.existsSync(propsFilePath)){
           dataCallback(true);
+          return;
       }
 
       const props = util.parsePropsFile(propsFilePath);
@@ -413,7 +414,7 @@ export default class Installer {
       });
   }
 
-  private installRingoLib(callback: (err) => void, info: InstallInfo){
+  private installRingoLib(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
       let librariesPath: string;
       if(info.sketchbook == null){
           if(os.type() == "Linux"){
@@ -435,15 +436,16 @@ export default class Installer {
           }
 
           console.log("Updating library");
+          if(stage) stage("RINGO");
 
           let rf = 0;
           const instCont = (err) => {
               if(err){
                   callback("Error deleting old library.");
-                  rf = -2;
+                  rf = -3;
               }
 
-              if(++rf != 2) return;
+              if(++rf != 3) return;
 
               const tmp = util.tmpdir("cb-lib");
               util.download(this.downloads.ringo.library, tmp)
@@ -471,11 +473,12 @@ export default class Installer {
 
           rimraf(path.join(librariesPath, "Ringo"), {}, instCont);
           rimraf(path.join(librariesPath, "MAKERphone"), {}, instCont);
+          rimraf(path.join(librariesPath, "CircuitMess-Ringo-master"), {}, instCont);
 
       }, callback, path.join(librariesPath, "Ringo"));
   }
 
-  private installRingo(callback: (err) => void, info: InstallInfo) {
+  private installRingo(callback: (err) => void, info: InstallInfo, stage?: (string) => void) {
     const cli =
       this.PLATFORM === 'Windows_NT'
         ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI', 'arduino-cli.exe')
@@ -502,7 +505,7 @@ export default class Installer {
         callback("Library update error. Please check your internet connection.")
     }
 
-    this.installRingoLib(callback, info);
+    this.installRingoLib(callback, info, stage);
   }
 
   private arduino(callback: (err) => void) {
@@ -518,14 +521,18 @@ export default class Installer {
     });
   }
 
-    private checkArduinoUpdate(callback: (err) => void, info: InstallInfo){
-      if(info.arduinoVersion == ""){
+    private checkArduinoUpdate(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
+        callback(null);
+        return;
+
+        if(info.arduinoVersion == ""){
           callback(null);
           return;
-      }
+        }
 
         if(isNewer(this.versions.arduino, info.arduinoVersion)){
             console.log("Updating Arduino");
+            if(stage) stage("ARDUINO");
             this.arduino(callback);
         }else{
             callback(null);
@@ -545,13 +552,14 @@ export default class Installer {
     });
   }
 
-  private checkCliUpdate(callback: (err) => void, info: InstallInfo){
+  private checkCliUpdate(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
       const cliPath = path.join(info.cli, "arduino-cli" + (os.type() == "Windows_NT" ? ".exe" : ""));
 
       const cliData = JSON.parse(childProcess.execSync([ cliPath, "--format json", "version" ].join(" "), { encoding: "utf8" }));
 
       if(isNewer(this.versions.cli, cliData.VersionString)){
           console.log("Updating CLI");
+          if(stage) stage("CLI");
           fs.unlinkSync(cliPath);
           this.cli(callback);
       }else{
@@ -624,7 +632,7 @@ export default class Installer {
 
               ArduinoCompiler.checkInstall();
               stage('DONE');
-          }, info);
+          }, info, stage);
       };
 
       const cli = () => {
@@ -634,8 +642,9 @@ export default class Installer {
                   return;
               }
 
+              stage("UPDATE");
               ringo();
-          }, info);
+          }, info, stage);
       };
 
       this.checkArduinoUpdate((err) => {
@@ -644,7 +653,8 @@ export default class Installer {
               return;
           }
 
+          stage("UPDATE");
           cli();
-      }, info);
+      }, info, stage);
   }
 }

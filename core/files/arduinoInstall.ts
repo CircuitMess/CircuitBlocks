@@ -99,24 +99,23 @@ export default class arduinoInstall {
             this.setupState.stage = "UPDATE";
             this.sendSetupState();
 
-            // The CLI usually hogs all the IO and doesn't let electron start. We add a delay to the update so
-            // that the app can start and display an "Updating" message to the user
-            setTimeout(() => {
-                this.installer.update((stage) => {
-                    this.setupState.stage = stage;
+            this.installer.update((stage) => {
+                this.setupState.stage = stage;
+                this.sendSetupState();
+
+                if(stage == "DONE"){
                     this.installing = false;
-                    this.sendSetupState();
                     this.startDaemon();
                     if(callback) callback();
-                }, installInfo, (err) => {
-                    logger.log("Update error", err);
-                    this.installing = false;
-                    this.setupState.error = err instanceof Error ? err.message : err;
-                    console.log(err);
-                    this.sendSetupState();
-                    if(callback) callback();
-                });
-            }, 2000);
+                }
+            }, installInfo, (err) => {
+                logger.log("Update error", err);
+                this.installing = false;
+                this.setupState.error = err instanceof Error ? err.message : err;
+                console.log(err);
+                this.sendSetupState();
+                if(callback) callback();
+            });
         }
     }
 }
