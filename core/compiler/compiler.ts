@@ -374,14 +374,15 @@ export default class ArduinoCompiler {
    */
   public static compile(
     code: string,
-    progressCallback?: (number) => void
+    progressCallback?: (number) => void,
+    minimal?: boolean
   ): Promise<{ binary: string; stdout: string[]; stderr: string[] }> {
     const sketchDir = path.join(this.CB_TMP, 'sketch');
     const sketchPath = path.join(sketchDir, 'sketch.ino');
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
     fs.writeFileSync(sketchPath, code);
 
-    return this.compileSketch(sketchPath, progressCallback);
+    return this.compileSketch(sketchPath, progressCallback, minimal);
   }
 
   /**
@@ -398,14 +399,23 @@ export default class ArduinoCompiler {
    */
   public static compileSketch(
     sketchPath: string,
-    progressCallback?: (number) => void
+    progressCallback?: (number) => void,
+    minimal?: boolean
   ): Promise<{ binary: string; stdout: string[]; stderr: string[] }> {
     const pathParsed = path.parse(sketchPath);
     const sketchName = pathParsed.name;
     const sketchDir = pathParsed.dir;
 
-    const buildPath = path.join(this.CB_TMP, 'build', sketchName);
-    const cachePath = path.join(this.CB_TMP, 'cache');
+    let buildPath;
+    let cachePath;
+    if(minimal){
+      cachePath = path.join(this.CB_TMP, 'cache-minimal');
+      buildPath = path.join(this.CB_TMP, 'build-minimal', sketchName);
+    }else{
+      cachePath = path.join(this.CB_TMP, 'cache');
+      buildPath = path.join(this.CB_TMP, 'build', sketchName);
+    }
+
     const compiledPath: string = path.join(buildPath, sketchName + '.ino.bin');
 
     if (!fs.existsSync(buildPath)) fs.mkdirSync(buildPath, { recursive: true });
@@ -461,6 +471,10 @@ export default class ArduinoCompiler {
       req.setFqbn('cm:esp32:ringo');
       req.setExportfile(path.join(buildPath, 'export'));
       req.setVerbose(true);
+      if(minimal){
+        logger.log("compiling minimal");
+        req.setBuildpropertiesList([ "compiler.c.extra_flags=-DMPMINIMAL", "compiler.cpp.extra_flags=-DMPMINIMAL", "compiler.c.elf.extra_flags=-DMPMINIMAL" ]);
+      }
 
       const stream = this.client.compile(req);
 

@@ -71,6 +71,7 @@ export default class ArduinoCompile {
             this.running = true;
 
             const code = args.code;
+            const minimal = args.minimal != undefined && args.minimal;
 
             this.send("runprogress", { stage: "COMPILE", progress: 0 });
             this.compile(code, (binary) => {
@@ -79,7 +80,7 @@ export default class ArduinoCompile {
                     this.send('runprogress', { stage: 'DONE' });
                     this.running = false;
                 });
-            });
+            }, undefined, minimal);
         });
 
         ipcMain.on("export", (event, args) => {
@@ -110,6 +111,8 @@ export default class ArduinoCompile {
                 exportPath += ".bin";
             }
 
+            const minimal = args.minimal != undefined && args.minimal;
+
             this.send("runprogress", { error: null, stage: "EXPORT", progress: 0 });
             this.compile(code, (binary) => {
                 fs.copyFile(binary, exportPath, error => {
@@ -124,7 +127,7 @@ export default class ArduinoCompile {
 
                     this.running = false;
                 });
-            }, "EXPORT");
+            }, "EXPORT", minimal);
         });
 
         ipcMain.on("firmware", (event, args) => {
@@ -178,10 +181,10 @@ export default class ArduinoCompile {
         this.window = window;
     }
 
-    private compile(code: string, callback: (binary) => void, stage?: string){
+    private compile(code: string, callback: (binary) => void, stage?: string, minimal?: boolean){
         if(!stage) stage = "COMPILE";
 
-        ArduinoCompiler.compile(code, progress => this.send('runprogress', { stage: stage, progress }))
+        ArduinoCompiler.compile(code, progress => this.send('runprogress', { stage: stage, progress }), minimal)
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {

@@ -80,6 +80,7 @@ interface State {
   xml?: string;
   type: SketchType;
   code: string;
+  minimalCompile: boolean;
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -101,7 +102,8 @@ const INIT_STATE: State = {
   serial: '',
   isSerialOpen: false,
   type: SketchType.BLOCK,
-  code: ""
+  code: "",
+  minimalCompile: true
 };
 
 interface Notification {
@@ -246,10 +248,10 @@ class Editor extends Component<EditorProps, State> {
 
   run = () => {
     if(this.state.running){
-      ipcRenderer.send('stop', { code: this.getCode() });
+      ipcRenderer.send('stop', { code: this.getCode(), minimal: this.state.minimalCompile });
     }else{
       this.setState({ running: true, runningPercentage: 0 });
-      ipcRenderer.send('run', { code: this.getCode() });}
+      ipcRenderer.send('run', { code: this.getCode(), minimal: this.state.minimalCompile });}
   };
 
   openLoadModal = () => {
@@ -393,7 +395,7 @@ class Editor extends Component<EditorProps, State> {
     if(path == undefined) return;
 
     this.setState({ running: true, runningPercentage: 0 });
-    ipcRenderer.send('export', { code: this.getCode(), path });
+    ipcRenderer.send('export', { code: this.getCode(), path, minimal: this.state.minimalCompile });
   };
 
   saveExternal = () => {
@@ -487,7 +489,8 @@ class Editor extends Component<EditorProps, State> {
       serial,
       isSerialOpen,
       type,
-      code
+      code,
+      minimalCompile
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
 
@@ -561,6 +564,8 @@ class Editor extends Component<EditorProps, State> {
               connected={makerPhoneConnected}
               exportBinary={this.exportBinary}
               codeButton={type == SketchType.BLOCK}
+              minimalCompile={minimalCompile}
+              toggleMinimal={() => { this.setState({ minimalCompile: !minimalCompile }) }}
             />
 
             {notifications && (
