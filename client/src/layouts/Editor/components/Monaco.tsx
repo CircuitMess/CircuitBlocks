@@ -4,9 +4,11 @@ import MonacoEditor from 'react-monaco-editor';
 
 interface Props {
   code?: string;
-  ref: React.RefObject<typeof monacoTypes>;
+  ref?: React.RefObject<typeof monacoTypes>;
   theme?: string;
   editing?: boolean;
+  startCode?: string;
+  sketch?: string;
 }
 
 class Monaco extends React.Component<Props> {
@@ -18,13 +20,25 @@ class Monaco extends React.Component<Props> {
     this.monacoRef = React.createRef();
   }
 
-  editorDidMount(editor: monacoTypes.IStandaloneCodeEditor, monaco: any) {
-    // console.log('editorDidMount', editor);
+  componentWillUpdate(nextProps: Readonly<Props>, nextState: Readonly<any>, nextContext: any): void {
+    if(this.props.startCode != nextProps.startCode){
+      this.setCode(nextProps.startCode ? nextProps.startCode : "");
+    }
+  }
+
+  editorDidMount(editor: monacoTypes.IStandaloneCodeEditor/*, monaco: any*/) {
+    if(!this.props.editing) return;
+    editor.setValue(this.props.startCode ? this.props.startCode : "");
   }
 
   public getCode(){
     if(this.monacoRef.current == undefined || this.monacoRef.current.editor == null) return "";
     return this.monacoRef.current.editor.getValue();
+  }
+
+  public setCode(value: string){
+    if(this.monacoRef.current == undefined || this.monacoRef.current.editor == null) return "";
+    return this.monacoRef.current.editor.setValue(value);
   }
 
   render() {
@@ -51,7 +65,7 @@ class Monaco extends React.Component<Props> {
         height="90%"
         value={code}
         options={options}
-        editorDidMount={this.editorDidMount}
+        editorDidMount={ (editor) => { this.editorDidMount(editor); }}
         ref={this.monacoRef}
       />
     );

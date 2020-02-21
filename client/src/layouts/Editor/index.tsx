@@ -81,6 +81,7 @@ interface State {
   type: SketchType;
   code: string;
   minimalCompile: boolean;
+  startCode: string;
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -103,7 +104,8 @@ const INIT_STATE: State = {
   isSerialOpen: false,
   type: SketchType.BLOCK,
   code: "",
-  minimalCompile: true
+  minimalCompile: true,
+  startCode: ""
 };
 
 interface Notification {
@@ -182,11 +184,12 @@ class Editor extends Component<EditorProps, State> {
 
       code = this.props.monacoRef.current.getCode();
     }else{
+      if(!this.workspace) return "";
       // @ts-ignore
       code = Blockly.Arduino.workspaceToCode(this.workspace);
     }
 
-    this.setState({ code });
+    //this.setState({ code });
     return code;
   }
 
@@ -211,7 +214,7 @@ class Editor extends Component<EditorProps, State> {
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox, trashcan: false, zoom: { wheel: true, controls: true } });
     this.workspace.addChangeListener((e: any) => {
       // @ts-ignore
-      const code = Blockly.Arduino. workspaceToCode(this.workspace);
+      const code = Blockly.Arduino.workspaceToCode(this.workspace);
       this.setState({ code });
     });
 
@@ -222,6 +225,8 @@ class Editor extends Component<EditorProps, State> {
   }
 
   componentWillUpdate(nextProps: Readonly<EditorProps>, nextState: Readonly<State>, nextContext: any): void {
+    let stateUpdate: any = {};
+
     if(this.props.isEditorOpen && !nextProps.isEditorOpen){
       this.setState({ isSerialOpen: false });
     }
@@ -297,7 +302,7 @@ class Editor extends Component<EditorProps, State> {
         startCode = sketch.data;
       }
 
-      this.setState({ code: startCode, type: sketch.type });
+      this.setState({ code: startCode, type: sketch.type, startCode: startCode });
     }else{
       if(sketch.data === "") sketch.data = StartSketch.block;
       const xml = Blockly.Xml.textToDom(sketch.data);
@@ -359,7 +364,7 @@ class Editor extends Component<EditorProps, State> {
     if(this.state.type == SketchType.BLOCK){
       data = this.generateSketch();
     }else{
-      data = "";
+      data = this.getCode();
     }
 
     ipcRenderer.send('save', { title: filename, data, type: this.state.type });
@@ -489,10 +494,17 @@ class Editor extends Component<EditorProps, State> {
       serial,
       isSerialOpen,
       type,
-      code,
-      minimalCompile
+      minimalCompile,
+      startCode
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef } = this.props;
+
+    const stateCode = this.state.code;
+    let code: string = stateCode;
+
+    if(type == SketchType.CODE){
+      code = this.getCode();
+    }
 
     const footer = {
       left: [{ text: 'Save externally', onClick: this.saveExternal }],
@@ -600,7 +612,7 @@ class Editor extends Component<EditorProps, State> {
               theme={theme}
               extendedHeader={type == SketchType.BLOCK}
             />
-            <Monaco ref={monacoRef} code={code} theme={theme} editing={type == SketchType.CODE} />
+            { (type == SketchType.CODE) && <Monaco ref={monacoRef} startCode={startCode} theme={theme} editing={true} /> || <Monaco code={code} theme={theme} editing={false} /> }
           </EditorPopup>
         )}
       </div>
