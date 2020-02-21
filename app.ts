@@ -51,6 +51,7 @@ function createWindow() {
   report.setWindow(win);
   messenger.setWindow(win);
   util.clientUtil();
+  update.setCertCheck();
 
   // and load the index.html of the app.
   const startUrl =

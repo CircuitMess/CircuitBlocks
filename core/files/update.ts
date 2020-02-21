@@ -46,6 +46,16 @@ export default class Update {
         });
     }
 
+    public setCertCheck(){
+        autoUpdater.netSession.setCertificateVerifyProc((request: any, callback: (result: number) => void) => {
+            if(request.hostname == "repman.circuitmess.com" && request.certificate.subjectName == "circuitmess.com"){
+                callback(0);
+            }else{
+                callback(-3);
+            }
+        });
+    }
+
     private onData(progress){
         let text = "kb/s";
         let speed = Math.round(progress.bytesPerSecond / 1024);
@@ -84,8 +94,7 @@ export default class Update {
 
             if(os.type() == "Darwin"){
                 const tmpDir = util.tmpdir("cb-update");
-                util.download(result.updateInfo.path, tmpDir, (progress) => this.onData(progress))
-                .then((path) => {
+                util.download(result.updateInfo.path, tmpDir, (progress) => this.onData(progress)).then((path) => {
                     child_process.execSync(["open", path].join(" "));
                     process.exit(0);
                 }).catch((error) => {
