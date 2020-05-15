@@ -70,5 +70,5 @@ This will produce the binaries for your platform in the dist directroy.
 
 Copyright © 2019 CircuitMess
 
-Licensed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+Licensed under the MIT license (See LICENSE.md)
 
