@@ -1,6 +1,6 @@
 # CircuitBlocks
 
-<img src="https://www.circuitmess.com/wp-content/uploads/CB-Cover-e1572298172355.png">
+<img src="https://old.circuitmess.com/wp-content/uploads/CB-Cover-e1572298172355.png">
 
 A graphical programming interface that helps newbies get into embedded programming. Based on Microsoft's [MakeCode](https://github.com/microsoft/pxt), [PXT-Blockly](https://github.com/microsoft/pxt-blockly) (Google Blockly fork), and carlosperate's [Ardublockly](https://github.com/carlosperate/ardublockly).
 
