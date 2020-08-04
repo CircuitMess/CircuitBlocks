@@ -5,11 +5,23 @@ import {ipcMain, BrowserWindow} from 'electron';
 
 import homePath from './consts';
 import * as fs from "fs";
+import * as os from "os";
 import logger from "./logger";
 import ArduinoCompiler from "../compiler/compiler";
 
+interface Device {
+    fqbn: string;
+    name: string;
+}
+
+export const Devices: { [name: string]: Device } = {
+    "cm:esp32:ringo": { fqbn: "cm:esp32:ringo", name: "Ringo" },
+    "cm:esp8266:nibble": { fqbn: "cm:esp8266:nibble", name: "Nibble" }
+};
+
 interface Sketch {
     title: string;
+    device: string;
     path: string;
     snapshot?: string;
     description?: string;
@@ -66,13 +78,31 @@ export default class Sketches {
                     logger.log("Loading sketch", err);
                     event.reply("load", { error: "Error loading sketch. Please restart or make sure the sketch wasn't deleted." });
                 }else{
-                    event.reply("load", { data, type });
+                    let device: string = "cm:esp32:ringo";
+                    if(type == SketchType.BLOCK){
+                        const dom = Sketches.domParser.parseFromString(data);
+                        const devices = dom.getElementsByTagName("device");
+                        if(devices.length > 0){
+                            const _device = devices[0].innerHTML.trim();
+
+                            if(Devices.hasOwnProperty(_device)){
+                                device = _device;
+                            }
+                        }
+                    }else{
+                        const deviceParts = data.split(os.EOL)[0].trim().split(" ");
+                        if(deviceParts.length == 2 && Devices.hasOwnProperty(deviceParts[1])){
+                            device = deviceParts[1];
+                        }
+                    }
+                    event.reply("load", { data, type, device });
                 }
             });
         });
 
         ipcMain.on("save", (event, args) => {
-            const { title, data, type } = args;
+            const { title, type, device } = args;
+            var data = args.data;
 
             let sketchDir: string;
             let ext: string;
@@ -88,6 +118,11 @@ export default class Sketches {
                 const installInfo = ArduinoCompiler.getInstallInfo();
                 sketchDir = path.join(installInfo.sketchbook, title);
                 ext = ".ino";
+
+                const deviceParts = data.split(os.EOL)[0].trim().split(" ");
+                if(deviceParts.length != 2 || !Devices.hasOwnProperty(deviceParts[1])){
+                    data = "// " + device + os.EOL + data;
+                }
             }
 
             if(!fs.existsSync(sketchDir)){
@@ -121,13 +156,23 @@ export default class Sketches {
 
             const sketch: Sketch = {
                 title: parsed.name,
-                path: sketchPath
+                path: sketchPath,
+                device: "cm:esp32:ringo"
             };
 
             const content = fs.readFileSync(sketchPath, { encoding: "utf-8" });
             const dom = domParser.parseFromString(content);
 
             if(dom.getElementsByTagName("variables").length == 0 || dom.getElementsByTagName("block").length == 0) return;
+
+            const devices = dom.getElementsByTagName("device");
+            if(devices.length > 0){
+                const device = devices[0].innerHTML.trim();
+
+                if(Devices.hasOwnProperty(device)){
+                    sketch.device = device;
+                }
+            }
 
             const snapshots = dom.getElementsByTagName("snapshot");
             if(snapshots.length > 0){
@@ -167,8 +212,15 @@ export default class Sketches {
 
             const sketch: Sketch = {
                 title: file,
-                path: sketchPath
+                path: sketchPath,
+                device: "cm:esp32:ringo"
             };
+
+            const deviceLine = fs.readFileSync(sketchPath, { encoding: "utf-8" }).split(os.EOL)[0];
+            const deviceParts = deviceLine.trim().split(" ");
+            if(deviceParts.length == 2 && Devices.hasOwnProperty(deviceParts[1])){
+                sketch.device = deviceParts[1];
+            }
 
             sketches.push(sketch);
         });

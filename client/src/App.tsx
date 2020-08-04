@@ -23,6 +23,7 @@ const App = () => {
   const [error, setError] = useState<string|undefined>(undefined);
   const [errorFatal, setErrorFatal] = useState<boolean>(false);
   const [filename, setFilename] = useState('');
+  const [device, setDevice] = useState('cm:esp32:ringo');
   const [isInstalling, setIsInstalling] = useState<boolean>(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isErrorReportOpen, setIsErrorReportOpen] = useState(false);
@@ -38,6 +39,7 @@ const App = () => {
   const openEditor = (data: SketchLoadInfo, filename?: string) => {
     (blocklyRef.current as any).load(data);
     setFilename(filename || '');
+    setDevice(data.device);
     setIsEditorOpen(true);
   };
 
@@ -84,6 +86,7 @@ const App = () => {
           reportError={(message, fatal) => reportError(message, fatal)}
         isEditorOpen={isEditorOpen}
         title={filename}
+        device={device}
         setFilename={setFilename}
         openHome={openHome}
         monacoRef={monacoRef}

@@ -76,11 +76,11 @@ export default class ArduinoCompile {
             this.send("runprogress", { stage: "COMPILE", progress: 0 });
             this.compile(code, (binary) => {
                 this.send('runprogress', { stage: 'UPLOAD', progress: 0 });
-                this.upload(binary, () => {
+                this.upload(binary, args.device,() => {
                     this.send('runprogress', { stage: 'DONE' });
                     this.running = false;
                 });
-            }, undefined, minimal);
+            }, args.device, undefined, minimal);
         });
 
         ipcMain.on("export", (event, args) => {
@@ -127,7 +127,7 @@ export default class ArduinoCompile {
 
                     this.running = false;
                 });
-            }, "EXPORT", minimal);
+            }, args.device, "EXPORT", minimal);
         });
 
         ipcMain.on("firmware", (event, args) => {
@@ -159,7 +159,7 @@ export default class ArduinoCompile {
             this.running = true;
             this.send("installstate", { state: { stage: "0%", restoring: true } });
 
-            this.upload(firmware, () => {
+            this.upload(firmware, "cm:esp32:ringo", () => {
                 this.send("installstate", { state: { stage: "DONE" } });
                 this.running = false;
             }, (progress => {
@@ -181,10 +181,10 @@ export default class ArduinoCompile {
         this.window = window;
     }
 
-    private compile(code: string, callback: (binary) => void, stage?: string, minimal?: boolean){
+    private compile(code: string, callback: (binary) => void, device: string, stage?: string, minimal?: boolean){
         if(!stage) stage = "COMPILE";
 
-        ArduinoCompiler.compile(code, progress => this.send('runprogress', { stage: stage, progress }), minimal)
+        ArduinoCompiler.compile(code, device, progress => this.send('runprogress', { stage: stage, progress }), minimal)
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
@@ -200,7 +200,7 @@ export default class ArduinoCompile {
         );
     }
 
-    private upload(binary: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
+    private upload(binary: string, device: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
         if(this.arduinoSerial.getPort() == undefined){
             logger.log("Upload error: Ringo disconnected");
             console.log(new Error("Ringo disconnected"));
@@ -213,7 +213,7 @@ export default class ArduinoCompile {
             return;
         }
 
-        ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName,
+        ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName, device,
             pCallback ? pCallback : progress => this.send("runprogress", { stage: "UPLOAD", progress }))
             .then(() => {
                 callback();

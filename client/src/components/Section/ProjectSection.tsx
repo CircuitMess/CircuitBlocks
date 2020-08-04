@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Card, CardContainer } from '../Card';
 import Section from './Section';
-import { Sketch } from '../../layouts/Home';
+import {Devices, Sketch} from '../../layouts/Home';
 
 interface ProjectSectionProps {
   title: string;
@@ -28,23 +28,29 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
         )}
 
         {projects.block.map((sketch: Sketch, index) => (
-          <Card key={`section-${title}-${index}`} className={ sketch.description ? "descriptive" : undefined }
+          <Card key={`section-${title}-${index}`} className={ "descriptive" }
             onClick={() => onPress('OPEN', sketch)}>
               <div className="image"><svg dangerouslySetInnerHTML={{ __html: sketch.snapshot || "" }} /></div>
             <div className="cover">
               <div className="title">{sketch.title}</div>
-              {sketch.description && <div className="description">{sketch.description}</div>}
+              <div className="description">
+                  <p className="device">{Devices[sketch.device].name}</p>
+                  { sketch.description && <p>{sketch.description}</p> }
+              </div>
             </div>
           </Card>
         ))}
 
           {projects.code.map((sketch: Sketch, index) => (
-              <Card key={`section-${title}-${index}`} className={ sketch.description ? "descriptive" : undefined }
+              <Card key={`section-${title}-${index}`} className={ "descriptive" }
                     onClick={() => onPress('OPEN', sketch)}>
                   <div className="image code"><i className="material-icons"> code </i></div>
                   <div className="cover">
                       <div className="title">{sketch.title}</div>
-                      {sketch.description && <div className="description">{sketch.description}</div>}
+                      <div className="description">
+                          <p className="device">{Devices[sketch.device].name}</p>
+                          { sketch.description && <p>{sketch.description}</p> }
+                      </div>
                   </div>
               </Card>
           ))}

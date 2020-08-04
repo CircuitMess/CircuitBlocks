@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import Button from '../../../components/Button';
 import Progressbar from './ProgressBar';
+import {Devices} from "../../Home";
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -86,6 +87,7 @@ interface Props {
   codeButton: boolean;
   minimalCompile: boolean;
   toggleMinimal: () => void;
+  device: string;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -106,7 +108,8 @@ const EditorHeader: React.FC<Props> = (props) => {
     exportBinary,
     codeButton,
     minimalCompile,
-    toggleMinimal
+    toggleMinimal,
+    device
   } = props;
 
   const stage = runningStage == "UPLOAD" ? "Uploading" : "Compiling";
@@ -127,7 +130,7 @@ const EditorHeader: React.FC<Props> = (props) => {
 
       <div className="center">
         <div className="row">
-          <h3>Ringo {connected ? 'connected' : 'disconnected'}</h3>
+          <h3>{ Devices[device].name } {connected ? 'connected' : 'disconnected'}</h3>
           <div className={`circle ${connected ? 'green' : 'red'}`}></div>
         </div>
       </div>
@@ -146,10 +149,10 @@ const EditorHeader: React.FC<Props> = (props) => {
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
         </Button> }
-        <Button className={`icon yellow ${minimalCompile ? 'active' : ''}`} onClick={toggleMinimal}>
+        { device == "cm:esp32:ringo" && <Button className={`icon yellow ${minimalCompile ? 'active' : ''}`} onClick={toggleMinimal}>
           <div className="text"> minimal </div>
           <i></i>
-        </Button>
+        </Button> }
         <Button
           className={`icon-text ${running ? 'running' : ''} ${!connected ? 'disabled' : ''}`}
           color="red"

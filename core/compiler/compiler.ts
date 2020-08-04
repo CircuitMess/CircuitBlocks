@@ -349,19 +349,17 @@ export default class ArduinoCompiler {
    */
   public static identifyPort(thirdParty: boolean = false): Promise<PortDescriptor[]> {
     return new Promise<any>((resolve, _reject) => {
-      SerialPort.list((err, ports) => {
-        if(err){
-          _reject(err);
-          return;
-        }
-
+      SerialPort.list().then(ports => {
         resolve(
-          ports.filter((port) =>
-            thirdParty
-              ? port.vendorId && port.productId
-              : port.vendorId && port.productId && port.vendorId.toLowerCase() === '10c4' && port.productId.toLowerCase() === 'ea60'
-          )
+            ports.filter((port) =>
+                thirdParty
+                    ? port.vendorId && port.productId
+                    : port.vendorId && port.productId && port.vendorId.toLowerCase() === '10c4' && port.productId.toLowerCase() === 'ea60'
+            )
         );
+      }).catch(err => {
+        _reject(err);
+        return;
       });
     });
   }
@@ -370,10 +368,12 @@ export default class ArduinoCompiler {
    * Compiles the specified Arduino C code. See {@link compileSketch} for details on returned promise
    * @see compileSketch
    * @param code Arduino C code
+   * @param device fqbn
    * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
   public static compile(
     code: string,
+    device: string,
     progressCallback?: (number) => void,
     minimal?: boolean
   ): Promise<{ binary: string; stdout: string[]; stderr: string[] }> {
@@ -382,7 +382,7 @@ export default class ArduinoCompiler {
     if (!fs.existsSync(sketchDir)) fs.mkdirSync(sketchDir, { recursive: true });
     fs.writeFileSync(sketchPath, code);
 
-    return this.compileSketch(sketchPath, progressCallback, minimal);
+    return this.compileSketch(sketchPath, device, progressCallback, minimal);
   }
 
   /**
@@ -395,10 +395,12 @@ export default class ArduinoCompiler {
    * On error rejects with an error object with an additional stderr array containing error/warning messages.
    *
    * @param sketchPath Absolute path to the sketch to be compiled.
+   * @param device fqbn
    * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
   public static compileSketch(
     sketchPath: string,
+    device: string,
     progressCallback?: (number) => void,
     minimal?: boolean
   ): Promise<{ binary: string; stdout: string[]; stderr: string[] }> {
@@ -463,15 +465,19 @@ export default class ArduinoCompiler {
         progInterval = setInterval(popProgress, 100);
       }
 
+      console.log("Compiling for", device);
+      if(device == "cm:esp8266:nibble"){
+        device = "esp8266:esp8266:nodemcu";
+      }
       const req = new CompileReq();
       req.setInstance(this.instance);
       req.setSketchpath(sketchDir);
       req.setBuildcachepath(cachePath);
       req.setBuildpath(buildPath);
-      req.setFqbn('cm:esp32:ringo');
+      req.setFqbn(device);
       req.setExportfile(path.join(buildPath, 'export'));
       req.setVerbose(true);
-      if(minimal){
+      if(minimal && device == "cm:esp32:ringo"){
         logger.log("compiling minimal");
         req.setBuildpropertiesList([ "compiler.c.extra_flags=-DMPMINIMAL", "compiler.cpp.extra_flags=-DMPMINIMAL", "compiler.c.elf.extra_flags=-DMPMINIMAL" ]);
       }
@@ -551,11 +557,13 @@ export default class ArduinoCompiler {
    * Uploads the specified binary to the MAKERphone
    * @param binary Path to the binary
    * @param port MAKERphone port
+   * @param device fqbn
    * @param progressCallback callback for progress reporting. Takes a single argument which represents percentage (0-100)
    */
   public static uploadBinary(
     binary: string,
     port: string,
+    device: string,
     progressCallback?: (number) => void
   ): Promise<null> {
     const promise = new Promise<null>((resolve, reject) => {
@@ -568,9 +576,13 @@ export default class ArduinoCompiler {
       serial.stop();
       serial.setUploading(true);
 
+      console.log("Uploading to", device);
+      if(device == "cm:esp8266:nibble"){
+        device = "esp8266:esp8266:nodemcu";
+      }
       const req = new UploadReq();
       req.setInstance(this.instance);
-      req.setFqbn('cm:esp32:ringo');
+      req.setFqbn(device);
       req.setImportFile(binary);
       req.setSketchPath(binary);
       req.setPort(port);

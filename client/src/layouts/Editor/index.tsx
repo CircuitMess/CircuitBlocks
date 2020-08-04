@@ -15,7 +15,7 @@ import Toolbox from '../../components/Toolbox';
 import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
 import Serial from "./components/Serial";
-import { Sketch } from "../Home/index";
+import {Devices, Sketch} from "../Home/index";
 
 const StartSketch = {
   block: `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`,
@@ -42,6 +42,7 @@ export enum SketchType { BLOCK, CODE }
 export interface SketchLoadInfo {
   data: string;
   type: SketchType;
+  device: string;
 }
 
 interface EditorProps {
@@ -51,6 +52,7 @@ interface EditorProps {
   setFilename: (filename: string) => void;
   monacoRef: React.RefObject<any>;
   reportError: (error: string, fatal?: boolean) => void;
+  device: string;
 }
 
 interface State {
@@ -135,12 +137,13 @@ class Editor extends Component<EditorProps, State> {
 
     ipcRenderer.on('ports', (event: any, args: any) => {
       const { port } = args;
+      const { device } = this.props;
 
       if(port && !this.state.makerPhoneConnected){
-        this.addNotification('Ringo connected');
+        this.addNotification(`${Devices[device].name} connected`);
         this.setState({ makerPhoneConnected: true });
       }else if(!port && this.state.makerPhoneConnected){
-        this.addNotification(`Ringo disconnected`);
+        this.addNotification(`${Devices[device].name} disconnected`);
         this.setState({ makerPhoneConnected: false });
       }
     });
@@ -256,7 +259,7 @@ class Editor extends Component<EditorProps, State> {
       ipcRenderer.send('stop', { code: this.getCode(), minimal: this.state.minimalCompile });
     }else{
       this.setState({ running: true, runningPercentage: 0 });
-      ipcRenderer.send('run', { code: this.getCode(), minimal: this.state.minimalCompile });}
+      ipcRenderer.send('run', { code: this.getCode(), device: this.props.device, minimal: this.state.minimalCompile });}
   };
 
   openLoadModal = () => {
@@ -320,9 +323,15 @@ class Editor extends Component<EditorProps, State> {
     const node = this.workspace.getCanvas().cloneNode(true);
     node.removeAttribute("transform");
     node.firstChild.removeAttribute("transform");
+
     const snapshot = document.createElement("snapshot");
     snapshot.appendChild(node);
+
+    const device = document.createElement("device");
+    device.innerText = this.props.device;
+
     xmlDom.prepend(snapshot);
+    xmlDom.prepend(device);
 
     return Blockly.Xml.domToText(xmlDom);
   }
@@ -343,7 +352,7 @@ class Editor extends Component<EditorProps, State> {
       data = this.getCode();
     }
 
-    ipcRenderer.send('save', { title: this.props.title, data, type: this.state.type });
+    ipcRenderer.send('save', { title: this.props.title, data, type: this.state.type, device: this.props.device });
   };
 
   onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -367,7 +376,7 @@ class Editor extends Component<EditorProps, State> {
       data = this.getCode();
     }
 
-    ipcRenderer.send('save', { title: filename, data, type: this.state.type });
+    ipcRenderer.send('save', { title: filename, data, type: this.state.type, device: this.props.device });
   };
 
   openSaveModal = () => {
@@ -400,7 +409,8 @@ class Editor extends Component<EditorProps, State> {
     if(path == undefined) return;
 
     this.setState({ running: true, runningPercentage: 0 });
-    ipcRenderer.send('export', { code: this.getCode(), path, minimal: this.state.minimalCompile });
+    console.log("Exporting for ", this.props.device);
+    ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
   };
 
   saveExternal = () => {
@@ -497,7 +507,7 @@ class Editor extends Component<EditorProps, State> {
       minimalCompile,
       startCode
     } = this.state;
-    const { isEditorOpen, openHome, title, monacoRef } = this.props;
+    const { isEditorOpen, openHome, title, monacoRef, device } = this.props;
 
     const stateCode = this.state.code;
     let code: string = stateCode;
@@ -577,6 +587,7 @@ class Editor extends Component<EditorProps, State> {
               exportBinary={this.exportBinary}
               codeButton={type == SketchType.BLOCK}
               minimalCompile={minimalCompile}
+              device={device}
               toggleMinimal={() => { this.setState({ minimalCompile: !minimalCompile }) }}
             />
 
