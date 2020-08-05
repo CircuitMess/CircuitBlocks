@@ -17,7 +17,9 @@ import Notification, { NotificationWrapper } from '../../components/Notification
 import Serial from "./components/Serial";
 import {Devices, Sketch} from "../Home/index";
 
-const StartSketch = {
+const StartSketches: { [name: string]: { block: string, code: string } } = {};
+
+StartSketches["cm:esp32:ringo"] = {
   block: `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`,
   code: `#include <MAKERphone.h>
 
@@ -30,8 +32,20 @@ void setup() {
 
 void loop() {
   mp.update();
+  
+}`
+};
 
-  // Write your code here
+StartSketches["cm:esp8266:nibble"] = {
+  block: `<xml xmlns="http://www.w3.org/1999/xhtml"><block type="arduino_functions" id="a2?I/d{0K_Umf.d2k4D0" x="40" y="50"></block></xml>`,
+  code: `#include <Arduino.h>
+
+void setup() {
+  
+}
+
+void loop() {
+  
 }`
 };
 
@@ -300,14 +314,14 @@ class Editor extends Component<EditorProps, State> {
       let startCode: string;
 
       if(sketch.data === ""){
-        startCode = StartSketch.code;
+        startCode = StartSketches[sketch.device].code;
       }else{
         startCode = sketch.data;
       }
 
       this.setState({ code: startCode, type: sketch.type, startCode: startCode });
     }else{
-      if(sketch.data === "") sketch.data = StartSketch.block;
+      if(sketch.data === "") sketch.data = StartSketches[sketch.device].block;
       const xml = Blockly.Xml.textToDom(sketch.data);
       this.workspace.clear();
       Blockly.Xml.domToWorkspace(xml, this.workspace);
