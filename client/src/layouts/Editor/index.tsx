@@ -311,6 +311,13 @@ class Editor extends Component<EditorProps, State> {
   };
 
   load = (sketch: SketchLoadInfo) => {
+    const Name: { [name: string]: string } = {
+      "cm:esp32:ringo": "MAKERphone",
+      "cm:esp8266:nibble": "Nibble"
+    }
+
+    Blockly.Device = Name[sketch.device];
+
     if(sketch.type == SketchType.CODE){
       let startCode: string;
 

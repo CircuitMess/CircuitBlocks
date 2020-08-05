@@ -157,4 +157,21 @@ export class Blocks {
 
     };
 
+    public static display_sprite: any = {
+        commit: '<block type="display_commit"></block>',
+        clear: '<block type="sprite_clear"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_BLACK</field></shadow></value></block>',
+
+        fontsize: '<block type="sprite_fontsize"><value name="SIZE"><shadow type="math_number"><field name="NUM">6</field></shadow></value></block>',
+        fonttype: '<block type="sprite_fonttype"></block>',
+        fontcolour: '<block type="sprite_fontcolour"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value></block>',
+        println: '<block type="sprite_println"><value name="TEXT"><shadow type="text"></shadow></value></block>',
+        drawtext: '<block type="sprite_draw_text"><value name="TEXT"><shadow type="text"></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
+
+        drawrect: '<block type="sprite_draw_rect"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="W"><shadow type="math_number"><field name="NUM">25</field></shadow></value><value name="H"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block>',
+        drawcircle: '<block type="sprite_draw_circle"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="R"><shadow type="math_number"><field name="NUM">25</field></shadow></value></block>',
+        drawellipse: '<block type="sprite_draw_ellipse"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="RX"><shadow type="math_number"><field name="NUM">15</field></shadow></value><value name="RY"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
+        drawtriangle: '<block type="sprite_draw_triangle"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="X1"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y1"><shadow type="math_number"><field name="NUM">20</field></shadow></value><value name="X2"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y2"><shadow type="math_number"><field name="NUM">60</field></shadow></value></block>',
+
+    };
+
 }

@@ -344,67 +344,63 @@ categories.push({
 
     blocks: [
         {
+            name: "display_commit",
+            xml: Blocks.display_sprite.commit
+        },
+        {
             name: "screen_colour",
             xml: Blocks.display.colour
         },
         {
-            name: "display_popup",
-            xml: Blocks.display.popup
-        },
-        {
-            name: "display_clear",
-            xml: Blocks.display.clear
-        },
-        {
-            name: "display_invert",
-            xml: Blocks.display.invert
+            name: "sprite_clear",
+            xml: Blocks.display_sprite.clear
         },
 
         {
-            name: "display_fontsize",
+            name: "sprite_fontsize",
             group: "Text",
-            xml: Blocks.display.fontsize
+            xml: Blocks.display_sprite.fontsize
         },
         {
-            name: "display_fonttype",
+            name: "sprite_fonttype",
             group: "Text",
-            xml: Blocks.display.fonttype
+            xml: Blocks.display_sprite.fonttype
         },
         {
-            name: "display_fontcolour",
+            name: "sprite_fontcolour",
             group: "Text",
-            xml: Blocks.display.fontcolour
+            xml: Blocks.display_sprite.fontcolour
         },
         {
-            name: "display_fontcolour",
+            name: "sprite_fontcolour",
             group: "Text",
-            xml: Blocks.display.println
+            xml: Blocks.display_sprite.println
         },
         {
-            name: "draw_text",
+            name: "sprite_draw_text",
             group: "Text",
-            xml: Blocks.display.drawtext
+            xml: Blocks.display_sprite.drawtext
         },
 
         {
-            name: "draw_rect",
+            name: "sprite_draw_rect",
             group: "Shapes",
-            xml: Blocks.display.drawrect
+            xml: Blocks.display_sprite.drawrect
         },
         {
-            name: "draw_circle",
+            name: "sprite_draw_circle",
             group: "Shapes",
-            xml: Blocks.display.drawcircle
+            xml: Blocks.display_sprite.drawcircle
         },
         {
-            name: "draw_ellipse",
+            name: "sprite_draw_ellipse",
             group: "Shapes",
-            xml: Blocks.display.drawellipse
+            xml: Blocks.display_sprite.drawellipse
         },
         {
-            name: "draw_triangle",
+            name: "sprite_draw_triangle",
             group: "Shapes",
-            xml: Blocks.display.drawtriangle
+            xml: Blocks.display_sprite.drawtriangle
         }
     ],
     subcategories: []

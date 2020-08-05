@@ -143,6 +143,7 @@ Blockly.Arduino.init = function(workspace) {
 Blockly.Arduino.finish = function(code) {
   for(var additional in Blockly.Arduino.additionals){
     if(!Blockly.Arduino.additionals.hasOwnProperty(additional)) continue;
+    if(!Blockly.Device || Blockly.Device != additional) continue;
     Blockly.Arduino.additionals[additional]();
   }
 
@@ -208,7 +209,11 @@ Blockly.Arduino.finish = function(code) {
   var allDefs = includes.join('\n') + variables.join('\n') +
     definitions.join('\n') + functions.join('\n\n');
   var setup = 'void setup() {' + setups.join('\n  ') + '\n}\n\n';
-  var loop = 'void loop() {\n  ' + wraps.join('\n  ') + "\n\n  " + code.replace(/\n/g, '\n  ') + '\n}';
+  var loop = 'void loop() {\n  ' + wraps.join('\n  ');
+  if(wraps.length){
+    loop += "\n\n  ";
+  }
+  loop += code.replace(/\n/g, '\n  ') + '\n}';
   return allDefs + setup + loop;
 };
 
