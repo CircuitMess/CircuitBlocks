@@ -13,6 +13,10 @@ const Card = styled.div`
   cursor: pointer;
   transition: box-shadow 0.2s ease;
   
+  &.nibble {
+    background: #FFC629;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;
