@@ -2,11 +2,11 @@ import * as React from "react"
 import * as ReactDOM from "react-dom"
 
 import * as tconf from './BlocklyToolbox/toolbox'
-import {getCategories, ToolboxCategorySpecial} from "./BlocklyToolbox/categories";
 
 import 'semantic-ui-css/semantic.min.css'
 import './BlocklyToolbox/toolbox.less'
 import {CreateFunctionDialog} from "./CreateFunction";
+import {ToolboxCategorySpecial} from "./BlocklyToolbox/Toolbox/Common";
 
 
 // this is a supertype of pxtc.SymbolInfo (see partitionBlocks)
@@ -20,6 +20,7 @@ export interface BlockDefinition {
 export interface ToolboxProps {
     editorname: string;
     blockly: any;
+    categories: ToolboxCategory[];
     //parent: editor.ToolboxEditor;
 }
 
@@ -86,9 +87,9 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
 
         this.Blockly = props.blockly;
         this.workspace = this.Blockly.getMainWorkspace();
-        this.categories = getCategories();
 
-        this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
+        this.categories = [];
+        this.loadToolbox(this.props.categories);
 
         this.Blockly.addChangeListener((e: any) => {
             this.rebuildFunctionsFlyout();
@@ -112,6 +113,10 @@ export class Toolbox extends React.Component<ToolboxProps, ToolboxState> {
         }
     }
 
+    public loadToolbox(categories: ToolboxCategory[]){
+        this.categories = categories;
+        this.categories.forEach(cat => this.buildCategoryFlyout(cat, this));
+    }
 
     public rebuildVariablesFlyout(){
         if(!this.variablesCat) return;

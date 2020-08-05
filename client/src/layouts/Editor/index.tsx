@@ -16,6 +16,7 @@ import Prompt from '../../components/Modal/Prompt';
 import Notification, { NotificationWrapper } from '../../components/Notification';
 import Serial from "./components/Serial";
 import {Devices, Sketch} from "../Home/index";
+import Toolboxes from "../../components/BlocklyToolbox/Toolbox";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -249,7 +250,7 @@ class Editor extends Component<EditorProps, State> {
     }
   }
 
-  injectToolbox() {
+  injectToolbox(device: string) {
     const blockly = ReactDOM.findDOMNode(this.blocklyDiv) as Element;
     const blocklyToolboxDiv = blockly.getElementsByClassName('blocklyToolboxDiv')[0];
     ReactDOM.unmountComponentAtNode(blocklyToolboxDiv);
@@ -257,7 +258,7 @@ class Editor extends Component<EditorProps, State> {
 
     const blocklyToolbox = (
       <div className="blocklyToolbox">
-        <Toolbox editorname="blocks" blockly={Blockly} />
+        <Toolbox editorname="blocks" blockly={Blockly} categories={Toolboxes[device]()} />
       </div>
     );
 
@@ -325,7 +326,7 @@ class Editor extends Component<EditorProps, State> {
       const xml = Blockly.Xml.textToDom(sketch.data);
       this.workspace.clear();
       Blockly.Xml.domToWorkspace(xml, this.workspace);
-      this.injectToolbox();
+      this.injectToolbox(sketch.device);
 
       this.setState({ type: sketch.type });
     }

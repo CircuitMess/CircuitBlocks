@@ -1,10 +1,7 @@
-import {ToolboxCategory} from "../Toolbox";
-import {Blocks} from './blocks'
-import Blockly from '../../blockly/blockly';
-
-export enum ToolboxCategorySpecial {
-    VARIABLES, FUNCTIONS
-}
+import {ToolboxCategory} from "../../Toolbox";
+import {Blocks} from '../blocks'
+import Blockly from '../../../blockly/blockly';
+import {moreCategory, ToolboxCategorySpecial} from "./Common";
 
 /*
 export function cachedBuiltinCategories(): ToolboxCategory[] {
@@ -648,13 +645,6 @@ export function cachedBuiltinCategories(): ToolboxCategory[] {
 
 let categories: ToolboxCategory[] = [];
 
-export const moreCategory: ToolboxCategory = {
-    name: "More",
-    color: "more",
-    icon: "\uf005",
-    subcategories: []
-};
-
 categories.push({
     color: Blockly.Msg.LOGIC_HUE,
     icon: "\uf085",
@@ -1153,6 +1143,6 @@ categories.push({
     ]
 });
 
-export function getCategories(): ToolboxCategory[] {
+export function getToolbox(): ToolboxCategory[] {
     return categories;
 }
