@@ -1,6 +1,6 @@
 # CircuitBlocks
 
-<img src="https://www.circuitmess.com/wp-content/uploads/CB-Cover-e1572298172355.png">
+<img src="https://old.circuitmess.com/wp-content/uploads/CB-Cover-e1572298172355.png">
 
 A graphical programming interface that helps newbies get into embedded programming. Based on Microsoft's [MakeCode](https://github.com/microsoft/pxt), [PXT-Blockly](https://github.com/microsoft/pxt-blockly) (Google Blockly fork), and carlosperate's [Ardublockly](https://github.com/carlosperate/ardublockly).
 
@@ -70,5 +70,5 @@ This will produce the binaries for your platform in the dist directroy.
 
 Copyright © 2019 CircuitMess
 
-Licensed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+Licensed under the MIT license (See LICENSE.md)
 

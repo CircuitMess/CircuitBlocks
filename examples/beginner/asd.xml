@@ -1,9 +1,0 @@
-<xml xmlns="https://developers.google.com/blockly/xml">
-  <block type="controls_repeat_ext" id="XD|N$puZR|Tlm6dYn,Qg" x="173" y="165">
-    <value name="TIMES">
-      <shadow type="math_number" id="RE7{=+T^Tj|*jOVSoPeC">
-        <field name="NUM">10</field>
-      </shadow>
-    </value>
-  </block>
-</xml>
