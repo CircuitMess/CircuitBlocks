@@ -205,10 +205,10 @@ export default class ArduinoCompile {
             logger.log("Upload error: Ringo disconnected");
             console.log(new Error("Ringo disconnected"));
             if(eCallback){
-                eCallback("Upload error. Check your Ringo then try again.");
+                eCallback("Upload error. Check your device then try again.");
             }else{
                 this.send('runprogress', { stage: 'DONE' });
-                messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
+                messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
             }
             return;
         }
@@ -225,10 +225,10 @@ export default class ArduinoCompile {
                 }
                 console.log(error);
                 if(eCallback){
-                    eCallback("Upload error. Check your Ringo then try again.")
+                    eCallback("Upload error. Check your device then try again.")
                 }else{
                     this.send('runprogress', { stage: 'DONE' });
-                    messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
+                    messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
                 }
                 this.running = false;
             });
