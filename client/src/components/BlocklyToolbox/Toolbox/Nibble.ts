@@ -441,6 +441,29 @@ categories.push({
     ]
 });
 
+categories.push({
+    name: "I/O",
+    icon: "\uf360",
+    color: Blockly.Msg.IO_HUE,
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "button_press_release",
+            xml: Blocks.input.input_button_nibble
+        },
+        {
+            name: "button_held",
+            xml: Blocks.input.input_button_held_nibble
+        },
+        {
+            name: "buttons",
+            xml: Blocks.input.nibble_buttons
+        }
+    ]
+});
+
 export function getToolbox(): ToolboxCategory[] {
     return categories;
 }

@@ -174,4 +174,13 @@ export class Blocks {
 
     };
 
+    public static input: any = {
+        input_button: '<block type="input_button"></block>',
+        input_button_held: '<block type="input_button_held"><value name="DURATION"><block type="math_number"></block><field name="NUM">500</field></value></block>',
+
+        input_button_nibble: '<block type="input_button"><value name="BUTTON"><block type="nibble_buttons"></block></value></block>',
+        input_button_held_nibble: '<block type="input_button_held"><value name="BUTTON"><block type="nibble_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
+        nibble_buttons: '<block type="nibble_buttons"></block>',
+    };
+
 }
