@@ -6,7 +6,7 @@ goog.provide("Blockly.Arduino.display_sprite");
 let goog = Blockly.goog;
 
 Blockly.Arduino['display_commit'] = function(block) {
-    var code = "display.commit();\n";
+    var code = "display->commit();\n";
     return code;
 };
 
