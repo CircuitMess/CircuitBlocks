@@ -466,9 +466,6 @@ export default class ArduinoCompiler {
       }
 
       console.log("Compiling for", device);
-      if(device == "cm:esp8266:nibble"){
-        device = "esp8266:esp8266:nodemcu";
-      }
       const req = new CompileReq();
       req.setInstance(this.instance);
       req.setSketchpath(sketchDir);
@@ -577,9 +574,10 @@ export default class ArduinoCompiler {
       serial.setUploading(true);
 
       console.log("Uploading to", device);
-      if(device == "cm:esp8266:nibble"){
-        device = "esp8266:esp8266:nodemcu";
+      if(device != "cm:esp32:ringo"){
+        device += ":baud=921600";
       }
+
       const req = new UploadReq();
       req.setInstance(this.instance);
       req.setFqbn(device);
