@@ -338,6 +338,29 @@ categories.push({
 });
 
 categories.push({
+    name: "I/O",
+    icon: "\uf360",
+    color: Blockly.Msg.IO_HUE,
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "button_press_release",
+            xml: Blocks.input.input_button_nibble
+        },
+        {
+            name: "button_held",
+            xml: Blocks.input.input_button_held_nibble
+        },
+        {
+            name: "buttons",
+            xml: Blocks.input.nibble_buttons
+        }
+    ]
+});
+
+categories.push({
     name: "Display",
     icon: "\uf108",
     color: Blockly.Msg.DISPLAY_HUE,
@@ -437,29 +460,6 @@ categories.push({
         {
             name: "time_millis",
             xml: Blocks.time.time_millis
-        }
-    ]
-});
-
-categories.push({
-    name: "I/O",
-    icon: "\uf360",
-    color: Blockly.Msg.IO_HUE,
-
-    subcategories: [],
-
-    blocks: [
-        {
-            name: "button_press_release",
-            xml: Blocks.input.input_button_nibble
-        },
-        {
-            name: "button_held",
-            xml: Blocks.input.input_button_held_nibble
-        },
-        {
-            name: "buttons",
-            xml: Blocks.input.nibble_buttons
         }
     ]
 });
