@@ -11,9 +11,7 @@ const Button_CallbackReg = {
 Blockly.Arduino['input_button'] = function(block) {
     if(!Blockly.Device) return;
 
-    Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
-    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
-    Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
+    Blockly.Arduino.addWrap("Input_loop", "Input::getInstance()->loop(0);");
 
     const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
     const STATE = block.getField('STATE').getValue();
@@ -30,9 +28,7 @@ Blockly.Arduino['input_button'] = function(block) {
 Blockly.Arduino['input_button_held'] = function(block) {
     if(!Blockly.Device) return;
 
-    Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
-    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
-    Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
+    Blockly.Arduino.addWrap("Input_loop", "Input::getInstance()->loop(0);");
 
     const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
     const DURATION = Blockly.Arduino.valueToCode(block, 'DURATION', Blockly.Arduino.ORDER_ATOMIC);
@@ -49,9 +45,7 @@ Blockly.Arduino['input_button_held'] = function(block) {
 Blockly.Arduino['input_button_any'] = function(block) {
     if(!Blockly.Device) return;
 
-    Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
-    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
-    Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
+    Blockly.Arduino.addWrap("Input_loop", "Input::getInstance()->loop(0);");
 
     const RETURN = Blockly.Arduino.valueToCode(block, 'RETURN', Blockly.Arduino.ORDER_ATOMIC);
     const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
