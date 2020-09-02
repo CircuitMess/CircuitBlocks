@@ -1,3 +1,4 @@
+"use strict";
 
 goog.require('Blockly.Arduino');
 
@@ -47,13 +48,12 @@ Blockly.Arduino['input_button_any'] = function(block) {
 
     Blockly.Arduino.addWrap("Input_loop", "Input::getInstance()->loop(0);");
 
-    const RETURN = Blockly.Arduino.valueToCode(block, 'RETURN', Blockly.Arduino.ORDER_ATOMIC);
     const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
 
     const funcName = `BTN_any`;
     const generated = `void ${funcName}(){\n${CODE}\n}`;
     Blockly.Arduino.addFunction(funcName, generated);
 
-    const setupCode = `Input::getInstance()->setAnyKeyCallback(${funcName}, ${RETURN});`;
+    const setupCode = `Input::getInstance()->setAnyKeyCallback(${funcName});`;
     Blockly.Arduino.addSetup(`input_button_any`, setupCode, false);
 };
