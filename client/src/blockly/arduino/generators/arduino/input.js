@@ -45,3 +45,21 @@ Blockly.Arduino['input_button_held'] = function(block) {
     const setupCode = `Input::getInstance()->setButtonHeldCallback(${BUTTON}, ${DURATION}, ${funcName});`;
     Blockly.Arduino.addSetup(`input_${BUTTON}_held_${DURATION}`, setupCode, false);
 };
+
+Blockly.Arduino['input_button_any'] = function(block) {
+    if(!Blockly.Device) return;
+
+    Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
+    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
+    Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
+
+    const RETURN = Blockly.Arduino.valueToCode(block, 'RETURN', Blockly.Arduino.ORDER_ATOMIC);
+    const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
+
+    const funcName = `BTN_any`;
+    const generated = `void ${funcName}(){\n${CODE}\n}`;
+    Blockly.Arduino.addFunction(funcName, generated);
+
+    const setupCode = `Input::getInstance()->setAnyKeyCallback(${funcName}, ${RETURN});`;
+    Blockly.Arduino.addSetup(`input_button_any`, setupCode, false);
+};

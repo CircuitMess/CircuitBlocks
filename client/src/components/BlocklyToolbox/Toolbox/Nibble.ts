@@ -354,6 +354,10 @@ categories.push({
             xml: Blocks.input.input_button_held_nibble
         },
         {
+            name: "button_any",
+            xml: Blocks.input.input_button_any
+        },
+        {
             name: "buttons",
             xml: Blocks.input.nibble_buttons
         }

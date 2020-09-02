@@ -38,3 +38,15 @@ Blockly.Blocks["input_button_held"] = {
         this.appendStatementInput('CODE');
     }
 };
+
+Blockly.Blocks["input_button_any"] = {
+    init: function(){
+        this.setColour(Blockly.Msg.IO_HUE);
+        this.appendDummyInput()
+            .appendField("When any button gets pressed or released");
+        this.appendStatementInput('CODE');
+        this.appendValueInput("RETURN")
+            .setCheck(Blockly.Types.BOOLEAN.checkList)
+            .appendField("Ignore other button events");
+    }
+};
