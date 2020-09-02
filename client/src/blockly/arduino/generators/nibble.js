@@ -5,7 +5,6 @@ goog.provide("Blockly.Arduino.Nibble");
 Blockly.Arduino.additionals["Nibble"] = function(){
   Blockly.Arduino.addInclude("AR_include", "#include <Arduino.h>");
   Blockly.Arduino.addInclude("COS_include", "#include <CircuitOS.h>");
-  Blockly.Arduino.addInclude("Disp_include", "#include <Display/Display.h>");
   Blockly.Arduino.addInclude("Nibble_include", "#include <Nibble.h>");
   Blockly.Arduino.addDeclaration("Disp_declare", "Display* display;");
   Blockly.Arduino.addDeclaration("Canv_declare", "Sprite* sprite;");

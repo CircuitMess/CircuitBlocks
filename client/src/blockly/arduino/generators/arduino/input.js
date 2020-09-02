@@ -11,14 +11,8 @@ const Button_CallbackReg = {
 Blockly.Arduino['input_button'] = function(block) {
     if(!Blockly.Device) return;
 
-    var input = "";
-    if(Blockly.Device == "Nibble"){
-        Blockly.Arduino.addInclude("Input_include", "#include <Input/InputI2C.h>");
-        input = "new InputI2C(Nibble.getExpander())";
-    }
-
     Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
-    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(${input});`);
+    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
     Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
 
     const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
@@ -36,14 +30,8 @@ Blockly.Arduino['input_button'] = function(block) {
 Blockly.Arduino['input_button_held'] = function(block) {
     if(!Blockly.Device) return;
 
-    var input = "";
-    if(Blockly.Device == "Nibble"){
-        Blockly.Arduino.addInclude("Input_include", "#include <Input/InputI2C.h>");
-        input = "new InputI2C(Nibble.getExpander())";
-    }
-
     Blockly.Arduino.addInclude("LoopManager_include", "#include <Loop/LoopManager.h>");
-    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(${input});`);
+    Blockly.Arduino.addSetup("Input_register", `LoopManager::addListener(Input::getInstance());`);
     Blockly.Arduino.addWrap("LoopManager_loop", "LoopManager::loop();");
 
     const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
