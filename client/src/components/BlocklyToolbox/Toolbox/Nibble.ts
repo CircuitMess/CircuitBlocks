@@ -346,20 +346,45 @@ categories.push({
 
     blocks: [
         {
+            name: "piezo_tone",
+            xml: Blocks.piezo.tone,
+            group: "Piezo"
+        },
+        {
+            name: "piezo_notone",
+            xml: Blocks.piezo.notone,
+            group: "Piezo"
+        },
+        {
+            name: "piezo_mute",
+            xml: Blocks.piezo.mute,
+            group: "Piezo"
+        },
+        {
+            name: "piezo_is_mute",
+            xml: Blocks.piezo.is_mute,
+            group: "Piezo"
+        },
+
+        {
             name: "button_press_release",
-            xml: Blocks.input.input_button_nibble
+            xml: Blocks.input.input_button_nibble,
+            group: "Buttons"
         },
         {
             name: "button_held",
-            xml: Blocks.input.input_button_held_nibble
+            xml: Blocks.input.input_button_held_nibble,
+            group: "Buttons"
         },
         {
             name: "button_any",
-            xml: Blocks.input.input_button_any
+            xml: Blocks.input.input_button_any,
+            group: "Buttons"
         },
         {
             name: "buttons",
-            xml: Blocks.input.nibble_buttons
+            xml: Blocks.input.nibble_buttons,
+            group: "Buttons"
         }
     ]
 });

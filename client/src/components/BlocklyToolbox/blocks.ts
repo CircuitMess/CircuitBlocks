@@ -176,12 +176,19 @@ export class Blocks {
 
     public static input: any = {
         input_button: '<block type="input_button"></block>',
-        input_button_held: '<block type="input_button_held"><value name="DURATION"><block type="math_number"></block><field name="NUM">500</field></value></block>',
+        input_button_held: '<block type="input_button_held"><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
         input_button_any: '<block type="input_button_any"><value name="RETURN"><block type="logic_boolean"><field name="BOOL">FALSE</field></block></value></block>',
 
         input_button_nibble: '<block type="input_button"><value name="BUTTON"><block type="nibble_buttons"></block></value></block>',
         input_button_held_nibble: '<block type="input_button_held"><value name="BUTTON"><block type="nibble_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
         nibble_buttons: '<block type="nibble_buttons"></block>',
     };
+
+    public static piezo: any = {
+        tone: '<block type="piezo_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
+        notone: '<block type="piezo_notone"></block>',
+        mute: '<block type="piezo_mute"><value name="MUTE"><block type="logic_boolean"><field name="BOOL">TRUE</field></block></value></block>',
+        is_mute: '<block type="piezo_ismute"></block>'
+    }
 
 }
