@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as sui from 'semantic-ui-react';
-import { defaultIconForArgType } from './BlocklyToolbox/toolbox';
+import { defaultIconForArgType } from './BlocklyToolbox/ToolboxUtils';
 
 export interface ISettingsProps {
   //parent: IProjectView;

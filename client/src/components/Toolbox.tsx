@@ -1,7 +1,7 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
 
-import * as tconf from './BlocklyToolbox/toolbox'
+import * as tconf from './BlocklyToolbox/ToolboxUtils'
 
 import 'semantic-ui-css/semantic.min.css'
 import './BlocklyToolbox/toolbox.less'
