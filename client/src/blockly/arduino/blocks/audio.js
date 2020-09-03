@@ -11,7 +11,7 @@ Blockly.Blocks["piezo_tone"] = {
             .appendField("Play tone with frequency")
             .setCheck(Blockly.Types.NUMBER.checkList);
         this.appendValueInput("DURATION")
-            .appendField("for")
+            .appendField("Hz for")
             .setCheck(Blockly.Types.NUMBER.checkList);
         this.appendDummyInput()
             .appendField("milliseconds");
@@ -48,7 +48,7 @@ Blockly.Blocks["piezo_notone"] = {
 Blockly.Blocks["piezo_mute"] = {
     init: function(){
         this.appendValueInput("MUTE")
-            .appendField("Mute piezo speaker")
+            .appendField("Set piezo speaker muted")
             .setCheck(Blockly.Types.BOOLEAN.checkList);
         this.setPreviousStatement(true);
         this.setNextStatement(true);
