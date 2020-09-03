@@ -6,6 +6,7 @@ import * as path from "path";
 import * as util from "../compiler/util";
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
+import {parseProps} from "../compiler/util";
 
 export default class ArduinoCompile {
 
@@ -144,7 +145,13 @@ export default class ArduinoCompile {
                 return;
             }
 
-            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", "esp32");
+            const deviceParts = args.device.split(":");
+            const platform = deviceParts[1];
+            const device = deviceParts[2];
+
+            let firmware = "";
+
+            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", platform);
             let newest = "";
             fs.readdirSync(hardwareDir).forEach((version) => {
                 const versionDir = path.join(hardwareDir, version);
@@ -154,12 +161,22 @@ export default class ArduinoCompile {
                     newest = version;
                 }
             });
-            const firmware = path.join(hardwareDir, newest, "firmware", "firmware.bin");
+            const platformDir = path.join(hardwareDir, newest);
+
+            if(device == "ringo"){
+                firmware = path.join(platformDir, "firmware", "firmware.bin");
+            }else{
+                const boards = parseProps(fs.readFileSync(path.join(platformDir, "boards.txt"), { encoding: "utf8" }));
+                const firmwarePath = boards[device + ".bootloader.tool.firmware"];
+                firmware = path.join(platformDir, "firmwares", firmwarePath);
+            }
+
+            console.log("Uploading", firmware);
 
             this.running = true;
             this.send("installstate", { state: { stage: "0%", restoring: true } });
 
-            this.upload(firmware, "cm:esp32:ringo", () => {
+            this.upload(firmware, args.device, () => {
                 this.send("installstate", { state: { stage: "DONE" } });
                 this.running = false;
             }, (progress => {

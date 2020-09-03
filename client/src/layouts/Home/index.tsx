@@ -9,6 +9,7 @@ import {Login} from './components/Login';
 import {Loader} from "semantic-ui-react";
 import {SketchLoadInfo, SketchType} from "../Editor";
 import {NewSketch} from "./components/NewSketch";
+import {RestoreFirmware} from "./components/RestoreFirmware";
 
 // const projects = [
 //   {
@@ -45,6 +46,7 @@ interface HomeState {
   projectsLoading: boolean;
   examplesLoading: boolean;
   newSketchOpen: boolean;
+  restoreFirmwareModalOpen: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -90,7 +92,8 @@ export default class Home extends React.Component<HomeProps, HomeState> {
       examples: [],
       projectsLoading: true,
       examplesLoading: true,
-      newSketchOpen: false
+      newSketchOpen: false,
+      restoreFirmwareModalOpen: false
     };
 
     ipcRenderer.on('sketches', (event: IpcRendererEvent, args) => {
@@ -126,8 +129,9 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send('examples');
   } //, [isEditorOpen]);
 
-  public restoreFirmware(){
-    ipcRenderer.send("firmware");
+  public restoreFirmware(device: string){
+    this.setState({ restoreFirmwareModalOpen: false });
+    ipcRenderer.send("firmware", { device });
   }
 
   public openErrorReport(){
@@ -157,7 +161,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
-    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading } = this.state;
+    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen } = this.state;
 
     return <div
             className={isEditorOpen ? 'd-none' : 'h-open'}
@@ -172,7 +176,8 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
           <NewSketch open={newSketchOpen} callback={ (type: SketchType, device: string) => { this.openFile("NEWTYPE", device, undefined, type) } } />
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
-          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.restoreFirmware()} />
+          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} />
+          <RestoreFirmware open={restoreFirmwareModalOpen} callback={device => this.restoreFirmware(device)} />
           {loggedIn ? (
               <>
                 <Main>

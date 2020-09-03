@@ -53,7 +53,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ loggedIn, restoreC
           <Profile username={username} image_url={require('../../../assets/images/profile.png')} />
         </div> */}
           <div className="right">
-              <Button onClick={() => restoreCallback()}>Restore Ringo Firmware</Button>
+              <Button onClick={() => restoreCallback()}>Restore Firmware</Button>
           </div>
       </Header>
     </Section>
