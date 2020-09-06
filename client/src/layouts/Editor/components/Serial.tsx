@@ -86,10 +86,11 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
         if(!connected) return;
 
         const line: JSX.Element = <p className={"input"}>{input}</p>;
-        this.state.content.push(line);
+
+        const content = [ ...this.state.content, line ];
 
         ipcRenderer.send("serial", { input });
-        this.setState({ input: "", content: this.state.content });
+        this.setState({ input: "", content });
     }
 
     public componentDidMount(): void {
@@ -98,7 +99,9 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
     }
 
     public componentDidUpdate(prevProps: Readonly<SerialProps>, prevState: Readonly<SerialState>, snapshot?: any): void {
-        if(this.input && this.props.isOpen && !prevProps.isOpen) this.input.focus();
+        if(!this.props.isOpen) return;
+        if(this.input && !prevProps.isOpen) this.input.focus();
+        if(this.content && this.contentEnd && this.state.content.length != prevState.content.length) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
     }
 
     public render() {
