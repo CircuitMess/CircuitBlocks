@@ -74,9 +74,8 @@
     "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./core/grpc --grpc_out=./core/grpc --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/grpc/proto core/grpc/proto/*.proto",
     "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/grpc -I core/grpc/proto core/grpc/proto/*.proto",
     "proto": "yarn proto-js && yarn proto-ts",
-    "postinstall": "yarn rebuild-electron",
-    "pack": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder --dir",
-    "dist": "CC=/usr/bin/gcc-7 CXX=/usr/bin/g++-7 electron-builder"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "eslintConfig": {
     "extends": "react-app"
