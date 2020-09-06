@@ -174,7 +174,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
             }}
         >
 
-          <NewSketch open={newSketchOpen} callback={ (type: SketchType, device: string) => { this.openFile("NEWTYPE", device, undefined, type) } } />
+          <NewSketch open={newSketchOpen} callback={ (type: SketchType, device: string) => this.openFile("NEWTYPE", device, undefined, type) } />
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
           <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} />
           <RestoreFirmware open={restoreFirmwareModalOpen} callback={device => this.restoreFirmware(device)} />
