@@ -39,6 +39,11 @@ export default class Installer {
         'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json',
       fqbn: 'cm:esp32',
       library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip'
+    },
+
+    nibble: {
+        manager: 'https://raw.githubusercontent.com/CircuitMess/Arduino-Packages/master/package_circuitmess.com_esp8266_index.json',
+        fqbn: 'cm:esp8266'
     }
   };
 
@@ -478,27 +483,42 @@ export default class Installer {
       }, callback, path.join(librariesPath, "Ringo"));
   }
 
-  private installRingo(callback: (err) => void, info: InstallInfo, stage?: (string) => void) {
+  private installPlatforms(callback: (err) => void, info: InstallInfo, stage?: (string) => void) {
     const cli =
       this.PLATFORM === 'Windows_NT'
         ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI', 'arduino-cli.exe')
         : path.join(os.homedir(), '.arduino', 'arduino-cli');
 
     try{
+        const additionals = [
+            this.downloads.ringo.manager,
+            this.downloads.nibble.manager
+        ].join(",");
+
         childProcess.execSync(
-            [cli, '--additional-urls', this.downloads.ringo.manager, 'core', 'update-index'].join(' ')
+            [cli, '--additional-urls', additionals, 'core', 'update-index'].join(' ')
         );
         childProcess.execSync(
-            [cli, '--additional-urls', this.downloads.ringo.manager, 'lib', 'update-index'].join(' ')
+            [cli, '--additional-urls', additionals, 'lib', 'update-index'].join(' ')
         );
         childProcess.execSync(
             [
                 cli,
                 '--additional-urls',
-                this.downloads.ringo.manager,
+                additionals,
                 'core',
                 'install',
                 this.downloads.ringo.fqbn
+            ].join(' ')
+        );
+        childProcess.execSync(
+            [
+                cli,
+                '--additional-urls',
+                additionals,
+                'core',
+                'install',
+                this.downloads.nibble.fqbn
             ].join(' ')
         );
     }catch(e){
@@ -531,6 +551,7 @@ export default class Installer {
         }
 
         if(isNewer(this.versions.arduino, info.arduinoVersion)){
+            console.log("Required version", this.versions.arduino, "is newer than installed version", info.arduinoVersion);
             console.log("Updating Arduino");
             if(stage) stage("ARDUINO");
             this.arduino(callback);
@@ -585,7 +606,7 @@ export default class Installer {
       }
 
       stage('RINGO');
-      this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
+      this.installPlatforms(stageRingo, ArduinoCompiler.checkInstall());
     };
 
     const stageArduino = (err) => {
@@ -617,14 +638,14 @@ export default class Installer {
           }
 
           stage('RINGO');
-          this.installRingo(stageRingo, ArduinoCompiler.checkInstall());
+          this.installPlatforms(stageRingo, ArduinoCompiler.checkInstall());
       });
     }
   }
 
   public update(stage: (string) => void, info: InstallInfo, error: (err) => void){
       const ringo = () => {
-          this.installRingo((err) => {
+          this.installPlatforms((err) => {
               if(err){
                   error(err);
                   return;

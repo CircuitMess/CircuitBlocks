@@ -34,18 +34,26 @@ goog.require("Blockly.Arduino.colour");
 goog.require("Blockly.Arduino.loops");
 goog.require("Blockly.Arduino.stepper");
 goog.require("Blockly.Arduino.IO");
+goog.require("Blockly.Arduino.input");
+goog.require("Blockly.Arduino.audio");
+goog.require("Blockly.Arduino.pins");
 goog.require("Blockly.Arduino.serial");
 goog.require("Blockly.Arduino.tone");
 goog.require("Blockly.Arduino.math");
 goog.require("Blockly.Arduino.variables");
 goog.require("Blockly.Arduino.MAKERphone");
+goog.require("Blockly.Arduino.Nibble");
 goog.require("Blockly.Arduino.phone");
 goog.require("Blockly.Arduino.display");
+goog.require("Blockly.Arduino.display_sprite");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
 goog.require("Blockly.Blocks.serial");
 goog.require("Blockly.Blocks.io");
+goog.require("Blockly.Blocks.input");
+goog.require("Blockly.Blocks.audio");
+goog.require("Blockly.Blocks.pins");
 goog.require("Blockly.Blocks.tone");
 goog.require("Blockly.Blocks.logo");
 goog.require("Blockly.Blocks.variables");
@@ -57,5 +65,8 @@ goog.require("Blockly.Ext.Blocks.Functions");
 goog.require('Blockly.Blocks.functions');
 goog.require('Blockly.Blocks.phone');
 goog.require('Blockly.Blocks.display');
+goog.require('Blockly.Blocks.display_sprite');
+
+Blockly.Device = "";
 
 export default Blockly;

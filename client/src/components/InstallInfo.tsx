@@ -62,7 +62,7 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         const stages: any = {
             ARDUINO: "Arduino",
             CLI: "Arduino CLI",
-            RINGO: "Ringo board and libraries",
+            RINGO: "Platform and board definitions", // formerly "Ringo board and libraries", hence the `RINGO` key
             UPDATE: "Checking for updates..."
         };
 

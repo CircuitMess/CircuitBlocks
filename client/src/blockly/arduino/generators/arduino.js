@@ -107,6 +107,8 @@ Blockly.Arduino.init = function(workspace) {
   Blockly.Arduino.functionNames_ = Object.create(null);
   // Create a dictionary of setups to be printed in the setup() function
   Blockly.Arduino.setups_ = Object.create(null);
+  // Create a dictionary of post setups to be printed in the setup() function
+  Blockly.Arduino.postSetups_ = Object.create(null);
   // Create a dictionary of code to be appended to the loop() function
   Blockly.Arduino.wraps_ = Object.create(null);
   // Create a dictionary of pins to check if their use conflicts
@@ -133,6 +135,12 @@ Blockly.Arduino.init = function(workspace) {
       Blockly.Arduino.getArduinoType_(varsWithTypes[varName]) +' ' +
       Blockly.Arduino.variableDB_.getName(varName, Blockly.Variables.NAME_TYPE) + ';');
   }
+
+  for(var additional in Blockly.Arduino.additionals){
+    if(!Blockly.Arduino.additionals.hasOwnProperty(additional)) continue;
+    if(!Blockly.Device || Blockly.Device != additional) continue;
+    Blockly.Arduino.additionals[additional]();
+  }
 };
 
 /**
@@ -141,10 +149,6 @@ Blockly.Arduino.init = function(workspace) {
  * @return {string} Completed sketch code.
  */
 Blockly.Arduino.finish = function(code) {
-  for(var additional in Blockly.Arduino.additionals){
-    if(!Blockly.Arduino.additionals.hasOwnProperty(additional)) continue;
-    Blockly.Arduino.additionals[additional]();
-  }
 
   // Convert the includes, definitions, and functions dictionaries into lists
   var includes = [], definitions = [], variables = [], functions = [];
@@ -189,6 +193,11 @@ Blockly.Arduino.finish = function(code) {
     setups.push(userSetupCode);
   }
 
+  var postSetups = [];
+  for (var name in Blockly.Arduino.postSetups_) {
+    postSetups.push(Blockly.Arduino.postSetups_[name]);
+  }
+
   var wraps = [];
   for (var name in Blockly.Arduino.wraps_) {
     wraps.push(Blockly.Arduino.wraps_[name]);
@@ -201,14 +210,19 @@ Blockly.Arduino.finish = function(code) {
   delete Blockly.Arduino.userFunctions_;
   delete Blockly.Arduino.functionNames_;
   delete Blockly.Arduino.setups_;
+  delete Blockly.Arduino.postSetups_;
   delete Blockly.Arduino.wraps_;
   delete Blockly.Arduino.pins_;
   Blockly.Arduino.variableDB_.reset();
 
   var allDefs = includes.join('\n') + variables.join('\n') +
     definitions.join('\n') + functions.join('\n\n');
-  var setup = 'void setup() {' + setups.join('\n  ') + '\n}\n\n';
-  var loop = 'void loop() {\n  ' + wraps.join('\n  ') + "\n\n  " + code.replace(/\n/g, '\n  ') + '\n}';
+  var setup = 'void setup() {' + setups.join('\n  ') + '\n  ' + postSetups.join('\n  ') + '\n}\n\n';
+  var loop = 'void loop() {\n  ' + wraps.join('\n  ');
+  if(wraps.length){
+    loop += "\n\n  ";
+  }
+  loop += code.replace(/\n/g, '\n  ') + '\n}';
   return allDefs + setup + loop;
 };
 
@@ -268,6 +282,25 @@ Blockly.Arduino.addSetup = function(setupTag, code, overwrite) {
   var overwritten = false;
   if (overwrite || (Blockly.Arduino.setups_[setupTag] === undefined)) {
     Blockly.Arduino.setups_[setupTag] = code;
+    overwritten = true;
+  }
+  return overwritten;
+};
+
+/**
+ * Adds a string of code into the Arduino setup() function, after all the setups. It takes an
+ * identifier to not repeat the same kind of initialisation code from several
+ * blocks. If overwrite option is set to true it will overwrite whatever
+ * value the identifier held before.
+ * @param {!string} setupTag Identifier for the type of set up code.
+ * @param {!string} code Code to be included in the setup() function.
+ * @param {boolean=} overwrite Flag to ignore previously set value.
+ * @return {!boolean} Indicates if the new setup code overwrote a previous one.
+ */
+Blockly.Arduino.addPostSetup = function(postSetupTag, code, overwrite) {
+  var overwritten = false;
+  if (overwrite || (Blockly.Arduino.postSetups_[postSetupTag] === undefined)) {
+    Blockly.Arduino.postSetups_[postSetupTag] = code;
     overwritten = true;
   }
   return overwritten;

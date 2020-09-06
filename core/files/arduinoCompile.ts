@@ -6,6 +6,7 @@ import * as path from "path";
 import * as util from "../compiler/util";
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
+import {parseProps} from "../compiler/util";
 
 export default class ArduinoCompile {
 
@@ -76,11 +77,11 @@ export default class ArduinoCompile {
             this.send("runprogress", { stage: "COMPILE", progress: 0 });
             this.compile(code, (binary) => {
                 this.send('runprogress', { stage: 'UPLOAD', progress: 0 });
-                this.upload(binary, () => {
+                this.upload(binary, args.device,() => {
                     this.send('runprogress', { stage: 'DONE' });
                     this.running = false;
                 });
-            }, undefined, minimal);
+            }, args.device, undefined, minimal);
         });
 
         ipcMain.on("export", (event, args) => {
@@ -127,7 +128,7 @@ export default class ArduinoCompile {
 
                     this.running = false;
                 });
-            }, "EXPORT", minimal);
+            }, args.device, "EXPORT", minimal);
         });
 
         ipcMain.on("firmware", (event, args) => {
@@ -144,7 +145,13 @@ export default class ArduinoCompile {
                 return;
             }
 
-            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", "esp32");
+            const deviceParts = args.device.split(":");
+            const platform = deviceParts[1];
+            const device = deviceParts[2];
+
+            let firmware = "";
+
+            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", platform);
             let newest = "";
             fs.readdirSync(hardwareDir).forEach((version) => {
                 const versionDir = path.join(hardwareDir, version);
@@ -154,12 +161,22 @@ export default class ArduinoCompile {
                     newest = version;
                 }
             });
-            const firmware = path.join(hardwareDir, newest, "firmware", "firmware.bin");
+            const platformDir = path.join(hardwareDir, newest);
+
+            if(device == "ringo"){
+                firmware = path.join(platformDir, "firmware", "firmware.bin");
+            }else{
+                const boards = parseProps(fs.readFileSync(path.join(platformDir, "boards.txt"), { encoding: "utf8" }));
+                const firmwarePath = boards[device + ".bootloader.tool.firmware"];
+                firmware = path.join(platformDir, "firmwares", firmwarePath);
+            }
+
+            console.log("Uploading", firmware);
 
             this.running = true;
             this.send("installstate", { state: { stage: "0%", restoring: true } });
 
-            this.upload(firmware, () => {
+            this.upload(firmware, args.device, () => {
                 this.send("installstate", { state: { stage: "DONE" } });
                 this.running = false;
             }, (progress => {
@@ -181,10 +198,10 @@ export default class ArduinoCompile {
         this.window = window;
     }
 
-    private compile(code: string, callback: (binary) => void, stage?: string, minimal?: boolean){
+    private compile(code: string, callback: (binary) => void, device: string, stage?: string, minimal?: boolean){
         if(!stage) stage = "COMPILE";
 
-        ArduinoCompiler.compile(code, progress => this.send('runprogress', { stage: stage, progress }), minimal)
+        ArduinoCompiler.compile(code, device, progress => this.send('runprogress', { stage: stage, progress }), minimal)
             .then((data) => {
                 callback(data.binary);
             }).catch(error => {
@@ -200,20 +217,20 @@ export default class ArduinoCompile {
         );
     }
 
-    private upload(binary: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
+    private upload(binary: string, device: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
         if(this.arduinoSerial.getPort() == undefined){
             logger.log("Upload error: Ringo disconnected");
             console.log(new Error("Ringo disconnected"));
             if(eCallback){
-                eCallback("Upload error. Check your Ringo then try again.");
+                eCallback("Upload error. Check your device then try again.");
             }else{
                 this.send('runprogress', { stage: 'DONE' });
-                messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
+                messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
             }
             return;
         }
 
-        ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName,
+        ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName, device,
             pCallback ? pCallback : progress => this.send("runprogress", { stage: "UPLOAD", progress }))
             .then(() => {
                 callback();
@@ -225,10 +242,10 @@ export default class ArduinoCompile {
                 }
                 console.log(error);
                 if(eCallback){
-                    eCallback("Upload error. Check your Ringo then try again.")
+                    eCallback("Upload error. Check your device then try again.")
                 }else{
                     this.send('runprogress', { stage: 'DONE' });
-                    messenger.report(MessageType.RUN, [ "Upload error. Check your Ringo then try again." ], [{ title: "Ok" }]);
+                    messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
                 }
                 this.running = false;
             });

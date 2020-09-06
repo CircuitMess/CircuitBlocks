@@ -9,6 +9,7 @@ import {Login} from './components/Login';
 import {Loader} from "semantic-ui-react";
 import {SketchLoadInfo, SketchType} from "../Editor";
 import {NewSketch} from "./components/NewSketch";
+import {RestoreFirmware} from "./components/RestoreFirmware";
 
 // const projects = [
 //   {
@@ -45,13 +46,25 @@ interface HomeState {
   projectsLoading: boolean;
   examplesLoading: boolean;
   newSketchOpen: boolean;
+  restoreFirmwareModalOpen: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
 const ipcRenderer: IpcRenderer = electron.ipcRenderer;
 
+interface Device {
+  fqbn: string;
+  name: string;
+}
+
+export const Devices: { [name: string]: Device } = {
+  "cm:esp32:ringo": { fqbn: "cm:esp32:ringo", name: "Ringo" },
+  "cm:esp8266:nibble": { fqbn: "cm:esp8266:nibble", name: "Nibble" }
+};
+
 export interface Sketch {
   title: string;
+  device: string;
   path?: string;
   snapshot?: string;
   description?: string;
@@ -79,7 +92,8 @@ export default class Home extends React.Component<HomeProps, HomeState> {
       examples: [],
       projectsLoading: true,
       examplesLoading: true,
-      newSketchOpen: false
+      newSketchOpen: false,
+      restoreFirmwareModalOpen: false
     };
 
     ipcRenderer.on('sketches', (event: IpcRendererEvent, args) => {
@@ -115,28 +129,29 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send('examples');
   } //, [isEditorOpen]);
 
-  public restoreFirmware(){
-    ipcRenderer.send("firmware");
+  public restoreFirmware(device: string){
+    this.setState({ restoreFirmwareModalOpen: false });
+    ipcRenderer.send("firmware", { device });
   }
 
   public openErrorReport(){
     ipcRenderer.send("report");
   }
 
-  public openFile(type: 'NEW' | 'NEWTYPE' | 'OPEN', sketch?: Sketch, sketchType?: SketchType){
+  public openFile(type: 'NEW' | 'NEWTYPE' | 'OPEN', device: string, sketch?: Sketch, sketchType?: SketchType){
     const { reportError, openEditor } = this.props;
 
     if (type === 'NEW') {
       this.setState({ newSketchOpen: true });
     } else if(type == "NEWTYPE" && sketchType != undefined) {
       this.setState({ newSketchOpen: false });
-      openEditor({ type: sketchType, data: "" }, undefined);
+      openEditor({ type: sketchType, device, data: "" }, undefined);
     } else if(sketch) {
       ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
         if (args.error) {
           reportError(args.error);
         } else {
-          openEditor({ type: args.type, data: args.data }, sketch.title);
+          openEditor({ type: args.type, device: args.device, data: args.data }, sketch.title);
         }
       });
 
@@ -146,7 +161,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
-    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading } = this.state;
+    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen } = this.state;
 
     return <div
             className={isEditorOpen ? 'd-none' : 'h-open'}
@@ -159,16 +174,17 @@ export default class Home extends React.Component<HomeProps, HomeState> {
             }}
         >
 
-          <NewSketch open={newSketchOpen} callback={ (type: SketchType) => { this.openFile("NEWTYPE", undefined, type) } } />
+          <NewSketch open={newSketchOpen} callback={ (type: SketchType, device: string) => { this.openFile("NEWTYPE", device, undefined, type) } } />
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
-          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.restoreFirmware()} />
+          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} />
+          <RestoreFirmware open={restoreFirmwareModalOpen} callback={device => this.restoreFirmware(device)} />
           {loggedIn ? (
               <>
                 <Main>
                   <ProjectSection
                       title={'Your sketches'}
                       projects={sketches}
-                      onPress={(type, sketch) => this.openFile(type, sketch)}
+                      onPress={(type, sketch) => this.openFile(type, sketch ? sketch.device : "cm:esp32:ringo", sketch)}
                       createNew={ !projectsLoading } />
 
                   <Loader active={projectsLoading || examplesLoading} inline={"centered"} style={{ marginBottom: 20 }} />
@@ -178,7 +194,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                           title={category.title}
                           projects={category.sketches}
                           key={`Section-${category.title}`}
-                          onPress={(type, sketch) => this.openFile(type, sketch)}
+                          onPress={(type, sketch) => this.openFile(type, sketch ? sketch.device : "cm:esp32:ringo", sketch)}
                       /> )}
                 </Main>
                 <Footer>
