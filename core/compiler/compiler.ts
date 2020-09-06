@@ -466,6 +466,7 @@ export default class ArduinoCompiler {
       }
 
       console.log("Compiling for", device);
+      logger.log("Compiling for " + device);
       const req = new CompileReq();
       req.setInstance(this.instance);
       req.setSketchpath(sketchDir);
