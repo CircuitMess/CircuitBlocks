@@ -265,7 +265,9 @@ export default class ArduinoCompiler {
         return;
       }
 
-      this.process = childProcess.execFile(cliPath, ['daemon']);
+      this.process = childProcess.execFile("arduino-cli" + (os.type() == 'Windows_NT' ? '.exe' : ''),
+          ['daemon'],
+          { cwd: this.installInfo.cli });
 
       const req = new InitReq();
       req.setLibraryManagerOnly(false);

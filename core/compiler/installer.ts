@@ -102,7 +102,7 @@ export default class Installer {
 
         fs.copySync(path.join(tmp, _file), install);
 
-        this.cliInit(install, (err) => {
+        this.cliInit(dest, (err) => {
             callback(err);
         });
       })
@@ -126,7 +126,7 @@ export default class Installer {
 
         fs.chmodSync(install, '755');
 
-        this.cliInit(install, (err) => {
+        this.cliInit(dest, (err) => {
             callback(err);
         });
       })
@@ -137,9 +137,9 @@ export default class Installer {
 
   private cliInit(path, callback: (error) => void) {
       try{
-        childProcess.execSync([path, 'config', 'init'].join(' '));
-        childProcess.execSync([path, 'core', 'update-index'].join(' '));
-        childProcess.execSync([path, 'lib', 'update-index'].join(' '));
+        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['config', 'init'], { cwd: path });
+        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['core', 'update-index'], { cwd: path });
+        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['lib', 'update-index'], { cwd: path });
       }catch(e){
           logger.log("CLI init error", e);
           callback(e);
@@ -484,10 +484,11 @@ export default class Installer {
   }
 
   private installPlatforms(callback: (err) => void, info: InstallInfo, stage?: (string) => void) {
-    const cli =
+    const cliPath =
       this.PLATFORM === 'Windows_NT'
-        ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI', 'arduino-cli.exe')
-        : path.join(os.homedir(), '.arduino', 'arduino-cli');
+        ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI')
+        : path.join(os.homedir(), '.arduino');
+    const PLATFORM = this.PLATFORM;
 
     try{
         const additionals = [
@@ -495,32 +496,26 @@ export default class Installer {
             this.downloads.nibble.manager
         ].join(",");
 
-        childProcess.execSync(
-            [cli, '--additional-urls', additionals, 'core', 'update-index'].join(' ')
-        );
-        childProcess.execSync(
-            [cli, '--additional-urls', additionals, 'lib', 'update-index'].join(' ')
-        );
-        childProcess.execSync(
-            [
-                cli,
+        function execCli(args: string[]){
+            childProcess.execFileSync("arduino-cli" + (PLATFORM == "Windows_NT" ? ".exe" : ""), args, { cwd: cliPath })
+        }
+
+        execCli(['--additional-urls', additionals, 'core', 'update-index']);
+        execCli(['--additional-urls', additionals, 'lib', 'update-index']);
+        execCli([
                 '--additional-urls',
                 additionals,
                 'core',
                 'install',
                 this.downloads.ringo.fqbn
-            ].join(' ')
-        );
-        childProcess.execSync(
-            [
-                cli,
+            ]);
+        execCli([
                 '--additional-urls',
                 additionals,
                 'core',
                 'install',
                 this.downloads.nibble.fqbn
-            ].join(' ')
-        );
+            ]);
     }catch(e){
         callback("Library update error. Please check your internet connection.")
     }
@@ -574,9 +569,12 @@ export default class Installer {
   }
 
   private checkCliUpdate(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
-      const cliPath = path.join(info.cli, "arduino-cli" + (os.type() == "Windows_NT" ? ".exe" : ""));
+      const cliPath = path.join(info.cli, "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""));
 
-      const cliData = JSON.parse(childProcess.execSync([ cliPath, "--format json", "version" ].join(" "), { encoding: "utf8" }));
+      const cliData = JSON.parse(
+          childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""),
+              [ "--format", "json", "version" ],
+              { encoding: "utf8", cwd: info.cli }));
 
       if(isNewer(this.versions.cli, cliData.VersionString)){
           console.log("Updating CLI");
@@ -631,7 +629,7 @@ export default class Installer {
       this.cli(stageCli);
     } else if (info.local == null || info.sketchbook == null) {
       stage('CLI');
-      this.cliInit(path.join(info.cli, 'arduino-cli' + (this.PLATFORM == 'Windows_NT' ? '.exe' : '')), (err) => {
+      this.cliInit(info.cli, (err) => {
           if(err){
               error(err);
               return;
