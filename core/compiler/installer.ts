@@ -138,9 +138,9 @@ export default class Installer {
 
   private cliInit(path, callback: (error) => void) {
       try{
-        CLI.run(['config', 'init']);
-        CLI.run(['core', 'update-index']);
-        CLI.run(['lib', 'update-index']);
+        CLI.run(['config', 'init'], path);
+        CLI.run(['core', 'update-index'], path);
+        CLI.run(['lib', 'update-index'], path);
       }catch(e){
           logger.log("CLI init error", e);
           callback(e);
