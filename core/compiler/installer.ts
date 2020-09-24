@@ -9,6 +9,7 @@ import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
 import logger from "../files/logger";
 import {isNewer} from "./util";
+import {CLI} from "./cli";
 
 export default class Installer {
   private readonly PLATFORM: string;
@@ -137,9 +138,9 @@ export default class Installer {
 
   private cliInit(path, callback: (error) => void) {
       try{
-        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['config', 'init'], { cwd: path });
-        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['core', 'update-index'], { cwd: path });
-        childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""), ['lib', 'update-index'], { cwd: path });
+        CLI.run(['config', 'init']);
+        CLI.run(['core', 'update-index']);
+        CLI.run(['lib', 'update-index']);
       }catch(e){
           logger.log("CLI init error", e);
           callback(e);
@@ -484,12 +485,6 @@ export default class Installer {
   }
 
   private installPlatforms(callback: (err) => void, info: InstallInfo, stage?: (string) => void) {
-    const cliPath =
-      this.PLATFORM === 'Windows_NT'
-        ? path.join(os.homedir(), 'AppData', 'Local', 'ArduinoCLI')
-        : path.join(os.homedir(), '.arduino');
-    const PLATFORM = this.PLATFORM;
-
     try{
         const additionals = [
             this.downloads.ringo.manager,
@@ -497,7 +492,7 @@ export default class Installer {
         ].join(",");
 
         function execCli(args: string[]){
-            childProcess.execFileSync("arduino-cli" + (PLATFORM == "Windows_NT" ? ".exe" : ""), args, { cwd: cliPath })
+            CLI.run(args, info);
         }
 
         execCli(['--additional-urls', additionals, 'core', 'update-index']);
@@ -571,10 +566,7 @@ export default class Installer {
   private checkCliUpdate(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
       const cliPath = path.join(info.cli, "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""));
 
-      const cliData = JSON.parse(
-          childProcess.execFileSync("arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""),
-              [ "--format", "json", "version" ],
-              { encoding: "utf8", cwd: info.cli }));
+      const cliData = JSON.parse(CLI.run([ "--format", "json", "version" ], info));
 
       if(isNewer(this.versions.cli, cliData.VersionString)){
           console.log("Updating CLI");
