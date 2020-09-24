@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "@grpc/proto-loader": "^0.5.2",
+    "@types/rimraf": "^3.0.0",
     "dom-parser": "^0.1.6",
     "electron-updater": "^4.2.0",
     "fs-extra": "^8.1.0",

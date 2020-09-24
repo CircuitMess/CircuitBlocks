@@ -21,7 +21,7 @@ export default class arduinoInstall {
             event.reply("installstate", { state: this.setupState });
         });
 
-        ipcMain.once("install", (event, args) => {
+        ipcMain.on("install", (event, args) => {
             this.setup(callback);
         });
 

@@ -187,6 +187,8 @@ export default class Installer {
     const dest = path.join(os.homedir(), '.arduino');
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
 
+    let installPath: string | undefined;
+
     util
       .extract(file, tmp)
       .then(() => {
@@ -197,7 +199,7 @@ export default class Installer {
         }
 
         const name = files[0];
-        const installPath = path.join(dest, name);
+        installPath = path.join(dest, name);
 
         fs.copySync(path.join(tmp, name), installPath);
 
@@ -271,7 +273,12 @@ export default class Installer {
                 }else{
                     err = error;
                 }
-                callback(err);
+
+                if(installPath){
+                    rimraf(installPath, {  }, () => {
+                        callback(err);
+                    });
+                }
               return;
             }
 
