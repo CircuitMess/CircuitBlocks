@@ -4,9 +4,9 @@
   "homepage": "https://circuitmess.com/",
   "author": {
     "email": "filip@circuitmess.com",
-    "name": "Filip Budiša"
+    "name": "CircuitMess"
   },
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "build/app.js",
   "private": true,
   "dependencies": {
