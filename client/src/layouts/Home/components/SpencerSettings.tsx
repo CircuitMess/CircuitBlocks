@@ -87,7 +87,6 @@ export class SpencerSettings extends React.Component<SpencerSettingsProps, Spenc
 
         	const { ssid, password, fahrenheit } = args.settings;
             this.setState({ ssid, password, fahrenheit: fahrenheit == 1, connected: true });
-            this.scanNetworks();
         });
 
 		ipcRenderer.on("SpencerSet", (event: IpcRendererEvent, args) => {
@@ -183,26 +182,12 @@ export class SpencerSettings extends React.Component<SpencerSettingsProps, Spenc
 
 					<div style={{marginTop: 25, marginBottom: 25, maxWidth: 350, marginLeft:"auto", marginRight: "auto"}}>
 						<div style={{ display: "flex", alignItems: "center", marginBottom: 30 }}>
-							<select onChange={e => { this.setState({ ssid: e.target.value }) }}
-									style={{width: 275, lineHeight: 10, marginRight: 30}}
-									disabled={!connected}>
-								{ wifiList.map((network) =>
-									<option value={network} key={network} selected={ ssid === network }>{network}</option>
-								) }
-							</select>
-
-							<a onClick={() => this.scanNetworks() } style={{
-								width: "24px",
-								height: "24px",
-								float: "right",
-								display: "flex",
-								alignItems: "center",
-								cursor: connected ? "pointer" : "default"
-							}}>
-
-								<SpinButton className={ scanning ? "spin" : undefined } src={connected ? reload : reloadgrey}/>
-
-							</a>
+							<input
+								placeholder="SSID"
+								type={"text"}
+								disabled={!connected}
+								value={ssid}
+								onChange={e => { this.setState({ ssid: e.target.value }); }}/>
 						</div>
 
 						<div style={{ display: "flex", alignItems: "center", marginBottom: 30 }} >
