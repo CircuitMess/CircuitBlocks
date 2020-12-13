@@ -9,7 +9,7 @@ export interface NewSketchProps {
 }
 
 interface NewSketchState {
-    nibble: boolean;
+    device: string;
     type: SketchType;
 }
 
@@ -19,7 +19,7 @@ export class NewSketch extends React.Component<NewSketchProps, NewSketchState> {
         super(props);
 
         this.state = {
-            nibble: false,
+            device: "cm:esp8266:nibble",
             type: SketchType.BLOCK
         };
     }
@@ -27,21 +27,25 @@ export class NewSketch extends React.Component<NewSketchProps, NewSketchState> {
     private create(){
         const { callback } = this.props;
         const { type } = this.state;
-        callback(type, this.state.nibble ? "cm:esp8266:nibble" : "cm:esp32:ringo");
+        callback(type, this.state.device);
     }
 
     public render(){
         const { open, callback } = this.props;
-        const { nibble, type } = this.state;
+        const { type, device} = this.state;
 
         return <Dimmer active={open}>
-            <ModalBase className={"small"}>
+            <ModalBase className={"medium"} style={{width:"30%", minWidth:"400px"}}>
                 <div className="title" style={{ position: "relative", fontSize: 26, top: 0, textAlign: "center", marginBottom: 30, lineHeight: 1.2 }}>New sketch</div>
                 <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Device:</p>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20 }}>
-                        <Button primary inverted={nibble} onClick={() => this.setState({ nibble: false }) } style={{margin: "0 15px"}}>Ringo</Button>
-                        <Button primary inverted={!nibble} onClick={() => this.setState({ nibble: true }) } style={{margin: "0 15px"}}>Nibble</Button>
+                        <Button primary inverted={this.state.device !== "cm:esp32:ringo"} onClick={() => this.setState({ device: "cm:esp32:ringo" }) } style={{margin: "0 15px", height:40}}>Ringo</Button>
+                        <Button primary inverted={this.state.device !== "cm:esp8266:nibble"} onClick={() => this.setState({ device: "cm:esp8266:nibble" }) } style={{margin: "0 15px", height:40}}>Nibble</Button>
+                        <div style={{display: "grid"}}>
+                            <Button primary inverted={this.state.device !== "spencer"} disabled onClick={() => this.setState({  device: "spencer" }) } style={{margin: "0 15px", height:40}}>Spencer</Button>
+                            <text style={{color: "red", fontSize: 10, margin: 5}}>Coming soon!</text>    
+                        </div>
                     </div>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Sketch type:</p>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center" }}>

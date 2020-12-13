@@ -10,6 +10,7 @@ import {Loader} from "semantic-ui-react";
 import {SketchLoadInfo, SketchType} from "../Editor";
 import {NewSketch} from "./components/NewSketch";
 import {RestoreFirmware} from "./components/RestoreFirmware";
+import {SpencerSettings} from "./components/SpencerSettings";
 
 // const projects = [
 //   {
@@ -47,6 +48,7 @@ interface HomeState {
   examplesLoading: boolean;
   newSketchOpen: boolean;
   restoreFirmwareModalOpen: boolean;
+  spencerSettingsModalOpen: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -86,6 +88,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     super(props);
 
     this.state = {
+      spencerSettingsModalOpen: false,
       loggedIn: true,
       animation: false,
       sketches: { code: [], block: [] },
@@ -161,7 +164,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
-    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen } = this.state;
+    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen, spencerSettingsModalOpen } = this.state;
 
     return <div
             className={isEditorOpen ? 'd-none' : 'h-open'}
@@ -176,8 +179,12 @@ export default class Home extends React.Component<HomeProps, HomeState> {
 
           <NewSketch open={newSketchOpen} callback={ (type: SketchType, device: string) => this.openFile("NEWTYPE", device, undefined, type) } />
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
-          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} />
+          <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} openSpencerModal={()=> this.setState({ spencerSettingsModalOpen: true})} />
           <RestoreFirmware open={restoreFirmwareModalOpen} callback={device => this.restoreFirmware(device)} />
+          <SpencerSettings
+            open={spencerSettingsModalOpen}
+            closeCallback={() => { this.setState({ spencerSettingsModalOpen: false }); }}
+          />
           {loggedIn ? (
               <>
                 <Main>

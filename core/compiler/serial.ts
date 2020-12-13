@@ -6,7 +6,8 @@ import * as child_process from 'child_process';
 import logger from "../files/logger";
 
 export default class Serial {
-  private messageListener: (msg: string) => void;
+  private messageListener: (msg: string) => void = undefined;
+  private splitMessageListener: (msg: string) => void = undefined;
   private com: SerialPort.SerialPort;
   private buffer: string = '';
   private uploading: boolean = false;
@@ -26,7 +27,20 @@ export default class Serial {
       this.buffer = "";
     }
 
-    this.messageListener(message);
+    if(this.messageListener != undefined){
+      this.messageListener(message);
+    }
+
+    if(this.splitMessageListener != undefined){
+      const parts = message.split("\n");
+      parts.forEach(part => {
+        this.splitMessageListener(part.replace("\r", ""));
+      });
+    }
+  }
+
+  public isConnected(){
+    return this.com !== undefined && this.com.isOpen;
   }
 
   public setUploading(uploading: boolean) {
@@ -36,7 +50,7 @@ export default class Serial {
   public stop() {
     if (this.com === undefined || !this.com.isOpen) return;
 
-    this.com.flush();
+    this.com.drain();
     this.com.close();
     this.com = undefined;
 
@@ -64,10 +78,13 @@ export default class Serial {
       console.log("conncting " + comName);
 
       const options: any = { baudRate: 115200 };
-      if(os.type() == "Windows_NT"){
+
+      // fix for old version of serialport on Windows. left for archive purposes
+      /*if(os.type() == "Windows_NT"){
         options.hupcl = true;
         options.rtscts = true;
-      }
+      }*/
+
       context.com = new SerialPort(comName, options);
       context.com.on('data', (data) => context.data(data));
     }
@@ -88,10 +105,22 @@ export default class Serial {
     this.messageListener = listener;
   }
 
+  public registerSplitListener(listener: (msg: string) => void) {
+    this.splitMessageListener = listener;
+  }
+
   public write(message: string) {
     if (this.com === undefined) return;
 
     this.com.write(message + "\n");
+    this.com.drain();
+  }
+
+  public writeRaw(message: string){
+    if (this.com === undefined) return;
+
+    this.com.write(message);
+    this.com.drain();
   }
 
   /**

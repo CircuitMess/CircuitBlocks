@@ -11,6 +11,7 @@ import ErrorReport from "./core/files/errorReport";
 import messenger, {MessageType} from "./core/files/messenger";
 import Update from "./core/files/update";
 import * as util from "./core/compiler/util";
+import SpencerSettings from './core/files/spencerSettings';
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
@@ -24,6 +25,7 @@ const arduinoSerial = new ArduinoSerial();
 const arduinoCompile = new ArduinoCompile(arduinoSerial);
 const sketches = new Sketches();
 const report = new ErrorReport();
+const spencerSettings = new SpencerSettings();
 
 function createWindow() {
   // Create the browser window.

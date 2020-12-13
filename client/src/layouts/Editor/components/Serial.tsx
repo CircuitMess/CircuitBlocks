@@ -100,6 +100,7 @@ export default class Serial extends React.Component<SerialProps, SerialState> {
 
     public componentDidUpdate(prevProps: Readonly<SerialProps>, prevState: Readonly<SerialState>, snapshot?: any): void {
         if(!this.props.isOpen) return;
+        ipcRenderer.send("monitorOpen");
         if(this.input && !prevProps.isOpen) this.input.focus();
         if(this.content && this.contentEnd && this.state.content.length != prevState.content.length) this.contentEnd.scrollIntoView({ behaviour: "smooth" } as ScrollIntoViewOptions);
     }

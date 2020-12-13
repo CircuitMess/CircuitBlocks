@@ -14,10 +14,6 @@ export class ArduinoSerial {
 
     public constructor(){
         this.serial = ArduinoCompiler.getSerial();
-        this.serial.registerListener((content) => {
-            if(!this.window) return;
-            this.window.webContents.send('serial', { content })
-        });
 
         ipcMain.on('ports', (event, _args) => {
             const res = { port: this.connected ? this.port : null };
@@ -27,6 +23,13 @@ export class ArduinoSerial {
         ipcMain.on("serial", (event, args) => {
             const { input } = args;
             this.serial.write(input);
+        });
+
+        ipcMain.on("monitorOpen", () => {
+            this.serial.registerListener((content) => {
+                if(!this.window) return;
+                this.window.webContents.send('serial', { content })
+            });
         });
 
         setInterval(() => this.checkConnection(), 1000);
