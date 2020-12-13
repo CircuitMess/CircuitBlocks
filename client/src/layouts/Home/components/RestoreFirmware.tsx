@@ -35,8 +35,7 @@ export class RestoreFirmware extends React.Component<RestoreFirmwareProps, Resto
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20 }}>
                         <Button primary onClick={() => callback("cm:esp32:ringo")} style={{margin: "0 15px"}}>Ringo</Button>
                         <Button primary onClick={() => callback("cm:esp8266:nibble")} style={{margin: "0 15px"}}>Nibble</Button>
-                        {/*<Button primary onClick={() => callback("spencer")} style={{margin: "0 15px"}}>Spencer</Button>*/}
-                        
+                        <Button primary onClick={() => callback("cm:esp32:spencer")} style={{margin: "0 15px"}}>Spencer</Button>
                     </div>
                 </div>
             </ModalBase>

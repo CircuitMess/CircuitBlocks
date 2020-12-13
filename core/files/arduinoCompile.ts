@@ -165,6 +165,9 @@ export default class ArduinoCompile {
 
             if(device == "ringo"){
                 firmware = path.join(platformDir, "firmware", "firmware.bin");
+            }else if(device == "spencer"){
+                firmware = path.resolve(".", "resources", "SpencerFirmware", "Spencer.bin");
+                args.device = "cm:esp32:ringo";
             }else{
                 const boards = parseProps(fs.readFileSync(path.join(platformDir, "boards.txt"), { encoding: "utf8" }));
                 const firmwarePath = boards[device + ".bootloader.tool.firmware"];
