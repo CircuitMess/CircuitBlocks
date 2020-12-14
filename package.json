@@ -41,6 +41,9 @@
     "directories": {
       "buildResources": "resources"
     },
+    "extraResources": [
+      "resources/SpencerFirmware/*"
+    ],
     "mac": {
       "helperBundleId": "com.circuitmess.circuitblocks",
       "category": "public.app-category.developer-tools",

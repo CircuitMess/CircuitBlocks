@@ -155,7 +155,12 @@ export class SpencerSettings extends React.Component<SpencerSettingsProps, Spenc
 
     public render(){
         const { open, closeCallback } = this.props;
-        const { fahrenheit, connected, scanning, saving, ssid, privacyOpen, privacyAccepted } = this.state;
+        const { fahrenheit, connected, scanning, saving, privacyOpen, privacyAccepted } = this.state;
+
+		let ssid = this.state.ssid;
+		if(ssid == "SpencerFoo"){
+			ssid = "";
+		}
 
         let wifiList = this.state.wifiList;
 		if(ssid && ssid !== "" && ssid !== "SpencerFoo" && wifiList.indexOf(ssid) === -1){
