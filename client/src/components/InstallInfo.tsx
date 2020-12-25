@@ -15,6 +15,7 @@ interface InstallInfoState {
     stage: string;
     error: string | undefined;
     restoring: boolean | undefined;
+    updateDismissed: boolean;
 }
 
 export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoState> {
@@ -25,7 +26,8 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         this.state = {
             stage: "DONE",
             error: undefined,
-            restoring: false
+            restoring: false,
+            updateDismissed: false
         };
 
         ipcRenderer.on("installstate", (event, args) => {
@@ -42,15 +44,22 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
 
         this.setState({ stage: "DONE", error: undefined, restoring: false });
 
-        if(!wasRestoring){
+        if(!wasRestoring && this.state.stage != "DISMISS"){
             ipcRenderer.send("install");
         }else{
             this.props.setIsInstalling(false);
         }
     }
 
+    private dismiss(){
+        ipcRenderer.send("startdaemon");
+        ipcRenderer.send("daemoncheck");
+        this.setState({ stage: "DISMISS", error: "Please note that some features such as compiling might not work. Restart CircuitBlocks to retry the update.", restoring: false, updateDismissed: true });
+        this.props.setIsInstalling(false);
+    }
+
     public render(){
-        const { stage, error, restoring } = this.state;
+        const { stage, error, restoring, updateDismissed } = this.state;
         const loading = stage == "";
 
         if(stage == "DONE"){
@@ -63,7 +72,8 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             ARDUINO: "Arduino",
             CLI: "Arduino CLI",
             RINGO: "Platform and board definitions", // formerly "Ringo board and libraries", hence the `RINGO` key
-            UPDATE: "Checking for updates..."
+            UPDATE: "Checking for updates...",
+            DISMISS: "Update"
         };
 
         let heading, status;
@@ -78,6 +88,9 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             if(stage == "UPDATE"){
                 heading = "Updating...";
                 subtitle = "Hold on tight. This might take a bit.";
+            }else if(stage == "DISMISS"){
+                heading = "Update";
+                // subtitle = ;
             }else{
                 heading = "Installing...";
                 subtitle = "Hold on tight. This might take up to 10 minutes.";
@@ -96,7 +109,8 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
                         <Loader active={ error == undefined } indeterminate size={"massive"} inline={"centered"} style={{ margin: "20px auto" }} />
                         <div style={{ paddingTop: 0, textAlign: "center" }}>{ status }</div>
                         { subtitle && <div style={{ paddingTop: 5, textAlign: "center" }}>{ subtitle }</div> }
-                        { (error != undefined) && <Button onClick={ () => this.retry() } primary style={{ margin: "0 auto", display: "block", marginTop: 20 }}>{ restoring ? "Ok" : "Try again" }</Button> }
+                        { (error != undefined) && <Button onClick={ () => this.retry() } primary style={{ margin: "0 auto", display: "block", marginTop: 20 }}>{ restoring || stage == "DISMISS" ? "Ok" : "Try again" }</Button> }
+                        { (error != undefined && !restoring && stage != "DISMISS") && <Button onClick={ () => this.dismiss() } role={"cancel"} color={"black"} style={{ margin: "0 auto", display: "block", marginTop: 20 }}>Continue without installing</Button> }
                     </div>
                 </ModalBase> }
         </div>

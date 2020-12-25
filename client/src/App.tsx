@@ -66,7 +66,7 @@ const App = () => {
       setError(args.error);
     });
 
-    ipcRenderer.send("daemoncheck");
+    // ipcRenderer.send("daemoncheck");
   }, []);
 
   return (

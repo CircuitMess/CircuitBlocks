@@ -1,8 +1,8 @@
 import ArduinoCompiler from "../compiler/compiler";
 import Installer from "../compiler/installer";
-import {ipcMain, BrowserWindow} from "electron";
+import {BrowserWindow, ipcMain} from "electron";
 import logger from "./logger";
-import messenger from "./messenger";
+import messenger, {MessageType} from "./messenger";
 
 interface SetupState {
     stage: string;
@@ -23,6 +23,11 @@ export default class arduinoInstall {
 
         ipcMain.on("install", (event, args) => {
             this.setup(callback);
+        });
+
+        ipcMain.on("startdaemon", (event, args) => {
+            console.log("Got start daemon");
+            this.startDaemon();
         });
 
         ipcMain.on("daemoncheck", (event, args) => {
