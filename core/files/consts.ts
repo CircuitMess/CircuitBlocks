@@ -1,10 +1,11 @@
 import path from 'path';
 import * as os from 'os';
 import * as fs from "fs";
+import {getDocumentsFolder} from 'platform-folders';
 
 let home;
 if(os.type() == "Windows_NT"){
-    home = path.join(os.homedir(), "Documents");
+    home = getDocumentsFolder();
 }else{
     home = path.join(os.homedir());
 }

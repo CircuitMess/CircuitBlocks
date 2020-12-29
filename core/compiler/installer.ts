@@ -4,6 +4,8 @@ import * as fs from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import rimraf from 'rimraf';
+import {getDocumentsFolder} from 'platform-folders';
+
 
 import ArduinoCompiler, { InstallInfo } from './compiler';
 import * as util from './util';
@@ -433,7 +435,7 @@ export default class Installer {
           if(os.type() == "Linux"){
               info.sketchbook = path.join(os.homedir(), "Arduino");
           }else{
-              info.sketchbook = path.join(os.homedir(), "Documents", "Arduino");
+              info.sketchbook = path.join(getDocumentsFolder(), "Arduino");
           }
       }
 

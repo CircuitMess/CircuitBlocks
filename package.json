@@ -19,6 +19,7 @@
     "grpc": "^1.23.3",
     "js-yaml": "^3.13.1",
     "lzma-native": "^4.0.5",
+    "platform-folders": "^0.5.2",
     "request": "^2.88.0",
     "rimraf": "^3.0.2",
     "serialport": "^9.0.0",
@@ -30,6 +31,7 @@
     "productName": "CircuitBlocks",
     "copyright": "Copyright © 2020 CircuitMess",
     "buildDependenciesFromSource": true,
+    "npmRebuild": false,
     "afterSign": "scripts/notarize.js",
     "files": [
       "client/build/**/*",

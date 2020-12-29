@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import ArduinoCompiler, {InstallInfo} from "../compiler/compiler";
 import * as request from 'request';
+import {getDocumentsFolder} from 'platform-folders';
 
 export interface LogEntry {
     message: string;
@@ -197,7 +198,7 @@ class Logger {
     public saveReport(report: any){
         let reportDir = os.homedir();
         if(os.type() == "Windows_NT" || os.type() == "Darwin"){
-            reportDir = path.join(reportDir, "Documents");
+            reportDir = getDocumentsFolder();
         }
 
         const reportPath = path.join(reportDir, "CircuitBlocksReport.txt");
