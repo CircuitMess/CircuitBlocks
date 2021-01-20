@@ -1545,10 +1545,8 @@ Blockly.Blocks.procedures_defnoreturn = {
   }, getProcedureDef: function () {
     return [this.getFieldValue("NAME"), this.arguments_, !1]
   }, getVars: function () {
-    console.log("arguments", this.arguments_);
     return this.arguments_
   }, getVarModels: function () {
-    console.log("var models", this.argumentVarModels_);
     return this.argumentVarModels_
   }, renameVarById: function (a, b) {
     var c = this.workspace.getVariableById(a);
@@ -1965,7 +1963,6 @@ Blockly.PXTBlockly.FunctionUtils.createAllInputs_ = function (a) {
   var e = this;
   this.arguments_.forEach(function (b) {
     var c = e.appendValueInput(b.id);
-    console.log(b);
     Blockly.Functions.isCustomType(b.type) ? c.setCheck(b.type) : c.setCheck(b.type.charAt(0).toUpperCase() + b.type.slice(1));
     e.isInsertionMarker() || e.populateArgument_(b, a, c)
   });
