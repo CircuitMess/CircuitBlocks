@@ -47,3 +47,35 @@ Blockly.Blocks["input_button_any"] = {
         this.appendStatementInput('CODE');
     }
 };
+
+Blockly.Blocks["input_button_spencer"] = {
+    init: function(){
+        this.setColour(Blockly.Msg.IO_HUE);
+        this.appendDummyInput()
+            .appendField("When button");
+        this.appendDummyInput()
+            .appendField("gets");
+        this.appendDummyInput()
+            .appendField(new Blockly.FieldDropdown([
+                ["pressed", "press"],
+                ["released", "release"]
+            ]), "STATE");
+
+        this.appendStatementInput('CODE');
+    }
+};
+
+Blockly.Blocks["input_button_held_spencer"] = {
+    init: function(){
+        this.setColour(Blockly.Msg.IO_HUE);
+        this.appendDummyInput('BUTTON')
+            .appendField("When button");
+        this.appendValueInput("DURATION")
+            .setCheck(Blockly.Types.NUMBER.checkList)
+            .appendField("gets held for");
+        this.appendDummyInput()
+            .appendField("milliseconds");
+
+        this.appendStatementInput('CODE');
+    }
+};

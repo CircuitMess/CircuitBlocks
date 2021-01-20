@@ -43,9 +43,14 @@ goog.require("Blockly.Arduino.math");
 goog.require("Blockly.Arduino.variables");
 goog.require("Blockly.Arduino.MAKERphone");
 goog.require("Blockly.Arduino.Nibble");
+goog.require("Blockly.Arduino.Spencer");
 goog.require("Blockly.Arduino.phone");
 goog.require("Blockly.Arduino.display");
 goog.require("Blockly.Arduino.display_sprite");
+goog.require("Blockly.Arduino.ledmatrix");
+goog.require("Blockly.Arduino.audio_spencer");
+goog.require("Blockly.Arduino.wifi");
+goog.require("Blockly.Arduino.spencer_speech");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
@@ -66,6 +71,10 @@ goog.require('Blockly.Blocks.functions');
 goog.require('Blockly.Blocks.phone');
 goog.require('Blockly.Blocks.display');
 goog.require('Blockly.Blocks.display_sprite');
+goog.require('Blockly.Blocks.ledmatrix');
+goog.require('Blockly.Blocks.audio_spencer');
+goog.require('Blockly.Blocks.wifi');
+goog.require('Blockly.Blocks.spencer_speech');
 
 Blockly.Device = "";
 

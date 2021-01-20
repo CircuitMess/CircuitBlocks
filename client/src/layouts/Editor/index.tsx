@@ -50,6 +50,8 @@ void loop() {
 }`
 };
 
+StartSketches["cm:esp32:spencer"] = StartSketches["cm:esp8266:nibble"];
+
 const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
 
 export enum SketchType { BLOCK, CODE }
@@ -313,7 +315,8 @@ class Editor extends Component<EditorProps, State> {
   load = (sketch: SketchLoadInfo) => {
     const Name: { [name: string]: string } = {
       "cm:esp32:ringo": "MAKERphone",
-      "cm:esp8266:nibble": "Nibble"
+      "cm:esp8266:nibble": "Nibble",
+      "cm:esp32:spencer": "Spencer"
     }
 
     Blockly.Device = Name[sketch.device];

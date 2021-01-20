@@ -28,7 +28,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
         )}
 
         {projects.block.map((sketch: Sketch, index) => (
-          <Card key={`section-${title}-${index}`} className={ "descriptive " + (sketch.device == "cm:esp8266:nibble" ? "nibble" : undefined) }
+          <Card key={`section-${title}-${index}`} className={ "descriptive " + (Devices.hasOwnProperty(sketch.device) ? Devices[sketch.device].name.toLowerCase() : undefined) }
             onClick={() => onPress('OPEN', sketch)}>
               <div className="image"><svg dangerouslySetInnerHTML={{ __html: sketch.snapshot || "" }} /></div>
             <div className="cover">
@@ -42,7 +42,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
         ))}
 
           {projects.code.map((sketch: Sketch, index) => (
-              <Card key={`section-${title}-${index}`} className={ "descriptive " + (sketch.device == "cm:esp8266:nibble" ? "nibble" : undefined) }
+              <Card key={`section-${title}-${index}`} className={ "descriptive " + (Devices.hasOwnProperty(sketch.device) ? Devices[sketch.device].name.toLowerCase() : undefined) }
                     onClick={() => onPress('OPEN', sketch)}>
                   <div className="image code"><i className="material-icons"> code </i></div>
                   <div className="cover">

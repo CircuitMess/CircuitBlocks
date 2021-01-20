@@ -17,6 +17,10 @@ const Card = styled.div`
     background: #FFC629;
   }
   
+  &.spencer {
+    background: #E3384D;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

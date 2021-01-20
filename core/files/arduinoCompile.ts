@@ -163,16 +163,13 @@ export default class ArduinoCompile {
             });
             const platformDir = path.join(hardwareDir, newest);
 
-            if(device == "ringo"){
+            /*if(device == "ringo"){
                 firmware = path.join(platformDir, "firmware", "firmware.bin");
-            }else if(device == "spencer"){
-                firmware = path.resolve(process.resourcesPath, "resources", "SpencerFirmware", "Spencer.bin");
-                args.device = "cm:esp32:ringo";
-            }else{
+            }else{*/
                 const boards = parseProps(fs.readFileSync(path.join(platformDir, "boards.txt"), { encoding: "utf8" }));
                 const firmwarePath = boards[device + ".bootloader.tool.firmware"];
                 firmware = path.join(platformDir, "firmwares", firmwarePath);
-            }
+            //}
 
             console.log("Uploading", firmware);
 
@@ -222,8 +219,8 @@ export default class ArduinoCompile {
 
     private upload(binary: string, device: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
         if(this.arduinoSerial.getPort() == undefined){
-            logger.log("Upload error: Ringo disconnected");
-            console.log(new Error("Ringo disconnected"));
+            logger.log("Upload error: Device disconnected");
+            console.log(new Error("Device disconnected"));
             if(eCallback){
                 eCallback("Upload error. Check your device then try again.");
             }else{

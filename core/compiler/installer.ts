@@ -39,7 +39,7 @@ export default class Installer {
 
     ringo: {
       manager:
-        'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json',
+        'https://raw.githubusercontent.com/CircuitMess/Arduino-Packages/master/package_circuitmess.com_esp32_index.json',
       fqbn: 'cm:esp32',
       library: 'https://github.com/CircuitMess/CircuitMess-Ringo/archive/master.zip'
     },

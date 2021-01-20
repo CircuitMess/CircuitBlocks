@@ -578,7 +578,7 @@ export default class ArduinoCompiler {
       serial.setUploading(true);
 
       console.log("Uploading to", device);
-      if(device != "cm:esp32:ringo"){
+      if(device == "cm:esp8266:nibble"){
         device += ":baud=921600";
       }
 

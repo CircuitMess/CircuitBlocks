@@ -182,6 +182,9 @@ export class Blocks {
         input_button_nibble: '<block type="input_button"><value name="BUTTON"><block type="nibble_buttons"></block></value></block>',
         input_button_held_nibble: '<block type="input_button_held"><value name="BUTTON"><block type="nibble_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
         nibble_buttons: '<block type="nibble_buttons"></block>',
+
+        input_button_spencer: '<block type="input_button_spencer"></block>',
+        input_button_held_spencer: '<block type="input_button_held_spencer"><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
     };
 
     public static piezo: any = {
@@ -191,4 +194,44 @@ export class Blocks {
         is_mute: '<block type="piezo_ismute"></block>'
     }
 
+    public static ledmatrix: any = {
+        push: '<block type="ledmatrix_push"></block>',
+        clear: '<block type="ledmatrix_clear"></block>',
+        pixel: '<block type="ledmatrix_pixel"></block>',
+        text: '<block type="ledmatrix_text"></block>',
+        brightness: '<block type="ledmatrix_brightness"></block>',
+        start_animation: '<block type="ledmatrix_start_animation"><value name="ANIMATION"><shadow type="ledmatrix_animation"><field name="ANIMATION">GIF-idle1.gif</field></shadow></value></block>',
+        stop_animation: '<block type="ledmatrix_stop_animation"></block>',
+    }
+
+    public static audio_spencer: any = {
+        play: '<block type="audio_spencer_playsample"></block>',
+        stop: '<block type="audio_spencer_stopsample"></block>',
+        done: '<block type="audio_spencer_done"></block>',
+
+        samples_error: '<block type="audio_spencer_sample_error"></block>',
+        samples_generic: '<block type="audio_spencer_sample_generic"></block>',
+        samples_level: '<block type="audio_spencer_sample_level"></block>',
+        samples_special: '<block type="audio_spencer_sample_special"></block>',
+        samples_weather: '<block type="audio_spencer_sample_weather"></block>',
+        samples_month: '<block type="audio_spencer_sample_month"></block>',
+        samples_weekday: '<block type="audio_spencer_sample_weekday"></block>',
+        samples_number: '<block type="audio_spencer_sample_number"></block>',
+        samples_number_ordinal: '<block type="audio_spencer_sample_number_ordinal"></block>',
+        samples_funpack: '<block type="audio_spencer_sample_funpack"></block>',
+    };
+
+    public static network: any = {
+        set: '<block type="wifi_set_info"></block>',
+        state_changed: '<block type="wifi_state_changed"></block>',
+        is_connected: '<block type="wifi_is_connected"></block>',
+        wifi_connect: '<block type="wifi_connect"></block>',
+        wifi_connect_callback: '<block type="wifi_connect_callback"></block>',
+    };
+
+    public static spencer_speech: any = {
+        listen: '<block type="spencer_speech_listen"></block>',
+        process: '<block type="spencer_speech_processed"></block>',
+        synthesize: '<block type="spencer_speech_synthesize"></block>',
+    };
 }

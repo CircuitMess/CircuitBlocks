@@ -61,7 +61,8 @@ interface Device {
 
 export const Devices: { [name: string]: Device } = {
   "cm:esp32:ringo": { fqbn: "cm:esp32:ringo", name: "Ringo" },
-  "cm:esp8266:nibble": { fqbn: "cm:esp8266:nibble", name: "Nibble" }
+  "cm:esp8266:nibble": { fqbn: "cm:esp8266:nibble", name: "Nibble" },
+  "cm:esp32:spencer": { fqbn: "cm:esp32:spencer", name: "Spencer" },
 };
 
 export interface Sketch {
