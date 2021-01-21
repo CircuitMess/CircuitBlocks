@@ -197,9 +197,9 @@ export class Blocks {
     public static ledmatrix: any = {
         push: '<block type="ledmatrix_push"></block>',
         clear: '<block type="ledmatrix_clear"></block>',
-        pixel: '<block type="ledmatrix_pixel"></block>',
-        text: '<block type="ledmatrix_text"></block>',
-        brightness: '<block type="ledmatrix_brightness"></block>',
+        pixel: '<block type="ledmatrix_pixel"><value name="X"><shadow type="math_number"><field name="NUM">2</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">6</field></shadow></value><value name="BRIGHTNESS"><shadow type="math_number"><field name="NUM">255</field></shadow></value></block>',
+        text: '<block type="ledmatrix_text"><value name="TEXT"><shadow type="text"><field name="TEXT"></field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="BRIGHTNESS"><shadow type="math_number"><field name="NUM">255</field></shadow></value></block>',
+        brightness: '<block type="ledmatrix_brightness"><value name="BRIGHTNESS"><shadow type="math_number"><field name="NUM">150</field></shadow></value></block>',
         start_animation: '<block type="ledmatrix_start_animation"><value name="ANIMATION"><shadow type="ledmatrix_animation"><field name="ANIMATION">GIF-idle1.gif</field></shadow></value></block>',
         stop_animation: '<block type="ledmatrix_stop_animation"></block>',
     }
@@ -222,7 +222,7 @@ export class Blocks {
     };
 
     public static network: any = {
-        set: '<block type="wifi_set_info"></block>',
+        set: '<block type="wifi_set_info"><value name="SSID"><shadow type="text"><field name="TEXT"></field></shadow></value><value name="PASS"><shadow type="text"><field name="TEXT"></field></shadow></value></block>',
         state_changed: '<block type="wifi_state_changed"></block>',
         is_connected: '<block type="wifi_is_connected"></block>',
         wifi_connect: '<block type="wifi_connect"></block>',
@@ -232,6 +232,6 @@ export class Blocks {
     public static spencer_speech: any = {
         listen: '<block type="spencer_speech_listen"></block>',
         process: '<block type="spencer_speech_processed"></block>',
-        synthesize: '<block type="spencer_speech_synthesize"></block>',
+        synthesize: '<block type="spencer_speech_synthesize"><value name="TEXT"><shadow type="text"><field name="TEXT">Hello! My name is Spencer!</field></shadow></value></block>',
     };
 }
