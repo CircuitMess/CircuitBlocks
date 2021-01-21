@@ -21,7 +21,7 @@ export class CLI {
 				? "arduino-cli.exe"
 				: "./arduino-cli";
 
-			return child_process.execFile(command, args, { encoding: "utf8", cwd: path }, (error, stdout, stderr) => {
+			child_process.execFile(command, args, { encoding: "utf8", cwd: path }, (error, stdout, stderr) => {
 				if(error){
 					reject(error);
 					return;

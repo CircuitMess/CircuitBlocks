@@ -140,16 +140,14 @@ export default class Installer {
 
   private cliInit(path, callback: (error) => void) {
       (async () => {
-          try {
-              await CLI.run(['config', 'init'], path);
-              await CLI.run(['core', 'update-index'], path);
-              await CLI.run(['lib', 'update-index'], path);
-              callback(null);
-          }catch(e){
-              logger.log("CLI init error", e);
-              callback(e);
-          }
-      })();
+          await CLI.run(['config', 'init'], path);
+          await CLI.run(['core', 'update-index'], path);
+          await CLI.run(['lib', 'update-index'], path);
+          callback(null);
+      })().then(() => callback(null)).catch(e => {
+          logger.log("CLI init error", e);
+          callback(e);
+      });
   }
 
   private installCli(file, callback: (err) => void) {
@@ -503,30 +501,24 @@ export default class Installer {
       await CLI.run(args, info);
     }
 
-    try{
-        (async () => {
-            await execCli(['--additional-urls', additionals, 'core', 'update-index']);
-            await execCli(['--additional-urls', additionals, 'lib', 'update-index']);
-            await execCli([
-                '--additional-urls',
-                additionals,
-                'core',
-                'install',
-                this.downloads.ringo.fqbn
-            ]);
-            await execCli([
-                '--additional-urls',
-                additionals,
-                'core',
-                'install',
-                this.downloads.nibble.fqbn
-            ]);
-
-            this.installRingoLib(callback, info, stage);
-        })();
-    }catch(e){
-        callback("Library update error. Please check your internet connection.")
-    }
+    (async () => {
+      await execCli(['--additional-urls', additionals, 'core', 'update-index']);
+      await execCli(['--additional-urls', additionals, 'lib', 'update-index']);
+      await execCli([
+          '--additional-urls',
+          additionals,
+          'core',
+          'install',
+          this.downloads.ringo.fqbn
+      ]);
+      await execCli([
+          '--additional-urls',
+          additionals,
+          'core',
+          'install',
+          this.downloads.nibble.fqbn
+      ]);
+    })().then(() => this.installRingoLib(callback, info, stage)).catch(e => callback("Library update error. Please check your internet connection."));
   }
 
   private arduino(callback: (err) => void) {
@@ -577,23 +569,21 @@ export default class Installer {
   private checkCliUpdate(callback: (err) => void, info: InstallInfo, stage?: (string) => void){
       const cliPath = path.join(info.cli, "arduino-cli" + (this.PLATFORM == "Windows_NT" ? ".exe" : ""));
 
-      (async () => {
-          CLI.run([ "--format", "json", "version" ], info).then(data => {
-              const cliData = JSON.parse(data);
+      CLI.run([ "--format", "json", "version" ], info).then(data => {
+          const cliData = JSON.parse(data);
 
-              if(isNewer(this.versions.cli, cliData.VersionString)){
-                  console.log("Updating CLI");
-                  if(stage) stage("CLI");
-                  fs.unlinkSync(cliPath);
-                  this.cli(callback);
-              }else{
-                  callback(null);
-              }
-          }).catch(e => {
-              logger.log("CLI version check error", e);
-              callback(e);
-          });
-      })();
+          if(isNewer(this.versions.cli, cliData.VersionString)){
+              console.log("Updating CLI");
+              if(stage) stage("CLI");
+              fs.unlinkSync(cliPath);
+              this.cli(callback);
+          }else{
+              callback(null);
+          }
+      }).catch(e => {
+          logger.log("CLI version check error", e);
+          callback(e);
+      });
   }
 
   public install(info: InstallInfo | null, stage: (string) => void, error: (err) => void) {
