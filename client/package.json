@@ -5,7 +5,9 @@
   "homepage": ".",
   "dependencies": {
     "@babel/core": "7.5.5",
+    "@brainhubeu/react-carousel": "^1.19.26",
     "@svgr/webpack": "4.3.2",
+    "@types/brainhubeu__react-carousel": "^2.0.2",
     "@types/electron": "^1.6.10",
     "@types/jest": "24.0.17",
     "@types/node": "12.7.2",
