@@ -305,7 +305,7 @@ export default class Installer {
 
                 const name = files[0];
                 const arduinoPath = path.join(tmp, name);
-                const installerPath = path.join(".", "resources", "ArduinoInstallerRO.dmg");
+                const installerPath = path.join(process.resourcesPath, "resources", "ArduinoInstallerRO.dmg");
 
                 util.mountDmg(installerPath, (err, mountPath) => {
                     if(err){
@@ -345,49 +345,46 @@ export default class Installer {
 
     public installDriverDarwin(callback: (err) => void){
       const tmpDir = util.tmpdir("cb-ard-driver");
-      util.download(this.downloads.arduino.Darwin_Driver, tmpDir)
-          .then((downloadPath) => {
-              util.extract(downloadPath, tmpDir)
-                  .then(() => {
+        const driverPath = path.join(process.resourcesPath, "resources", "Mac_OSX_VCP_Driver.zip");
+        util.extract(driverPath, tmpDir)
+            .then(() => {
 
-                      const extracted = path.join(tmpDir, "Mac_OSX_VCP_Driver", "Mac_OSX_VCP_Driver", "SiLabsUSBDriverDisk.dmg");
-                      util.mountDmg(extracted, (err, mountPath) => {
-                          const kextPath = path.join(mountPath, "Install CP210x VCP Driver.app", "Contents", "Resources", "SiLabsUSBDriver.kext");
+                const extracted = path.join(tmpDir, "macOS_VCP_Driver", "SiLabsUSBDriverDisk.dmg");
+                util.mountDmg(extracted, (err, mountPath) => {
+                    const kextPath = path.join(mountPath, "Install CP210x VCP Driver.app", "Contents", "Resources", "SiLabsUSBDriver.kext");
 
-                          const setup: string[] = [
-                            `cp -r '${kextPath}' /Library/Extensions/`,
-                            `chown -R root:wheel /Library/Extensions/SiLabsUSBDriver.kext`,
-                            `chmod -R 755 /Library/Extensions/SiLabsUSBDriver.kext`,
-                            `kextcache -i /`
-                          ];
+                    const setup: string[] = [
+                        `cp -r '${kextPath}' /Library/Extensions/`,
+                        `chown -R root:wheel /Library/Extensions/SiLabsUSBDriver.kext`,
+                        `chmod -R 755 /Library/Extensions/SiLabsUSBDriver.kext`,
+                        `kextcache -i /`
+                    ];
 
-                          sudoPrompt.exec(setup.join(" && "), {
-                                  name: 'Arduino installer',
-                                  icns: "./resources/icon.icns"
-                              },
-                              (error, stdout, stderr) => {
-                                if(error){
-                                  var err;
-                                  if(error instanceof Error){
-                                      err = error as any;
-                                      err.stdout = stdout;
-                                      err.stderr = stderr;
-                                      callback(error);
-                                  }else{
-                                      err = error;
-                                  }
-                                  callback(err);
-                                  return;
+                    sudoPrompt.exec(setup.join(" && "), {
+                            name: 'Arduino installer',
+                            icns: path.join(process.resourcesPath, "resources", "icon.icns")
+                        },
+                        (error, stdout, stderr) => {
+                            if(error){
+                                var err;
+                                if(error instanceof Error){
+                                    err = error as any;
+                                    err.stdout = stdout;
+                                    err.stderr = stderr;
+                                    callback(error);
+                                }else{
+                                    err = error;
                                 }
+                                callback(err);
+                                return;
+                            }
 
-                                  callback(null);
-                              });
-                      });
+                            callback(null);
+                        });
+                });
 
-                  })
-                  .catch((err) => callback(err));
-          })
-          .catch((err) => callback(err));
+            })
+            .catch((err) => callback(err));
     }
 
   private installArduino(file, callback: (err) => void) {

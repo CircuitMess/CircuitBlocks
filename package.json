@@ -43,6 +43,11 @@
     "directories": {
       "buildResources": "resources"
     },
+    "extraResources": [
+      "resources/ArduinoInstallerRO.dmg",
+      "resources/Mac_OSX_VCP_Driver.zip",
+      "resources/icon.*"
+    ],
     "mac": {
       "helperBundleId": "com.circuitmess.circuitblocks",
       "category": "public.app-category.developer-tools",
