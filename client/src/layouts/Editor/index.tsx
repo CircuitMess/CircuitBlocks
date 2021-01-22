@@ -17,6 +17,7 @@ import Notification, { NotificationWrapper } from '../../components/Notification
 import Serial from "./components/Serial";
 import {Devices, Sketch} from "../Home/index";
 import Toolboxes from "../../components/BlocklyToolbox/Toolbox";
+import MonacoRO from "./components/MonacoRO";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -88,9 +89,8 @@ interface State {
   initState?: string;
   isPromptOpen?: boolean;
   promptText?: string;
-  running: boolean;
   runningStage?: string;
-  runningPercentage?: number;
+  running: boolean;
   notifications: Notification[];
   makerPhoneConnected: boolean;
   filename: string;
@@ -114,11 +114,10 @@ const INIT_STATE: State = {
   isCodeFull: false,
   height: window.innerHeight - NAV_BAR_HEIGHT,
   theme: 'vs-dark',
-  running: false,
   notifications: [],
   makerPhoneConnected: false,
   filename: '',
-  runningPercentage: 0,
+  running: false,
   serial: '',
   isSerialOpen: false,
   type: SketchType.BLOCK,
@@ -167,7 +166,7 @@ class Editor extends Component<EditorProps, State> {
 
     ipcRenderer.on("runprogress", (event: any, args: any) => {
       if(args.stage == "DONE" && args.running){
-        this.setState({ running: true, runningPercentage: 0 });
+        this.setState({ running: true });
         return;
       }
 
@@ -178,21 +177,13 @@ class Editor extends Component<EditorProps, State> {
       }
 
       if(args.stage == "DONE"){
-        this.setState({ running: false, runningStage: undefined, runningPercentage: undefined });
+        this.setState({ running: false, runningStage: undefined});
         return;
       }
 
-      let progress = args.stage == "UPLOAD" ? 50 : 0;
-      progress += args.progress / 2;
-
-      if(args.stage == "EXPORT"){
-        progress *= 2;
+      if(this.state.runningStage != args.stage){
+        this.setState({ runningStage: args.stage })
       }
-
-      if(progress == 0) progress = 0.1;
-      if(progress == 0.5) progress = 0.56;
-
-      this.setState({ runningPercentage: progress, runningStage: args.stage })
     });
   }
 
@@ -275,7 +266,7 @@ class Editor extends Component<EditorProps, State> {
     if(this.state.running){
       ipcRenderer.send('stop', { code: this.getCode(), minimal: this.state.minimalCompile });
     }else{
-      this.setState({ running: true, runningPercentage: 0 });
+      this.setState({ running: true });
       ipcRenderer.send('run', { code: this.getCode(), device: this.props.device, minimal: this.state.minimalCompile });}
   };
 
@@ -433,7 +424,7 @@ class Editor extends Component<EditorProps, State> {
     const path = dialog.showSaveDialogSync({});
     if(path == undefined) return;
 
-    this.setState({ running: true, runningPercentage: 0 });
+    this.setState({ running: true});
     console.log("Exporting for ", this.props.device);
     ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
   };
@@ -519,9 +510,7 @@ class Editor extends Component<EditorProps, State> {
       isPromptOpen,
       initState,
       promptText,
-      running,
       runningStage,
-      runningPercentage,
       notifications,
       makerPhoneConnected,
       filename,
@@ -605,9 +594,6 @@ class Editor extends Component<EditorProps, State> {
               isCodeOpen={isCodeOpen}
               isSerialOpen={isSerialOpen}
               openSerial={() => this.setState({isSerialOpen: !this.state.isSerialOpen})}
-              running={running}
-              runningStage={runningStage}
-              runningPercentage={runningPercentage}
               connected={makerPhoneConnected}
               exportBinary={this.exportBinary}
               codeButton={type == SketchType.BLOCK}
@@ -648,7 +634,7 @@ class Editor extends Component<EditorProps, State> {
               theme={theme}
               extendedHeader={type == SketchType.BLOCK}
             />
-            { (type == SketchType.CODE) && <Monaco ref={monacoRef} startCode={startCode} theme={theme} editing={true} /> || <Monaco code={code} theme={theme} editing={false} /> }
+            { (type == SketchType.CODE) && <Monaco ref={monacoRef} startCode={startCode} theme={theme} editing={true} /> || <MonacoRO code={code} theme={theme} /> }
           </EditorPopup>
         )}
       </div>

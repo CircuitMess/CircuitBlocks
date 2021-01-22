@@ -47,10 +47,13 @@ export default class ArduinoCompile {
                     });
 
                 context.send('runprogress', { stage: 'DONE', cancel: true });
+                this.cancel = false;
             }, 1000);
         });
 
         ipcMain.on("run", (event, args) => {
+            if(this.cancel) return;
+
             const stats = ArduinoCompiler.getDaemon();
             if(!stats.connected){
                 this.send('runprogress', { stage: 'DONE' });
@@ -85,6 +88,8 @@ export default class ArduinoCompile {
         });
 
         ipcMain.on("export", (event, args) => {
+            if(this.cancel) return;
+
             const stats = ArduinoCompiler.getDaemon();
             if(!stats.connected){
                 if(stats.connecting){
@@ -206,7 +211,6 @@ export default class ArduinoCompile {
                 callback(data.binary);
             }).catch(error => {
                 if(this.cancel){
-                    this.cancel = false;
                     return;
                 }
                 console.log(error);
@@ -237,7 +241,6 @@ export default class ArduinoCompile {
             })
             .catch(error => {
                 if(this.cancel){
-                    this.cancel = false;
                     return;
                 }
                 console.log(error);

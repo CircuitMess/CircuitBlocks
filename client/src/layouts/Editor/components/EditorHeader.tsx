@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 
 import Button from '../../../components/Button';
 import Progressbar from './ProgressBar';
 import {Devices} from "../../Home";
+import {AllElectron, IpcRenderer} from "electron";
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -69,6 +70,9 @@ const StyledHeader = styled.div`
   }
 `;
 
+const electron: AllElectron = (window as any).require('electron');
+const ipcRenderer: IpcRenderer = electron.ipcRenderer;
+
 interface Props {
   home: () => void;
   title: string;
@@ -77,9 +81,6 @@ interface Props {
   toggle: () => void;
   run: () => void;
   isCodeOpen: boolean;
-  running: boolean;
-  runningStage?: string;
-  runningPercentage?: number;
   connected: boolean;
   isSerialOpen: boolean;
   openSerial: () => void;
@@ -100,9 +101,6 @@ const EditorHeader: React.FC<Props> = (props) => {
     run,
     isCodeOpen,
     connected,
-    running,
-    runningStage,
-    runningPercentage,
     isSerialOpen,
     openSerial,
     exportBinary,
@@ -112,7 +110,34 @@ const EditorHeader: React.FC<Props> = (props) => {
     device
   } = props;
 
+  const [ runningPercentage, setRunningPercentage ] = useState(0);
+  const [ runningStage, setRunningStage ] = useState("DONE");
+  const [ running, setRunning ] = useState(false);
+
   const stage = runningStage == "UPLOAD" ? "Uploading" : "Compiling";
+
+  ipcRenderer.on("runprogress", (event: any, args: any) => {
+    if(args.stage == "DONE" || args.cancel){
+      setRunning(false);
+      setRunningStage("DONE");
+      setRunningPercentage(0);
+      return;
+    }
+
+    let progress = args.stage == "UPLOAD" ? 50 : 0;
+    progress += args.progress / 2;
+
+    if(args.stage == "EXPORT"){
+      progress *= 2;
+    }
+
+    if(progress == 0) progress = 0.1;
+    if(progress == 0.5) progress = 0.56;
+
+    setRunningPercentage(progress);
+    setRunningStage(args.stage);
+    setRunning(true);
+  });
 
   return (
     <StyledHeader>
