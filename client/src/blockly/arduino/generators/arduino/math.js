@@ -56,7 +56,7 @@ Blockly.Arduino['math_arithmetic'] = function(block) {
   var code;
   // Power in C++ requires a special case since it has no operator.
   if (!operator) {
-    code = 'Math.pow(' + argument0 + ', ' + argument1 + ')';
+    code = 'pow(' + argument0 + ', ' + argument1 + ')';
     return [code, Blockly.Arduino.ORDER_UNARY_POSTFIX];
   }
   code = argument0 + operator + argument1;
@@ -121,13 +121,13 @@ Blockly.Arduino['math_single'] = function(block) {
       code = 'floor(' + arg + ')';
       break;
     case 'SIN':
-      code = 'sin(' + arg + ' / 180 * Math.PI)';
+      code = 'sin(' + arg + ' / 180 * M_PI)';
       break;
     case 'COS':
-      code = 'cos(' + arg + ' / 180 * Math.PI)';
+      code = 'cos(' + arg + ' / 180 * M_PI)';
       break;
     case 'TAN':
-      code = 'tan(' + arg + ' / 180 * Math.PI)';
+      code = 'tan(' + arg + ' / 180 * M_PI)';
       break;
   }
   if (code) {
