@@ -6,7 +6,7 @@
     "email": "filip@circuitmess.com",
     "name": "CircuitMess"
   },
-  "version": "1.3.0",
+  "version": "1.3.1",
   "main": "build/app.js",
   "private": true,
   "dependencies": {
@@ -29,7 +29,7 @@
   "build": {
     "appId": "com.circuitmess.circuitblocks",
     "productName": "CircuitBlocks",
-    "copyright": "Copyright © 2020 CircuitMess",
+    "copyright": "Copyright © 2021 CircuitMess",
     "buildDependenciesFromSource": true,
     "npmRebuild": false,
     "afterSign": "scripts/notarize.js",
