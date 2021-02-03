@@ -5,6 +5,8 @@ import Button from '../../../components/Button';
 import Progressbar from './ProgressBar';
 import {Devices} from "../../Home";
 import {AllElectron, IpcRenderer} from "electron";
+import ReactTooltip from 'react-tooltip';
+
 
 const StyledHeader = styled.div`
   box-sizing: border-box;
@@ -145,11 +147,21 @@ const EditorHeader: React.FC<Props> = (props) => {
 
       <div className="left">
         <Button className="icon" onClick={home}>
-          <i className="material-icons"> arrow_back </i>
+          <i className="material-icons" data-tip="Back" data-for="goBack" data-iscapture="true"> arrow_back </i>
         </Button>
+        <ReactTooltip
+            id="goBack"
+            place="bottom"
+            type="dark"
+        />
         <Button className="icon mr-1" onClick={save}>
-          <i className="material-icons"> save </i>
+          <i className="material-icons" data-tip="Save file" data-for="saveButton" data-iscapture="true"> save </i>
         </Button>
+        <ReactTooltip
+            id="saveButton"
+            place="bottom"
+            type="dark"
+        />
         <div className="title">{title}</div>
       </div>
 
@@ -164,12 +176,22 @@ const EditorHeader: React.FC<Props> = (props) => {
         { null && <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
         </Button> }
-        <Button className={`icon`} onClick={exportBinary}>
-          <i className="material-icons"> save_alt </i>
+        <Button className={`icon`} onClick={exportBinary} >
+          <i className="material-icons" data-tip="Open from folder" data-for="openFolder" data-iscapture="true"> save_alt </i>
         </Button>
-        <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}>
+        <ReactTooltip
+            id="openFolder"
+            place="bottom"
+            type="dark"
+        />
+        <Button className={`icon yellow mr-1 ${isSerialOpen ? 'active' : ''}`} onClick={openSerial}  data-tip="Serial monitor" data-for="serialMonitor" data-iscapture="true">
           <i className="material-icons"> call_to_action </i>
         </Button>
+        <ReactTooltip
+            id="serialMonitor"
+            place="bottom"
+            type="dark"
+        />
         { codeButton && <Button className={`icon-text mr-1 ${isCodeOpen ? 'active' : ''}`} onClick={toggle}>
           <div className="text"> {isCodeOpen ? 'Close' : 'Open'} Code </div>
           <i className="material-icons"> code </i>
