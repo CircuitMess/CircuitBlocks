@@ -144,6 +144,7 @@ class Editor extends Component<EditorProps, State> {
 
   constructor(props: EditorProps) {
     super(props);
+    this.handleKeyboardSave = this.handleKeyboardSave.bind(this);
 
     this.state = {
       ...INIT_STATE
@@ -187,6 +188,17 @@ class Editor extends Component<EditorProps, State> {
     });
   }
 
+  handleKeyboardSave(e: any){
+    console.log(e);
+    if((e.keyCode === 83) && (e.ctrlKey === true)){
+      console.log(this);
+        if(!this.props.title){
+          this.openSaveModal();
+        } else {
+          this.save();
+        }
+     }
+  }
   getCode(){
     let code: string;
 
@@ -231,6 +243,7 @@ class Editor extends Component<EditorProps, State> {
 
     this.updateDimensions();
     window.addEventListener('resize', this.updateDimensions);
+    window.addEventListener('keydown', this.handleKeyboardSave, false);
 
     ipcRenderer.send('ports');
   }
@@ -260,6 +273,7 @@ class Editor extends Component<EditorProps, State> {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('keydown', this.handleKeyboardSave);
   }
 
   run = () => {
@@ -333,6 +347,10 @@ class Editor extends Component<EditorProps, State> {
       this.setState({ type: sketch.type });
     }
   };
+
+  private onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    console.log(e.key)
+  }
 
   private generateSketch(): string {
     const xmlDom = Blockly.Xml.workspaceToDom(this.workspace) as unknown as Element;
@@ -560,7 +578,8 @@ class Editor extends Component<EditorProps, State> {
     };
 
     return (
-      <div className={isEditorOpen ? 'e-open' : 'e-close'} style={{ backgroundColor: '#F9F9F9' }}>
+
+      <div className={isEditorOpen ? 'e-open' : 'e-close'} style={{ backgroundColor: '#F9F9F9' }} >
         {isEditorOpen && (
           <React.Fragment>
             {isModalOpen &&
@@ -571,6 +590,7 @@ class Editor extends Component<EditorProps, State> {
                   filenameError={filenameError}
                   onChange={this.onChangeSaveModal}
                   onSubmit={this.onSubmitSaveModal}
+
                 />
               ) : (
                 null
