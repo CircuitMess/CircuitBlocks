@@ -18,6 +18,7 @@ import Serial from "./components/Serial";
 import {Devices, Sketch} from "../Home/index";
 import Toolboxes from "../../components/BlocklyToolbox/Toolbox";
 import MonacoRO from "./components/MonacoRO";
+import {SaveModal} from "../Home/components/SaveModal";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -101,6 +102,9 @@ interface State {
   code: string;
   minimalCompile: boolean;
   startCode: string;
+  codeDidChange?: boolean;
+  isExitEditor: boolean;
+  isExitEditorOption: string;
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -123,7 +127,10 @@ const INIT_STATE: State = {
   type: SketchType.BLOCK,
   code: "",
   minimalCompile: true,
-  startCode: ""
+  startCode: "",
+  codeDidChange: false,
+  isExitEditor: false,
+  isExitEditorOption: "",
 };
 
 interface Notification {
@@ -238,7 +245,8 @@ class Editor extends Component<EditorProps, State> {
     this.workspace.addChangeListener((e: any) => {
       // @ts-ignore
       const code = Blockly.Arduino.workspaceToCode(this.workspace);
-      this.setState({ code });
+      this.setState({ code});
+      this.setState({ codeDidChange: true});
     });
 
     this.updateDimensions();
@@ -248,13 +256,14 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.send('ports');
   }
 
+
   componentWillUpdate(nextProps: Readonly<EditorProps>, nextState: Readonly<State>, nextContext: any): void {
     let stateUpdate: any = {};
-
     if(this.props.isEditorOpen && !nextProps.isEditorOpen){
       this.setState({ isSerialOpen: false });
     }
   }
+
 
   injectToolbox(device: string) {
     const blockly = ReactDOM.findDOMNode(this.blocklyDiv) as Element;
@@ -345,6 +354,8 @@ class Editor extends Component<EditorProps, State> {
       this.injectToolbox(sketch.device);
 
       this.setState({ type: sketch.type });
+
+      setTimeout(() => this.setState({codeDidChange: false}), 1250)
     }
   };
 
@@ -388,6 +399,11 @@ class Editor extends Component<EditorProps, State> {
     }
 
     ipcRenderer.send('save', { title: this.props.title, data, type: this.state.type, device: this.props.device });
+    if(this.state.isExitEditor === true){
+      this.setState({isExitEditor: false});
+      this.props.openHome();
+    }else {this.setState({isExitEditor: false});}
+
   };
 
   onSubmitSaveModal = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -412,9 +428,13 @@ class Editor extends Component<EditorProps, State> {
     }
 
     ipcRenderer.send('save', { title: filename, data, type: this.state.type, device: this.props.device });
+    /*if(this.state.isExitEditor === true){
+      this.props.openHome();
+    }*/
+    this.setState({isExitEditor: false});
   };
 
-  openSaveModal = () => {
+  openSaveModal = (option?: string) => {
     if (this.state.type == SketchType.BLOCK && this.workspace.getAllBlocks().length === 0) {
       this.props.reportError("You can't save an empty sketch.");
       return;
@@ -437,6 +457,11 @@ class Editor extends Component<EditorProps, State> {
       filename: '',
       filenameError: 'EMPTY'
     });
+    if(option === "saveAndExit"){
+      if(this.props.title !== ""){
+        this.props.openHome();
+      }
+    }
   };
 
   exportBinary = () => {
@@ -487,6 +512,41 @@ class Editor extends Component<EditorProps, State> {
     this.setState({ isPromptOpen: false });
   };
 
+  saveAndExit = (option?: string) => {
+    if(this.state.codeDidChange === true){
+      this.setState({isExitEditor: true});
+      switch(option){
+        case "saveAndExit":
+          if(this.props.title === ""){
+            this.openSaveModal(option);
+            this.setState({isExitEditor: false});
+            option = "";
+            break;
+          } else if (this.props.title !== "") {
+            this.save();
+            this.setState({isExitEditor: false});
+            this.props.openHome();
+            break;
+          }
+        case "exit":{
+          this.props.openHome();
+          this.setState({isExitEditor: false});
+          break;
+        }
+
+        case "cancel":
+          this.setState({isExitEditor: false});
+          console.log(this.state.codeDidChange)
+          break;
+      }
+
+    } else {
+      this.setState({isExitEditor: false});
+      this.props.openHome();
+    }
+  }
+
+
   onChangeSaveModal = (e: React.ChangeEvent<HTMLInputElement>) => {
     const filename = e.target.value;
     const newState: { filename: string; filenameError: string | undefined } = {
@@ -516,6 +576,7 @@ class Editor extends Component<EditorProps, State> {
   cleanup = () => {
     Blockly.hideChaff();
   };
+
 
   render() {
     const {
@@ -589,7 +650,7 @@ class Editor extends Component<EditorProps, State> {
                   filename={filename}
                   filenameError={filenameError}
                   onChange={this.onChangeSaveModal}
-                  onSubmit={this.onSubmitSaveModal}
+                  onSubmit={ this.onSubmitSaveModal}
 
                 />
               ) : (
@@ -604,9 +665,9 @@ class Editor extends Component<EditorProps, State> {
                 closePrompt={this.closePrompt}
               />
             )}
-
+              <SaveModal open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
             <EditorHeader
-              home={openHome}
+              home={this.saveAndExit}
               load={this.openLoadModal}
               run={this.run}
               save={this.props.title.length > 0 ? this.save : this.openSaveModal}
