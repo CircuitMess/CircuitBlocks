@@ -6,6 +6,7 @@ import {SketchType} from "../../Editor";
 export interface RestoreFirmwareProps {
     open: boolean;
     callback: (device: string) => void;
+    closeFirmwareModal: () => void;
 }
 
 interface RestoreFirmwareState {
@@ -29,7 +30,11 @@ export class RestoreFirmware extends React.Component<RestoreFirmwareProps, Resto
 
         return <Dimmer active={open}>
             <ModalBase className={"medium"}>
-                <div className="title" style={{ position: "relative", fontSize: 26, top: 0, textAlign: "center", marginBottom: 30, lineHeight: 1.2 }}>Restore firmware</div>
+                <div style={{ display: "inline-flex"}}>
+                    <div className="title" style={{ position: "relative", fontSize: 26, top: 0, textAlign: "center", marginBottom: 30, lineHeight: 1.2 }}>Restore firmware</div>
+                    <i className="close link icon" style={{right: 10, top: 10, position: "absolute"}} onClick={()=> this.props.closeFirmwareModal()}/>
+                </div>
+
                 <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Device:</p>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20 }}>

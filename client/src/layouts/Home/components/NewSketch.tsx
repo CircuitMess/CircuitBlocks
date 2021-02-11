@@ -6,6 +6,7 @@ import {SketchType} from "../../Editor";
 export interface NewSketchProps {
     open: boolean;
     callback: (type: SketchType, device: string) => void;
+    closeNewSketchModal: () => void;
 }
 
 interface NewSketchState {
@@ -36,7 +37,10 @@ export class NewSketch extends React.Component<NewSketchProps, NewSketchState> {
 
         return <Dimmer active={open}>
             <ModalBase className={"medium"} style={{width:"30%", minWidth:"400px"}}>
-                <div className="title" style={{ position: "relative", fontSize: 26, top: 0, textAlign: "center", marginBottom: 30, lineHeight: 1.2 }}>New sketch</div>
+                <div>
+                    <div className="title" style={{ position: "relative", fontSize: 26, top: 0, textAlign: "center", marginBottom: 30, lineHeight: 1.2 }}>New sketch</div>
+                    <i className="close link icon" style={{right: 10, top: 10, position: "absolute"}} onClick={()=> this.props.closeNewSketchModal()}/>
+                </div>
                 <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Device:</p>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20, flexWrap: "wrap" }}>
