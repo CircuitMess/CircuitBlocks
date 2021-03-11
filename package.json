@@ -23,7 +23,7 @@
     "request": "^2.88.0",
     "rimraf": "^3.0.2",
     "serialport": "^9.0.0",
-    "sudo-prompt": "https://github.com/filipbudisa/sudo-prompt#add-env-to-options-type",
+    "sudo-prompt": "^9.2.1",
     "unzipper": "^0.10.5"
   },
   "build": {
