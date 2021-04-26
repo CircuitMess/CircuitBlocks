@@ -21,6 +21,10 @@ const Card = styled.div`
     background: #E3384D;
   }
   
+  &.jay-d {
+    background: #191919;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

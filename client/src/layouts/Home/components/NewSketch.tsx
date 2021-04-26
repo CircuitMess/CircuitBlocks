@@ -43,6 +43,7 @@ export class NewSketch extends React.Component<NewSketchProps, NewSketchState> {
                         <Button primary inverted={this.state.device !== "cm:esp32:ringo"} onClick={() => this.setState({ device: "cm:esp32:ringo" }) } style={{margin: "0 15px", height:40}}>Ringo</Button>
                         <Button primary inverted={this.state.device !== "cm:esp8266:nibble"} onClick={() => this.setState({ device: "cm:esp8266:nibble" }) } style={{margin: "0 15px", height:40}}>Nibble</Button>
                         <Button primary inverted={this.state.device !== "cm:esp32:spencer"} onClick={() => this.setState({  device: "cm:esp32:spencer" }) } style={{margin: "0 15px", height:40}}>Spencer</Button>
+                        <Button primary inverted={this.state.device !== "cm:esp32:jayd"} onClick={() => this.setState({  device: "cm:esp32:jayd" }) } style={{margin: "0 15px", height:40}}>Jay-D</Button>
 
                     </div>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Sketch type:</p>
