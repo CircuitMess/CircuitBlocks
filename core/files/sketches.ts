@@ -209,7 +209,7 @@ export default class Sketches {
             if(file.toLowerCase() == "libraries") return;
 
             const sketchPath = path.join(directory, file, file + ".ino");
-            if(!fs.existsSync(sketchPath)) return;
+            if(!fs.existsSync(sketchPath) || !fs.statSync(sketchPath).isFile()) return;
 
             const sketch: Sketch = {
                 title: file,
