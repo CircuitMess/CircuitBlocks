@@ -338,6 +338,32 @@ categories.push({
 });
 
 categories.push({
+    name: "Input",
+    icon: "\uf360",
+    color: Blockly.Msg.IO_HUE,
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "button",
+            xml: Blocks.input_jayd.jayd_buttons,
+            group: "Buttons"
+        },
+        {
+            name: "button_press_release",
+            xml: Blocks.input_jayd.input_button,
+            group: "Buttons"
+        },
+        {
+            name: "button_held",
+            xml: Blocks.input_jayd.input_button_held,
+            group: "Buttons"
+        }
+    ]
+});
+
+categories.push({
     name: "Display",
     icon: "\uf108",
     color: Blockly.Msg.DISPLAY_HUE,

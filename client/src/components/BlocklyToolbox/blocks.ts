@@ -187,6 +187,12 @@ export class Blocks {
         input_button_held_spencer: '<block type="input_button_held_spencer"><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
     };
 
+    public static input_jayd: any = {
+        input_button: '<block type="input_jayd_button"><value name="BUTTON"><block type="jayd_buttons"></block></value></block>',
+        input_button_held: '<block type="input_jayd_button_held"><value name="BUTTON"><block type="jayd_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
+        jayd_buttons: '<block type="jayd_buttons"></block>',
+    };
+
     public static piezo: any = {
         tone: '<block type="piezo_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
         notone: '<block type="piezo_notone"></block>',
