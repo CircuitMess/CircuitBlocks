@@ -337,8 +337,74 @@ categories.push({
     subcategories: []
 });
 
+categories.push({
+    name: "Display",
+    icon: "\uf108",
+    color: Blockly.Msg.DISPLAY_HUE,
 
+    blocks: [
+        {
+            name: "display_commit",
+            xml: Blocks.display_sprite.commit
+        },
+        {
+            name: "screen_colour",
+            xml: Blocks.display.colour
+        },
+        {
+            name: "sprite_clear",
+            xml: Blocks.display_sprite.clear
+        },
 
+        {
+            name: "sprite_fontsize",
+            group: "Text",
+            xml: Blocks.display_sprite.fontsize
+        },
+        {
+            name: "sprite_fonttype",
+            group: "Text",
+            xml: Blocks.display_sprite.fonttype
+        },
+        {
+            name: "sprite_fontcolour",
+            group: "Text",
+            xml: Blocks.display_sprite.fontcolour
+        },
+        {
+            name: "sprite_fontcolour",
+            group: "Text",
+            xml: Blocks.display_sprite.println
+        },
+        {
+            name: "sprite_draw_text",
+            group: "Text",
+            xml: Blocks.display_sprite.drawtext
+        },
+
+        {
+            name: "sprite_draw_rect",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawrect
+        },
+        {
+            name: "sprite_draw_circle",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawcircle
+        },
+        {
+            name: "sprite_draw_ellipse",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawellipse
+        },
+        {
+            name: "sprite_draw_triangle",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawtriangle
+        }
+    ],
+    subcategories: []
+});
 
 
 categories.push({

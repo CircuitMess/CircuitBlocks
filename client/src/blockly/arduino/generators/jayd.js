@@ -15,6 +15,11 @@ Blockly.Arduino.additionals["Jay-D"] = function(){
   Blockly.Arduino.addSetup('serial_' + serialId, setupCode, false);
   Blockly.Arduino.addSetup('serial_clr_' + serialId, clearCode, false);
 
+  Blockly.Arduino.addDeclaration("Disp_declare", "Display* display;");
+  Blockly.Arduino.addDeclaration("Canv_declare", "Sprite* sprite;");
+
   Blockly.Arduino.addSetup("JayD_begin", "JayD.begin();");
-  Blockly.Arduino.addSetup("JayD_backlight", "pinMode(PIN_BL, OUTPUT); digitalWrite(PIN_BL, HIGH);");
+  Blockly.Arduino.addSetup("JayD_backlight", "pinMode(PIN_BL, OUTPUT); digitalWrite(PIN_BL, LOW);");
+  Blockly.Arduino.addSetup("Disp_get", "display = &JayD.getDisplay();");
+  Blockly.Arduino.addSetup("Canv_get", "sprite = display->getBaseSprite();");
 };
