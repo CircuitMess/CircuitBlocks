@@ -14,6 +14,11 @@ Blockly.Arduino['jayd_encoders'] = function(block) {
     return [ ENC, Blockly.Arduino.ORDER_ATOMIC ];
 };
 
+Blockly.Arduino['jayd_pots'] = function(block) {
+    var POT = block.getFieldValue('POT');
+    return [ POT, Blockly.Arduino.ORDER_ATOMIC ];
+};
+
 const Button_CallbackReg = {
     press: "setBtnPressCallback",
     release: "setBtnReleaseCallback"
@@ -70,4 +75,35 @@ Blockly.Arduino['input_jayd_encoder'] = function(block){
 
     const setupCode = `InputJayD::getInstance()->setEncoderMovedCallback(${ENC}, ${callbackName});`;
     Blockly.Arduino.addSetup(`encoder_${ENC}_moved`, setupCode, false);
+}
+
+Blockly.Arduino['input_jayd_pot'] = function(block){
+    if(!Blockly.Device) return;
+
+    Blockly.Arduino.addInclude("JayD_Input", "#include <Input/InputJayD.h>");
+
+    const POT = Blockly.Arduino.valueToCode(block, 'POT', Blockly.Arduino.ORDER_ATOMIC);
+    const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
+
+    const callbackName = `potentiometer_${POT}_moved`;
+    if(Blockly.Arduino.codeFunctions_[callbackName] !== undefined){
+        Blockly.Arduino.codeFunctions_[callbackName] = undefined;
+    }
+    const callback = `void ${callbackName}(uint8_t value){\n${CODE}\n}`;
+    Blockly.Arduino.addFunction(callbackName, callback);
+
+    const setupCode = `InputJayD::getInstance()->setPotMovedCallback(${POT}, ${callbackName});`;
+    Blockly.Arduino.addSetup(`potentiometer_${POT}_moved`, setupCode, false);
+}
+
+Blockly.Arduino['input_jayd_pot_current'] = function(block){
+    if(!Blockly.Device) return;
+
+    Blockly.Arduino.addInclude("JayD_Input", "#include <Input/InputJayD.h>");
+
+    const POT = Blockly.Arduino.valueToCode(block, 'POT', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = `InputJayD::getInstance()->getPotValue(${POT})`;
+
+    return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 }

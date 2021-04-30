@@ -194,6 +194,10 @@ export class Blocks {
 
         jayd_encoder: '<block type="input_jayd_encoder"><value name="ENC"><block type="jayd_encoders"></block></value></block>',
         jayd_encoders: '<block type="jayd_encoders"></block>',
+
+        jayd_pot_current: '<block type="input_jayd_pot_current"><value name="POT"><block type="jayd_pots"></block></value></block>',
+        jayd_pot: '<block type="input_jayd_pot"><value name="POT"><block type="jayd_pots"></block></value></block>',
+        jayd_pots: '<block type="jayd_pots"></block>',
     };
 
     public static piezo: any = {

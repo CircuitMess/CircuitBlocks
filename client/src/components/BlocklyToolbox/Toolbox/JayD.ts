@@ -346,7 +346,7 @@ categories.push({
 
     blocks: [
         {
-            name: "input_encoder",
+            name: "input_encoders",
             xml: Blocks.input_jayd.jayd_encoders,
             group: "Encoders"
         },
@@ -357,7 +357,7 @@ categories.push({
         },
 
         {
-            name: "input_button",
+            name: "input_buttons",
             xml: Blocks.input_jayd.jayd_buttons,
             group: "Buttons"
         },
@@ -370,6 +370,22 @@ categories.push({
             name: "input_button_held",
             xml: Blocks.input_jayd.input_button_held,
             group: "Buttons"
+        },
+
+        {
+            name: "input_potentiometer_current",
+            xml: Blocks.input_jayd.jayd_pot_current,
+            group: "Potentiometers"
+        },
+        {
+            name: "input_potentiometer",
+            xml: Blocks.input_jayd.jayd_pot,
+            group: "Potentiometers"
+        },
+        {
+            name: "input_otentiometers",
+            xml: Blocks.input_jayd.jayd_pots,
+            group: "Potentiometers"
         },
     ]
 });
