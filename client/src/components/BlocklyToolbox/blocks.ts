@@ -191,6 +191,9 @@ export class Blocks {
         input_button: '<block type="input_jayd_button"><value name="BUTTON"><block type="jayd_buttons"></block></value></block>',
         input_button_held: '<block type="input_jayd_button_held"><value name="BUTTON"><block type="jayd_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
         jayd_buttons: '<block type="jayd_buttons"></block>',
+
+        jayd_encoder: '<block type="input_jayd_encoder"><value name="ENC"><block type="jayd_encoders"></block></value></block>',
+        jayd_encoders: '<block type="jayd_encoders"></block>',
     };
 
     public static piezo: any = {

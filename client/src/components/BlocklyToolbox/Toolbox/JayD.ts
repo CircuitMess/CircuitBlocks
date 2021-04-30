@@ -346,20 +346,31 @@ categories.push({
 
     blocks: [
         {
-            name: "button",
+            name: "input_encoder",
+            xml: Blocks.input_jayd.jayd_encoders,
+            group: "Encoders"
+        },
+        {
+            name: "input_encoder",
+            xml: Blocks.input_jayd.jayd_encoder,
+            group: "Encoders"
+        },
+
+        {
+            name: "input_button",
             xml: Blocks.input_jayd.jayd_buttons,
             group: "Buttons"
         },
         {
-            name: "button_press_release",
+            name: "input_button_press_release",
             xml: Blocks.input_jayd.input_button,
             group: "Buttons"
         },
         {
-            name: "button_held",
+            name: "input_button_held",
             xml: Blocks.input_jayd.input_button_held,
             group: "Buttons"
-        }
+        },
     ]
 });
 
