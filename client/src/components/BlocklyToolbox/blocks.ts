@@ -231,6 +231,14 @@ export class Blocks {
         stop_animation: '<block type="ledmatrix_stop_animation"></block>',
     }
 
+    public static ledmatrix_jayd: any = {
+        push: '<block type="jayd_ledmatrix_push"></block>',
+        clear: '<block type="jayd_ledmatrix_clear"></block>',
+        pixel: '<block type="jayd_ledmatrix_pixel"><value name="X"><shadow type="math_number"><field name="NUM">2</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">6</field></shadow></value><value name="BRIGHTNESS"><shadow type="math_number"><field name="NUM">255</field></shadow></value></block>',
+        start_animation: '<block type="jayd_ledmatrix_start_animation"></block>',
+        stop_animation: '<block type="jayd_ledmatrix_stop_animation"></block>',
+    }
+
     public static audio_spencer: any = {
         play: '<block type="audio_spencer_playsample"></block>',
         stop: '<block type="audio_spencer_stopsample"></block>',

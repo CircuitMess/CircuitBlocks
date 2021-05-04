@@ -391,6 +391,40 @@ categories.push({
 });
 
 categories.push({
+    name: "LED matrix",
+    icon: "\uf0eb",
+    color: Blockly.Msg.DISPLAY_HUE,
+
+    blocks: [
+        {
+            name: "ledmatrix_push",
+            xml: Blocks.ledmatrix_jayd.push
+        },
+        {
+            name: "ledmatrix_clear",
+            xml: Blocks.ledmatrix_jayd.clear
+        },
+        {
+            name: "ledmatrix_pixel",
+            xml: Blocks.ledmatrix_jayd.pixel,
+            group: "Drawing"
+        },
+        {
+            name: "ledmatrix_start_animation",
+            xml: Blocks.ledmatrix_jayd.start_animation,
+            group: "Animation"
+        },
+        {
+            name: "ledmatrix_stop_animation",
+            xml: Blocks.ledmatrix_jayd.stop_animation,
+            group: "Animation"
+        },
+
+    ],
+    subcategories: []
+});
+
+categories.push({
     name: "DJ",
     icon: "\uf025",
     color: Blockly.Msg.MIX_HUE ,
