@@ -200,6 +200,20 @@ export class Blocks {
         jayd_pots: '<block type="jayd_pots"></block>',
     };
 
+    public static jayd_mix: any = {
+        song: '<block type="mix_song"></block>',
+        open_prerecorded: '<block type="mix_open"><value name="FILE"><block type="mix_song"></block></value></block>',
+        open: '<block type="mix_open"><value name="FILE"><block type="text"><field name="TEXT">/My Mix.aac</field></block></value></block>',
+        start: '<block type="mix_start"></block>',
+        stop: '<block type="mix_stop"></block>',
+
+        effect_set: '<block type="mix_effect_set"><value name="SLOT"></value><value name="EFFECT"><shadow type="mix_effect"><field name="EFFECT">LOWPASS</field></shadow></value></block>',
+        effect_set_intensity: '<block type="mix_effect_set_intensity"><value name="SLOT">0</value><value name="INTENSITY"><block type="math_number"><field name="NUM">100</field></block></value></block>',
+
+        speed: '<block type="mix_speed"><value name="SPEED"><block type="math_number"><field name="NUM">200</field></block></value></block>',
+        volume: '<block type="mix_volume"><value name="VOLUME"><block type="math_number"><field name="NUM">150</field></block></value></block>',
+    };
+
     public static piezo: any = {
         tone: '<block type="piezo_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
         notone: '<block type="piezo_notone"></block>',

@@ -391,6 +391,59 @@ categories.push({
 });
 
 categories.push({
+    name: "DJ",
+    icon: "\uf025",
+    color: Blockly.Msg.MIX_HUE ,
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "mix_open_prerecorded",
+            xml: Blocks.jayd_mix.open_prerecorded,
+            group: "System"
+        },
+        {
+            name: "mix_open",
+            xml: Blocks.jayd_mix.open,
+            group: "System"
+        },
+        {
+            name: "mix_start",
+            xml: Blocks.jayd_mix.start,
+            group: "System"
+        },
+        {
+            name: "mix_stop",
+            xml: Blocks.jayd_mix.stop,
+            group: "System"
+        },
+
+        {
+            name: "mix_speed",
+            xml: Blocks.jayd_mix.speed,
+            group: "Playback"
+        },
+        {
+            name: "mix_volume",
+            xml: Blocks.jayd_mix.volume,
+            group: "Playback"
+        },
+
+        {
+            name: "mix_effect_set",
+            xml: Blocks.jayd_mix.effect_set,
+            group: "Effects"
+        },
+        {
+            name: "mix_effect_set_intensity",
+            xml: Blocks.jayd_mix.effect_set_intensity,
+            group: "Effects"
+        }
+    ]
+});
+
+categories.push({
     name: "Display",
     icon: "\uf108",
     color: Blockly.Msg.DISPLAY_HUE,
