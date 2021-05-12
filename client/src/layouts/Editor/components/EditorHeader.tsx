@@ -147,7 +147,7 @@ const EditorHeader: React.FC<Props> = (props) => {
 
       <div className="left">
         <Button className="icon" onClick={home}>
-          <i className="material-icons" data-tip="Back" data-for="goBack" data-iscapture="true"> arrow_back </i>
+          <i className="material-icons" data-tip="Home" data-for="goBack" data-iscapture="true"> arrow_back </i>
         </Button>
         <ReactTooltip
             id="goBack"
@@ -155,7 +155,7 @@ const EditorHeader: React.FC<Props> = (props) => {
             type="dark"
         />
         <Button className="icon mr-1" onClick={save}>
-          <i className="material-icons" data-tip="Save file" data-for="saveButton" data-iscapture="true"> save </i>
+          <i className="material-icons" data-tip="Save sketch" data-for="saveButton" data-iscapture="true"> save </i>
         </Button>
         <ReactTooltip
             id="saveButton"
@@ -177,7 +177,7 @@ const EditorHeader: React.FC<Props> = (props) => {
           <i className="material-icons"> folder_open </i>
         </Button> }
         <Button className={`icon`} onClick={exportBinary} >
-          <i className="material-icons" data-tip="Open from folder" data-for="openFolder" data-iscapture="true"> save_alt </i>
+          <i className="material-icons" data-tip="Export binary" data-for="openFolder" data-iscapture="true"> save_alt </i>
         </Button>
         <ReactTooltip
             id="openFolder"
