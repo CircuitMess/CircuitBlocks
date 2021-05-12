@@ -62,6 +62,7 @@
     "react-dev-utils": "^9.0.3",
     "react-dom": "^16.9.0",
     "react-monaco-editor": "^0.31.0",
+    "react-tooltip": "^4.2.19",
     "resolve": "1.12.0",
     "resolve-url-loader": "3.1.0",
     "sass-loader": "7.2.0",
