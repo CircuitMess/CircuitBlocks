@@ -18,7 +18,7 @@ import Serial from "./components/Serial";
 import {Devices, Sketch} from "../Home/index";
 import Toolboxes from "../../components/BlocklyToolbox/Toolbox";
 import MonacoRO from "./components/MonacoRO";
-import {SaveModal} from "../Home/components/SaveModal";
+import {CloseConfirm} from "./components/CloseConfirm";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -665,7 +665,7 @@ class Editor extends Component<EditorProps, State> {
                 closePrompt={this.closePrompt}
               />
             )}
-              <SaveModal open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
+              <CloseConfirm open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
             <EditorHeader
               home={this.saveAndExit}
               load={this.openLoadModal}
