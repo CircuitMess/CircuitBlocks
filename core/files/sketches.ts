@@ -231,11 +231,11 @@ export default class Sketches {
     }
 
     private getExamples(): Category[] {
-        const examplesDir = path.join(".", "examples");
+        const examplesDir = path.join(process.resourcesPath, "examples");
         const categories: Category[] = [];
 
         const getSketches = this.getBlockSketches;
-		
+
 		if(!fs.existsSync(examplesDir)) return [];
 
         const categoryDirs = fs.readdirSync(examplesDir);
