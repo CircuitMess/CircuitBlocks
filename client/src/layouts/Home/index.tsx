@@ -164,6 +164,22 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     }
   }
 
+  public openExample(sketch: Sketch){
+    const { reportError, openEditor } = this.props;
+
+    ipcRenderer.once('load', (event: IpcRendererEvent, args) => {
+      sketch.path = undefined;
+
+      if (args.error) {
+        reportError(args.error);
+      } else {
+        openEditor({ type: args.type, device: args.device, data: args.data });
+      }
+    });
+
+    ipcRenderer.send('load', { path: sketch.path });
+  }
+
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
     const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen, spencerSettingsModalOpen } = this.state;
@@ -203,7 +219,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                           title={category.title}
                           projects={category.sketches}
                           key={`Section-${category.title}`}
-                          onPress={(type, sketch) => this.openFile(type, sketch ? sketch.device : "cm:esp32:ringo", sketch)}
+                          onPress={(type, sketch) => sketch && this.openExample(sketch)}
                       /> )}
                 </Main>
                 <Footer>
