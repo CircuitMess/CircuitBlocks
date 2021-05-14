@@ -101,6 +101,9 @@ const Card = styled.div`
     left: 8px;
     text-align: center;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
   &.descriptive:hover .cover {
     top: 0;
@@ -126,10 +129,16 @@ const Card = styled.div`
     font-weight: normal;
     font-size: 12px;
     line-height: 18px;
-    margin-top: 40px;
+    max-height: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    
+    .device {
+      font-weight: bold;
+    }
   }
   &.descriptive:hover .cover .description {
     opacity: 1;
+    max-height: 150px;
   }
 `;
 
