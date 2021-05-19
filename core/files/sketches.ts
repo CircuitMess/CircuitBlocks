@@ -205,7 +205,14 @@ export default class Sketches {
 
         const sketches: Sketch[] = [];
 
-        const files = fs.readdirSync(directory);
+        const files: string[] = [];
+        try{
+            files.push(...fs.readdirSync(directory));
+        }catch(e){
+            logger.log("Get code sketches readdir error", e);
+            return [];
+        }
+
         files.forEach(file => {
             if(file.toLowerCase() == "libraries") return;
 
