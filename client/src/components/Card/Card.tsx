@@ -62,10 +62,9 @@ const Card = styled.div`
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     opacity: 1;
-    padding-top: 4px;
-    padding-left: 4px;
     
     svg {
+      background: #fff;
       width: 100%;
       height: 100%;
       pointer-events: none;
