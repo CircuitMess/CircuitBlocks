@@ -9,9 +9,6 @@ interface Props {
   editing?: boolean;
   startCode?: string;
   sketch?: string;
-  exitEditor: (option: boolean) => void;
-  defaultCode: string;
-  isNewFile: () => void;
 }
 interface State {
   didCodeChange: boolean;
@@ -35,10 +32,6 @@ class Monaco extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    if(this.props.defaultCode === this.props.startCode){
-      this.props.isNewFile();
-    }
-
       window.addEventListener("keydown", this.didCodeChange, false);
   }
 
@@ -58,14 +51,7 @@ class Monaco extends React.Component<Props, State> {
   }
 
   public didCodeChange(){
-    if(this.props.startCode !== this.props.code){
-      this.setState({didCodeChange: true});
-      this.props.exitEditor(this.state.didCodeChange);
-    } else if (this.props.startCode === this.props.code){
-      this.setState({didCodeChange: false});
-      this.props.exitEditor(this.state.didCodeChange);
-
-    }
+    this.setState({ didCodeChange: this.props.startCode !== this.props.code });
   }
 
   render() {
