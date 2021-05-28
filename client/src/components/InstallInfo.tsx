@@ -40,7 +40,9 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             this.setState(args.state);
         });
 
-        ipcRenderer.send("install", null);
+        if(!process.env.NODE_ENV || process.env.NODE_ENV != "development"){
+            ipcRenderer.send("install", null);
+        }
 
         setInterval(() => {
             if(this.state.stage == "DONE") return;
