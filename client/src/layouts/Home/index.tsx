@@ -210,7 +210,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                       title={'Your sketches'}
                       projects={sketches}
                       onPress={(type, sketch) => this.openFile(type, sketch ? sketch.device : "cm:esp32:ringo", sketch)}
-                      createNew={ !projectsLoading } />
+                      createNew={ true } />
 
                   <Loader active={projectsLoading || examplesLoading} inline={"centered"} style={{ marginBottom: 20 }} />
 

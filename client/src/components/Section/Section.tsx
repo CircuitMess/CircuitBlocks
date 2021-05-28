@@ -21,7 +21,6 @@ const Section = styled.div`
   }
   
   h2 {
-    text-transform: capitalize;
     font-size: 24px;
   }
 `;

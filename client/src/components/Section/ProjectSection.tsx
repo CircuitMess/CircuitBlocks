@@ -22,7 +22,7 @@ const ProjectSection: React.FC<ProjectSectionProps> = (props: ProjectSectionProp
           <Card onClick={() => onPress('NEW' )} className={"new"}>
               <div>
                   <i className="material-icons"> add </i>
-                  <h3>New project</h3>
+                  <h3>New sketch</h3>
               </div>
           </Card>
         )}
