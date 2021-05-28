@@ -27,6 +27,7 @@ interface Sketch {
     path: string;
     snapshot?: string;
     description?: string;
+    pos?: number;
 }
 
 interface Category {
@@ -167,35 +168,29 @@ export default class Sketches {
 
             if(dom.getElementsByTagName("variables").length == 0 || dom.getElementsByTagName("block").length == 0) return;
 
-            const devices = dom.getElementsByTagName("device");
-            if(devices.length > 0){
-                const device = devices[0].innerHTML.trim();
+            const get = (prop: string): any => {
+                const elements = dom.getElementsByTagName(prop);
+                if(elements.length == 0) return undefined;
 
-                if(Devices.hasOwnProperty(device)){
-                    sketch.device = device;
-                }
+                const element = elements[0].innerHTML.trim();
+                if(element == "") return undefined;
+
+                return element;
             }
 
-            const snapshots = dom.getElementsByTagName("snapshot");
-            if(snapshots.length > 0){
-                const snapshot = snapshots[0].innerHTML.trim();
-
-                if(snapshot != ""){
-                    sketch.snapshot = snapshot;
-                }
+            const device = get("device");
+            if(Devices.hasOwnProperty(device)){
+                sketch.device = device;
             }
 
-            const descriptions = dom.getElementsByTagName("description");
-            if(descriptions.length > 0){
-                const description = descriptions[0].innerHTML.trim();
-
-                if(description != ""){
-                    sketch.description = description;
-                }
-            }
+            sketch.snapshot = get("snapshot");
+            sketch.description = get("description");
+            sketch.pos = get("pos");
 
             sketches.push(sketch);
         });
+
+        sketches.sort((a, b) => a.pos - b.pos);
 
         return sketches;
     }
