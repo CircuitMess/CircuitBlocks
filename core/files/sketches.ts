@@ -238,7 +238,11 @@ export default class Sketches {
     }
 
     private getExamples(): Category[] {
-        const examplesDir = path.join(process.resourcesPath, "examples");
+        console.log("env", process.env.ELECTRON_ENV);
+        const examplesDir = (process.env.ELECTRON_ENV && process.env.ELECTRON_ENV == "development")
+        ? path.join(".", "examples")
+        : path.join(process.resourcesPath, "examples");
+
         const categories: Category[] = [];
 
         const getSketches = this.getBlockSketches;
