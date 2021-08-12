@@ -87,3 +87,42 @@ Blockly.Arduino['input_button_held_spencer'] = function(block) {
     const setupCode = `Input::getInstance()->setButtonHeldCallback(${BUTTON}, ${DURATION}, ${funcName});`;
     Blockly.Arduino.addSetup(`input_${BUTTON}_held_${DURATION}`, setupCode, false);
 };
+
+const Button_CallbackReg_Universal = {
+    press: "setBtnPressCallback",
+    release: "setBtnReleaseCallback"
+};
+
+Blockly.Arduino['input_universal_button'] = function(block) {
+    if(!Blockly.Device) return;
+
+    Blockly.Arduino.addInclude("Universal_Input", "#include <Input/Input.h>");
+
+    const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
+    const STATE = block.getField('STATE').getValue();
+    const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
+
+    const funcName = `button_${BUTTON}_${STATE}`;
+    const generated = `void ${funcName}(){\n${CODE}\n}`;
+    Blockly.Arduino.addFunction(funcName, generated);
+
+    const setupCode = `Input::getInstance()->${Button_CallbackReg_Universal[STATE]}(${BUTTON}, ${funcName});`;
+    Blockly.Arduino.addSetup(`input_${BUTTON}_${STATE}`, setupCode, false);
+};
+
+Blockly.Arduino['input_universal_button_held'] = function(block) {
+    if(!Blockly.Device) return;
+
+    Blockly.Arduino.addInclude("Universal_Input", "#include <Input/Input.h>");
+
+    const BUTTON = Blockly.Arduino.valueToCode(block, 'BUTTON', Blockly.Arduino.ORDER_ATOMIC);
+    const DURATION = Blockly.Arduino.valueToCode(block, 'DURATION', Blockly.Arduino.ORDER_ATOMIC);
+    const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
+
+    const funcName = `button_${BUTTON}_held_${DURATION}ms`;
+    const generated = `void ${funcName}(){\n${CODE}\n}`;
+    Blockly.Arduino.addFunction(funcName, generated);
+
+    const setupCode = `Input::getInstance()->setBtnHeldCallback(${BUTTON}, ${DURATION}, ${funcName});`;
+    Blockly.Arduino.addSetup(`input_${BUTTON}_held_${DURATION}`, setupCode, false);
+};

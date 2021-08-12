@@ -338,54 +338,27 @@ categories.push({
 });
 
 categories.push({
-    name: "Input",
+    name: "I/O",
     icon: "\uf360",
     color: Blockly.Msg.IO_HUE,
 
     subcategories: [],
 
     blocks: [
-        {
-            name: "input_encoders",
-            xml: Blocks.input_jayd.jayd_encoders,
-            group: "Encoders"
-        },
-        {
-            name: "input_encoder",
-            xml: Blocks.input_jayd.jayd_encoder,
-            group: "Encoders"
-        },
-
-        {
+                {
             name: "input_buttons",
-            xml: Blocks.input_jayd.jayd_buttons,
+            xml: Blocks.io_wheelson.input_button,
             group: "Buttons"
         },
         {
             name: "input_button_press_release",
-            xml: Blocks.input_jayd.input_button,
+            xml: Blocks.io_wheelson.input_button,
             group: "Buttons"
         },
         {
             name: "input_button_held",
-            xml: Blocks.input_jayd.input_button_held,
+            xml: Blocks.io_wheelson.input_button_held,
             group: "Buttons"
-        },
-
-        {
-            name: "input_potentiometer_current",
-            xml: Blocks.input_jayd.jayd_pot_current,
-            group: "Potentiometers"
-        },
-        {
-            name: "input_potentiometer",
-            xml: Blocks.input_jayd.jayd_pot,
-            group: "Potentiometers"
-        },
-        {
-            name: "input_otentiometers",
-            xml: Blocks.input_jayd.jayd_pots,
-            group: "Potentiometers"
         },
     ]
 });

@@ -214,6 +214,12 @@ export class Blocks {
         volume: '<block type="mix_volume"><value name="VOLUME"><block type="math_number"><field name="NUM">150</field></block></value></block>',
     };
 
+    public static io_wheelson: any = {
+        input_button: '<block type="input_universal_button"><value name="BUTTON"><block type="wheelson_buttons"></block></value></block>',
+        input_button_held: '<block type="input_universal_button_held"><value name="BUTTON"><block type="wheelson_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
+        jayd_buttons: '<block type="wheelson_buttons"></block>',
+    };
+
     public static piezo: any = {
         tone: '<block type="piezo_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
         notone: '<block type="piezo_notone"></block>',
