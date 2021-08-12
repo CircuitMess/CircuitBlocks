@@ -47,6 +47,7 @@ goog.require("Blockly.Arduino.MAKERphone");
 goog.require("Blockly.Arduino.Nibble");
 goog.require("Blockly.Arduino.Spencer");
 goog.require("Blockly.Arduino.JayD");
+goog.require("Blockly.Arduino.Wheelson");
 goog.require("Blockly.Arduino.phone");
 goog.require("Blockly.Arduino.display");
 goog.require("Blockly.Arduino.display_sprite");

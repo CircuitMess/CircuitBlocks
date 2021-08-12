@@ -25,6 +25,10 @@ const Card = styled.div`
     background: #191919;
   }
   
+  &.wheelson {
+    background: #00BED6;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

@@ -19,6 +19,7 @@ export const Devices: { [name: string]: Device } = {
     "cm:esp8266:nibble": { fqbn: "cm:esp8266:nibble", name: "Nibble" },
     "cm:esp32:spencer": { fqbn: "cm:esp32:spencer", name: "Spencer" },
     "cm:esp32:jayd": { fqbn: "cm:esp32:jayd", name: "Jay-D" },
+    "cm:esp32:wheelson": { fqbn: "cm:esp32:wheelson", name: "Wheelson" },
 };
 
 interface Sketch {

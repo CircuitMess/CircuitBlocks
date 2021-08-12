@@ -52,7 +52,7 @@ void loop() {
 }`
 };
 
-StartSketches["cm:esp32:jayd"] = StartSketches["cm:esp32:spencer"] = StartSketches["cm:esp8266:nibble"];
+StartSketches["cm:esp32:wheelson"] = StartSketches["cm:esp32:jayd"] = StartSketches["cm:esp32:spencer"] = StartSketches["cm:esp8266:nibble"];
 
 const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
 
@@ -331,7 +331,8 @@ class Editor extends Component<EditorProps, State> {
       "cm:esp32:ringo": "MAKERphone",
       "cm:esp8266:nibble": "Nibble",
       "cm:esp32:spencer": "Spencer",
-      "cm:esp32:jayd": "Jay-D"
+      "cm:esp32:jayd": "Jay-D",
+      "cm:esp32:wheelson": "Wheelson",
     }
 
     Blockly.Device = Name[sketch.device];
