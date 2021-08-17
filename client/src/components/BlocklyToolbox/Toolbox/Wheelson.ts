@@ -345,6 +345,10 @@ categories.push({
     subcategories: [],
 
     blocks: [
+        {
+            name: "battery_level_percentage",
+            xml: Blocks.io_wheelson.battery
+        },
 
         {
             name: "input_button_press_release",

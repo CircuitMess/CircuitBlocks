@@ -215,6 +215,8 @@ export class Blocks {
     };
 
     public static io_wheelson: any = {
+        battery: '<block type="wheelson_battery"></block>',
+
         input_button: '<block type="input_universal_button"><value name="BUTTON"><block type="wheelson_buttons"></block></value></block>',
         input_button_held: '<block type="input_universal_button_held"><value name="BUTTON"><block type="wheelson_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
         wheelson_buttons: '<block type="wheelson_buttons"></block>',

@@ -4,6 +4,18 @@ goog.provide("Blockly.Blocks.WheelsonIO");
 
 Blockly.defineBlocksWithJsonArray([
 	{
+		type: "wheelson_battery",
+		message0: "battery level",
+		output: "Number",
+		outputShape: Blockly.OUTPUT_SHAPE_ROUND,
+		colour: Blockly.Msg.IO_HUE,
+		tooltip: "Get battery level percentage",
+		helpUrl: ""
+	}
+]);
+
+Blockly.defineBlocksWithJsonArray([
+	{
 		type: "wheelson_buttons",
 		message0: "button %1",
 		args0: [

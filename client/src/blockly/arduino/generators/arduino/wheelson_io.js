@@ -2,6 +2,11 @@ goog.require("Blockly.Arduino");
 
 goog.provide("Blockly.Arduino.WheelsonIO");
 
+Blockly.Arduino['wheelson_battery'] = function(block) {
+	var code = `Battery.getPercentage()`;
+	return [ code, Blockly.Arduino.ORDER_ATOMIC ];
+};
+
 Blockly.Arduino['wheelson_buttons'] = function(block) {
 	var BUTTON = block.getFieldValue('BUTTON');
 	return [ BUTTON, Blockly.Arduino.ORDER_ATOMIC ];
