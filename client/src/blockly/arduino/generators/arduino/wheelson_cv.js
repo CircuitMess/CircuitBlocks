@@ -16,6 +16,10 @@ function whAddMarkers(){
 	Blockly.Arduino.addDeclaration("Wheelson_Marker_Handlers", "std::unordered_map<int, void (*)(Marker&)> markerHandlers;");
 }
 
+function whAddBall(){
+	Blockly.Arduino.addInclude("Wheelson_Balls", "#include <BallTracker.h>");
+}
+
 Blockly.Arduino['wheelson_markers'] = function(block) {
 	var MARKER = block.getFieldValue('MARKER');
 	return [ MARKER, Blockly.Arduino.ORDER_ATOMIC ];
@@ -56,6 +60,7 @@ Blockly.Arduino['wheelson_markers_detect'] = function(block) {
 };
 
 Blockly.Arduino['wheelson_marker_detected'] = function(block){
+	whAddCamera();
 	whAddMarkers();
 
 	const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
@@ -68,4 +73,40 @@ Blockly.Arduino['wheelson_marker_detected'] = function(block){
 
 	Blockly.Arduino.addFunction(detectedFuncName, `void ${detectedFuncName}(Marker& marker){\n${CODE}\n}`);
 	Blockly.Arduino.addSetup("Marker_Handler_" + ID, `markerHandlers[${ID}] = ${detectedFuncName};`)
+}
+
+Blockly.Arduino['wheelson_ball_detect'] = function(block) {
+	whAddCamera();
+	whAddBall();
+
+	const detectedFuncName = "ballDetected";
+	if(Blockly.Arduino.codeFunctions_[detectedFuncName] === undefined){
+		Blockly.Arduino.addFunction(detectedFuncName, `void ${detectedFuncName}(Ball& ball){\n\n}`);
+	}
+
+	var HUE = block.getFieldValue('HUE');
+
+	const detectCode = `  auto balls = BallTracker::detect((uint8_t*) cam->getRGB888(), 160, 120, ${HUE}, BallTracker::RGB888);\n` +
+		"  if(balls.empty()) return;\n" +
+		`  ${detectedFuncName}(balls[0]);`;
+	const detectFuncName = `detectBall`;
+	const detectFunc = `void ${detectFuncName}(){\n${detectCode}\n}`;
+	Blockly.Arduino.addFunction(detectFuncName, detectFunc);
+
+	var code = `${detectFuncName}();\n`;
+	return code;
+};
+
+Blockly.Arduino['wheelson_ball_detected'] = function(block){
+	whAddCamera();
+	whAddBall();
+
+	const CODE = Blockly.Arduino.statementToCode(block, 'CODE', Blockly.Arduino.ORDER_ATOMIC);
+
+	const detectedFuncName = `ballDetected`;
+	if(Blockly.Arduino.codeFunctions_[detectedFuncName] !== undefined){
+		Blockly.Arduino.codeFunctions_[detectedFuncName] = undefined;
+	}
+
+	Blockly.Arduino.addFunction(detectedFuncName, `void ${detectedFuncName}(Ball& ball){\n${CODE}\n}`);
 }

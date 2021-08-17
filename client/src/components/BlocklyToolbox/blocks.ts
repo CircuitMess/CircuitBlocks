@@ -235,6 +235,9 @@ export class Blocks {
         markers_detect: '<block type="wheelson_markers_detect"></block>',
         markers_detected_dropdown: '<block type="wheelson_marker_detected"><value name="ID"><block type="wheelson_markers"></block></value></block>',
         markers_detected_num: '<block type="wheelson_marker_detected"><value name="ID"><shadow type="math_number"><field name="NUM">112</field></shadow></value></block>',
+
+        ball_detect: '<block type="wheelson_ball_detect"></block>',
+        ball_detected: '<block type="wheelson_ball_detected"></block>'
     };
 
     public static piezo: any = {

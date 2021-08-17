@@ -415,6 +415,17 @@ categories.push({
         },
 
         {
+            name: "ball_detect",
+            xml: Blocks.wheelson_cv.ball_detect,
+            group: "Balls"
+        },
+        {
+            name: "ball_detected",
+            xml: Blocks.wheelson_cv.ball_detected,
+            group: "Balls"
+        },
+
+        {
             name: "markers_detect",
             xml: Blocks.wheelson_cv.markers_detect,
             group: "Markers"
@@ -433,7 +444,7 @@ categories.push({
             name: "markers_detected_id",
             xml: Blocks.wheelson_cv.markers_detected_num,
             group: "Markers"
-        },
+        }
     ]
 });
 
