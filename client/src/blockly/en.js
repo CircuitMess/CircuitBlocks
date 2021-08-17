@@ -103,6 +103,7 @@ Blockly.Msg.IO_HUE = '280';
 Blockly.Msg.DISPLAY_HUE = '40';
 Blockly.Msg.TIME_HUE = '310';
 Blockly.Msg.MIX_HUE = '145';
+Blockly.Msg.WHEELSON_HUE = '190';
 
 Blockly.HSV_SATURATION = 0.70;
 Blockly.HSV_VALUE = 0.80;

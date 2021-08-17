@@ -396,6 +396,48 @@ categories.push({
 });
 
 categories.push({
+    name: "Vision",
+    icon: "\uf06e",
+    color: Blockly.Msg.WHEELSON_HUE,
+
+    subcategories: [],
+
+    blocks: [
+        {
+            name: "camera_fetch_frame",
+            xml: Blocks.wheelson_cv.cam_fetch,
+            group: "Camera"
+        },
+        {
+            name: "camera_frame_draw",
+            xml: Blocks.wheelson_cv.frame_draw,
+            group: "Camera"
+        },
+
+        {
+            name: "markers_detect",
+            xml: Blocks.wheelson_cv.markers_detect,
+            group: "Markers"
+        },
+        {
+            name: "markers",
+            xml: Blocks.wheelson_cv.markers,
+            group: "Markers"
+        },
+        {
+            name: "markers_detected_dropdown",
+            xml: Blocks.wheelson_cv.markers_detected_dropdown,
+            group: "Markers"
+        },
+        {
+            name: "markers_detected_id",
+            xml: Blocks.wheelson_cv.markers_detected_num,
+            group: "Markers"
+        },
+    ]
+});
+
+categories.push({
     name: "Display",
     icon: "\uf108",
     color: Blockly.Msg.DISPLAY_HUE,

@@ -227,6 +227,16 @@ export class Blocks {
         motor_get: '<block type="wheelson_motor_get"><value name="ID"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>',
     };
 
+    public static wheelson_cv: any = {
+        cam_fetch: '<block type="wheelson_cam_fetch"></block>',
+        frame_draw: '<block type="wheelson_draw_frame"></block>',
+
+        markers: '<block type="wheelson_markers"></block>',
+        markers_detect: '<block type="wheelson_markers_detect"></block>',
+        markers_detected_dropdown: '<block type="wheelson_marker_detected"><value name="ID"><block type="wheelson_markers"></block></value></block>',
+        markers_detected_num: '<block type="wheelson_marker_detected"><value name="ID"><shadow type="math_number"><field name="NUM">112</field></shadow></value></block>',
+    };
+
     public static piezo: any = {
         tone: '<block type="piezo_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
         notone: '<block type="piezo_notone"></block>',
