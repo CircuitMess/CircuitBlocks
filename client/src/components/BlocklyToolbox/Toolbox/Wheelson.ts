@@ -347,7 +347,7 @@ categories.push({
     blocks: [
                 {
             name: "input_buttons",
-            xml: Blocks.io_wheelson.input_button,
+            xml: Blocks.io_wheelson.wheelson_buttons,
             group: "Buttons"
         },
         {
@@ -359,6 +359,27 @@ categories.push({
             name: "input_button_held",
             xml: Blocks.io_wheelson.input_button_held,
             group: "Buttons"
+        },
+
+        {
+            name: "backlight_set",
+            xml: Blocks.io_wheelson.backlight_set,
+            group: "Lights"
+        },
+        {
+            name: "backlight_get",
+            xml: Blocks.io_wheelson.backlight_get,
+            group: "Lights"
+        },
+        {
+            name: "headlight_set",
+            xml: Blocks.io_wheelson.headlight_set,
+            group: "Lights"
+        },
+        {
+            name: "headlight_get",
+            xml: Blocks.io_wheelson.headlight_get,
+            group: "Lights"
         },
     ]
 });

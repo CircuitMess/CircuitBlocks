@@ -217,7 +217,11 @@ export class Blocks {
     public static io_wheelson: any = {
         input_button: '<block type="input_universal_button"><value name="BUTTON"><block type="wheelson_buttons"></block></value></block>',
         input_button_held: '<block type="input_universal_button_held"><value name="BUTTON"><block type="wheelson_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
-        jayd_buttons: '<block type="wheelson_buttons"></block>',
+        wheelson_buttons: '<block type="wheelson_buttons"></block>',
+        backlight_set: '<block type="wheelson_backlight"><value name="VAL"><shadow type="logic_boolean"></shadow></value></block>',
+        headlight_set: '<block type="wheelson_headlight"><value name="VAL"><shadow type="logic_boolean"></shadow></value></block>',
+        backlight_get: '<block type="wheelson_backlight_get"></block>',
+        headlight_get: '<block type="wheelson_headlight_get"></block>',
     };
 
     public static piezo: any = {
