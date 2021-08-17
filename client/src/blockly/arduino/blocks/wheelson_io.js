@@ -66,7 +66,6 @@ Blockly.defineBlocksWithJsonArray([
 	{
 		type: "wheelson_backlight_get",
 		message0: "is backlight on",
-		//args0: [],
 		output: "Boolean",
 		outputShape: Blockly.OUTPUT_SHAPE_HEXAGONAL,
 		colour: Blockly.Msg.IO_HUE,
@@ -76,11 +75,61 @@ Blockly.defineBlocksWithJsonArray([
 	{
 		type: "wheelson_headlight_get",
 		message0: "is headlight on",
-		//args0: [],
 		output: "Boolean",
 		outputShape: Blockly.OUTPUT_SHAPE_HEXAGONAL,
 		colour: Blockly.Msg.IO_HUE,
 		tooltip: "Get headlight state",
 		helpUrl: ""
 	}
+]);
+
+Blockly.defineBlocksWithJsonArray([
+	{
+		type: "wheelson_motor_set",
+		message0: "set motor %1 speed %2",
+		args0: [
+			{
+				type: "field_dropdown",
+				name: "ID",
+				options: [
+					[ "left rear", "MOTOR_BL" ],
+					[ "left front", "MOTOR_FL" ],
+					[ "right rear", "MOTOR_BR" ],
+					[ "right front", "MOTOR_FR" ],
+				]
+			},
+			{
+				type: "input_value",
+				name: "SPEED",
+				check: "Number"
+			}
+		],
+		previousStatement: null,
+		nextStatement: null,
+		outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+		colour: Blockly.Msg.IO_HUE,
+		tooltip: "Sets the motor speed",
+		helpUrl: ""
+	},
+	{
+		type: "wheelson_motor_get",
+		message0: "motor %1 speed",
+		args0: [
+			{
+				type: "field_dropdown",
+				name: "ID",
+				options: [
+					[ "left rear", "MOTOR_BL" ],
+					[ "left front", "MOTOR_FL" ],
+					[ "right rear", "MOTOR_BR" ],
+					[ "right front", "MOTOR_FR" ],
+				]
+			},
+		],
+		output: "Number",
+		outputShape: Blockly.OUTPUT_SHAPE_ROUND,
+		colour: Blockly.Msg.IO_HUE,
+		tooltip: "Get motor speed",
+		helpUrl: ""
+	},
 ]);

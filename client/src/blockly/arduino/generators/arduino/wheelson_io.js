@@ -30,3 +30,18 @@ Blockly.Arduino['wheelson_headlight_get'] = function(block) {
 	var code = "LED.getHeadlight()";
 	return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 };
+
+Blockly.Arduino['wheelson_motor_set'] = function(block) {
+	var ID = block.getFieldValue('ID');
+	var SPEED = Blockly.Arduino.valueToCode(block, 'SPEED', Blockly.Arduino.ORDER_ATOMIC);
+
+	var code = `Motors.setMotor(${ID}, ${SPEED});\n`;
+	return code;
+};
+
+Blockly.Arduino['wheelson_motor_get'] = function(block) {
+	var ID = block.getFieldValue('ID');
+
+	var code = `Motors.getMotor(${ID})`;
+	return [ code, Blockly.Arduino.ORDER_ATOMIC ];
+};

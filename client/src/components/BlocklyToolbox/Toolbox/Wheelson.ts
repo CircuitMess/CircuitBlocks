@@ -381,6 +381,17 @@ categories.push({
             xml: Blocks.io_wheelson.headlight_get,
             group: "Lights"
         },
+
+        {
+            name: "motor_set",
+            xml: Blocks.io_wheelson.motor_set,
+            group: "Motors"
+        },
+        {
+            name: "motor_get",
+            xml: Blocks.io_wheelson.motor_get,
+            group: "Motors"
+        },
     ]
 });
 
