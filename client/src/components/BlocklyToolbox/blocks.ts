@@ -222,6 +222,7 @@ export class Blocks {
         headlight_set: '<block type="wheelson_headlight"><value name="VAL"><shadow type="logic_boolean"></shadow></value></block>',
         backlight_get: '<block type="wheelson_backlight_get"></block>',
         headlight_get: '<block type="wheelson_headlight_get"></block>',
+        rgb: '<block type="wheelson_rgb"></block>',
 
         motor_set: '<block type="wheelson_motor_set"><value name="ID"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="SPEED"><shadow type="math_number"><field name="NUM">100</field></shadow></value></block>',
         motor_get: '<block type="wheelson_motor_get"><value name="ID"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>',

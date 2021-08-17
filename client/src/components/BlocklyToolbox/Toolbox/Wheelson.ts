@@ -345,11 +345,7 @@ categories.push({
     subcategories: [],
 
     blocks: [
-                {
-            name: "input_buttons",
-            xml: Blocks.io_wheelson.wheelson_buttons,
-            group: "Buttons"
-        },
+
         {
             name: "input_button_press_release",
             xml: Blocks.io_wheelson.input_button,
@@ -362,13 +358,19 @@ categories.push({
         },
 
         {
-            name: "backlight_set",
-            xml: Blocks.io_wheelson.backlight_set,
-            group: "Lights"
+            name: "motor_set",
+            xml: Blocks.io_wheelson.motor_set,
+            group: "Motors"
         },
         {
-            name: "backlight_get",
-            xml: Blocks.io_wheelson.backlight_get,
+            name: "motor_get",
+            xml: Blocks.io_wheelson.motor_get,
+            group: "Motors"
+        },
+
+        {
+            name: "rgb_led_set",
+            xml: Blocks.io_wheelson.rgb,
             group: "Lights"
         },
         {
@@ -381,17 +383,16 @@ categories.push({
             xml: Blocks.io_wheelson.headlight_get,
             group: "Lights"
         },
-
         {
-            name: "motor_set",
-            xml: Blocks.io_wheelson.motor_set,
-            group: "Motors"
+            name: "backlight_set",
+            xml: Blocks.io_wheelson.backlight_set,
+            group: "Lights"
         },
         {
-            name: "motor_get",
-            xml: Blocks.io_wheelson.motor_get,
-            group: "Motors"
-        },
+            name: "backlight_get",
+            xml: Blocks.io_wheelson.backlight_get,
+            group: "Lights"
+        }
     ]
 });
 

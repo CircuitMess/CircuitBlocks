@@ -45,3 +45,10 @@ Blockly.Arduino['wheelson_motor_get'] = function(block) {
 	var code = `Motors.getMotor(${ID})`;
 	return [ code, Blockly.Arduino.ORDER_ATOMIC ];
 };
+
+Blockly.Arduino['wheelson_rgb'] = function(block) {
+	var COLOR = block.getFieldValue('COLOR');
+
+	var code = "LED.setRGB(" + COLOR + ");\n";
+	return code;
+};

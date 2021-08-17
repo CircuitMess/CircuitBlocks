@@ -80,6 +80,32 @@ Blockly.defineBlocksWithJsonArray([
 		colour: Blockly.Msg.IO_HUE,
 		tooltip: "Get headlight state",
 		helpUrl: ""
+	},
+	{
+		type: "wheelson_rgb",
+		message0: "set RGB LED color %1",
+		args0: [
+			{
+				type: "field_dropdown",
+				name: "COLOR",
+				options: [
+					[ "off", "WLEDColor::OFF" ],
+					[ "red", "WLEDColor::RED" ],
+					[ "green", "WLEDColor::GREEN" ],
+					[ "yellow", "WLEDColor::YELLOW" ],
+					[ "blue", "WLEDColor::BLUE" ],
+					[ "magenta", "WLEDColor::MAGENTA" ],
+					[ "cyan", "WLEDColor::CYAN" ],
+					[ "white", "WLEDColor::WHITE" ]
+				]
+			}
+		],
+		previousStatement: null,
+		nextStatement: null,
+		outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+		colour: Blockly.Msg.IO_HUE,
+		tooltip: "Set RGB LED color",
+		helpUrl: ""
 	}
 ]);
 
