@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, shell } from 'electron';
 import path from 'path';
 import url from 'url';
 
@@ -40,6 +40,25 @@ function createWindow() {
   });
 
   win.maximize();
+
+  const urls = {
+    "Learn More": "https://circuitmess.com/circuitblocks/",
+    "Documentation": "https://github.com/CircuitMess/CircuitBlocks",
+    "Community Discussions": "https://community.circuitmess.com/",
+    "Search Issues": "https://github.com/CircuitMess/CircuitBlocks/issues"
+  }
+
+  let menu = Menu.getApplicationMenu();
+  let help = menu.items.filter(item => item.role == "help")[0];
+  if(help !== undefined){
+    help.submenu.items.forEach(item => {
+      if(urls[item.label] !== undefined){
+        item.click = () => shell.openExternal(urls[item.label]);
+      }
+    });
+  }
+
+  win.setMenu(menu);
 
   if(!DEV){
     win.setMenu(null);
