@@ -121,13 +121,13 @@ Blockly.Arduino['math_single'] = function(block) {
       code = 'floor(' + arg + ')';
       break;
     case 'SIN':
-      code = 'sin(' + arg + ' / 180 * M_PI)';
+      code = 'sin(' + arg + ' * M_PI / 180.0)';
       break;
     case 'COS':
-      code = 'cos(' + arg + ' / 180 * M_PI)';
+      code = 'cos(' + arg + ' * M_PI / 180.0)';
       break;
     case 'TAN':
-      code = 'tan(' + arg + ' / 180 * M_PI)';
+      code = 'tan(' + arg + ' * M_PI / 180.0)';
       break;
   }
   if (code) {
@@ -139,13 +139,13 @@ Blockly.Arduino['math_single'] = function(block) {
       code = 'log(' + arg + ') / log(10)';
       break;
     case 'ASIN':
-      code = 'asin(' + arg + ') / M_PI * 180';
+      code = 'asin(' + arg + ') * 180 / M_PI';
       break;
     case 'ACOS':
-      code = 'acos(' + arg + ') / M_PI * 180';
+      code = 'acos(' + arg + ') * 180 / M_PI';
       break;
     case 'ATAN':
-      code = 'atan(' + arg + ') / M_PI * 180';
+      code = 'atan(' + arg + ') * 180 / M_PI';
       break;
     default:
       throw 'Unknown math operator: ' + operator;
