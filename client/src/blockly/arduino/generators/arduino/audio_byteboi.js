@@ -18,7 +18,7 @@ Blockly.Arduino['playback_notone'] = function(block) {
 Blockly.Arduino['playback_setVolume'] = function(block) {
     const VOLUME = Blockly.Arduino.valueToCode(block, 'VOLUME', Blockly.Arduino.ORDER_ATOMIC);
 
-    return `Settings.get().volume = ${VOLUME};\n  Playback.updateGain();\n`
+    return `Settings.get().volume = ${VOLUME};\nPlayback.updateGain();\n`
 };
 
 Blockly.Arduino['playback_getVolume'] = function(block) {
