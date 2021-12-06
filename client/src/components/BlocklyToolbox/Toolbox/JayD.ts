@@ -495,6 +495,10 @@ categories.push({
             name: "sprite_clear",
             xml: Blocks.display_sprite.clear
         },
+        {
+            name: "sprite_draw_sprite",
+            xml: Blocks.display_sprite.drawSprite
+        },
 
         {
             name: "sprite_fontsize",

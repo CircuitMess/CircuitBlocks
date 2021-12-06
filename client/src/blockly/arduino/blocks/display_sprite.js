@@ -330,3 +330,51 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     }
 ]);
+
+Blockly.defineBlocksWithJsonArray([{
+    type: "sprite_draw_sprite",
+    message0: "draw sprite %1 x %2 y %3",
+    args0: [
+        {
+            type: "input_dummy",
+            name: "SPRITE",
+        },
+        {
+            type: "input_value",
+            name: "X",
+            check: "Number"
+        },
+        {
+            type: "input_value",
+            name: "Y",
+            check: "Number"
+        }
+    ],
+    extensions: ["extension_spriteDraw"],
+    inputsInline: false,
+    previousStatement: null,
+    nextStatement: null,
+    outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+    colour: Blockly.Msg.DISPLAY_HUE,
+    tooltip: "Draw a line of text on the specified coordinates",
+    helpUrl: ""
+}]);
+
+Blockly.Extensions.register('extension_spriteDraw', function(){
+    const input = this.getInput('SPRITE');
+    input.appendField(new Blockly.FieldDropdown(function(){
+        if(!Array.isArray(Blockly.DefaultSprites) || !Array.isArray(Blockly.Sprites) || Blockly.DefaultSprites.length === 0) return [["ERROR", "FOO"]];
+
+        const sprites = [];
+
+        Blockly.Sprites.forEach(function(sprite){
+            sprites.push([ sprite.name, sprite ]); // lijepo, strojno
+        });
+
+        Blockly.DefaultSprites.forEach(function(sprite){
+            sprites.push([ sprite.name, `def:${sprite.name}` ]); // lijepo, strojno
+        });
+
+        return sprites;
+    }), 'SPRITEVAL');
+});

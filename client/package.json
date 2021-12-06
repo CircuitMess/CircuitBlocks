@@ -6,6 +6,9 @@
   "dependencies": {
     "@babel/core": "7.5.5",
     "@brainhubeu/react-carousel": "^1.19.26",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "@svgr/webpack": "4.3.2",
     "@types/brainhubeu__react-carousel": "^2.0.2",
     "@types/electron": "^1.6.10",
@@ -59,6 +62,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-app-polyfill": "^1.0.2",
+    "react-color": "^2.19.3",
     "react-dev-utils": "^9.0.3",
     "react-dom": "^16.9.0",
     "react-monaco-editor": "^0.31.0",
@@ -153,6 +157,7 @@
   "devDependencies": {
     "@types/file-saver": "^2.0.1",
     "@types/nprogress": "^0.2.0",
+    "@types/react-color": "^3.0.6",
     "@types/styled-components": "^4.1.18",
     "babel-plugin-styled-components": "^1.10.6",
     "monaco-editor-webpack-plugin": "^1.7.0"

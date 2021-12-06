@@ -106,3 +106,30 @@ Blockly.Arduino['sprite_draw_triangle'] = function(block) {
     var code = `sprite->${func}Triangle(${x0}, ${y0}, ${x1}, ${y1}, ${x2}, ${y2}, ${colour});\n`;
     return code;
 };
+
+Blockly.Arduino['sprite_draw_sprite'] = function(block) {
+    Blockly.Arduino.addInclude("COS_include", "#include <CircuitOS.h>");
+    Blockly.Arduino.addInclude("Color_include", "#include <Display/Color.h>");
+    Blockly.Arduino.addInclude("Display_include", "#include <Display/Display.h>");
+
+    var sprite = block.getFieldValue('SPRITEVAL');
+    if(sprite === undefined) return "";
+
+    if(typeof sprite === "string" && sprite.startsWith("def:")){
+        for(var i in Blockly.DefaultSprites){
+            if(Blockly.DefaultSprites[i].name === sprite.substr(4)){
+                sprite = Blockly.DefaultSprites[i];
+                break;
+            }
+        }
+    }
+
+    if(!sprite.hasOwnProperty("data")) return "";
+
+
+    var x = Blockly.Arduino.valueToCode(block, 'X', Blockly.Arduino.ORDER_ATOMIC);
+    var y = Blockly.Arduino.valueToCode(block, 'Y', Blockly.Arduino.ORDER_ATOMIC);
+
+    var code = `sprite->drawIcon(${sprite.name}, ${x}, ${y}, ${sprite.width}, ${sprite.height});\n`;
+    return code;
+};

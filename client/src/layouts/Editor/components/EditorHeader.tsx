@@ -82,15 +82,18 @@ interface Props {
   save: () => void;
   toggle: () => void;
   run: () => void;
+  isSpriteOpen: boolean;
   isCodeOpen: boolean;
   connected: boolean;
   isSerialOpen: boolean;
+  openSpriteEditor: () => void;
   openSerial: () => void;
   exportBinary: () => void;
   codeButton: boolean;
   minimalCompile: boolean;
   toggleMinimal: () => void;
   device: string;
+  spriteEditorButton: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -101,6 +104,7 @@ const EditorHeader: React.FC<Props> = (props) => {
     save,
     toggle,
     run,
+    isSpriteOpen,
     isCodeOpen,
     connected,
     isSerialOpen,
@@ -109,7 +113,9 @@ const EditorHeader: React.FC<Props> = (props) => {
     codeButton,
     minimalCompile,
     toggleMinimal,
-    device
+    device,
+    openSpriteEditor,
+    spriteEditorButton
   } = props;
 
   const [ runningPercentage, setRunningPercentage ] = useState(0);
@@ -175,6 +181,9 @@ const EditorHeader: React.FC<Props> = (props) => {
       <div className="right">
         { null && <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
+        </Button> }
+        { spriteEditorButton && <Button className={`icon red ${isSpriteOpen ? 'active' : ''}`} onClick={openSpriteEditor} >
+          <i className="material-icons" data-tip="Sprite editor" data-for="openFolder" data-iscapture="true"> brush </i>
         </Button> }
         <Button className={`icon`} onClick={exportBinary} >
           <i className="material-icons" data-tip="Export binary" data-for="openFolder" data-iscapture="true"> save_alt </i>

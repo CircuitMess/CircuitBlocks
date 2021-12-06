@@ -172,6 +172,7 @@ export class Blocks {
         drawellipse: '<block type="sprite_draw_ellipse"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">30</field></shadow></value><value name="RX"><shadow type="math_number"><field name="NUM">15</field></shadow></value><value name="RY"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
         drawtriangle: '<block type="sprite_draw_triangle"><value name="COLOUR"><shadow type="display_colour"><field name="COLOUR">TFT_GREEN</field></shadow></value><value name="X0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y0"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="X1"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y1"><shadow type="math_number"><field name="NUM">20</field></shadow></value><value name="X2"><shadow type="math_number"><field name="NUM">60</field></shadow></value><value name="Y2"><shadow type="math_number"><field name="NUM">60</field></shadow></value></block>',
 
+        drawSprite: '<block type="sprite_draw_sprite"><value name="X"><shadow type="math_number"><field name="NUM">10</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">20</field></shadow></value></block>',
     };
 
     public static input: any = {

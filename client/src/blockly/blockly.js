@@ -92,5 +92,7 @@ goog.require('Blockly.Blocks.WheelsonCV');
 goog.require("Blockly.Blocks.audio_byteboi");
 
 Blockly.Device = "";
+Blockly.DefaultSprites = [];
+Blockly.Sprites = [];
 
 export default Blockly;

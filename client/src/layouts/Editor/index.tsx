@@ -19,6 +19,8 @@ import {Devices, Sketch} from "../Home/index";
 import Toolboxes from "../../components/BlocklyToolbox/Toolbox";
 import MonacoRO from "./components/MonacoRO";
 import {CloseConfirm} from "./components/CloseConfirm";
+import {Pixel, Sprite} from "./components/SpriteEditor/Sprite";
+import SpriteEditor from "./components/SpriteEditor/index";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -105,6 +107,8 @@ interface State {
   codeDidChange?: boolean;
   isExitEditor: boolean;
   isExitEditorOption: string;
+  spriteEditorOpen: boolean;
+  sprites: Sprite[];
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -131,6 +135,8 @@ const INIT_STATE: State = {
   codeDidChange: false,
   isExitEditor: false,
   isExitEditorOption: "",
+  spriteEditorOpen: false,
+  sprites: []
 };
 
 interface Notification {
@@ -148,6 +154,8 @@ class Editor extends Component<EditorProps, State> {
   blocklyDiv: any = undefined;
   workspace: any = undefined;
   callback: (value: string) => void = () => {};
+
+  public static readonly DefaultSpriteNames = ["tree1", "tree2", "tree3", "rock1", "rock2", "rock3", "character1", "character2", "character3", "bush1", "bush2"];
 
   constructor(props: EditorProps) {
     super(props);
@@ -217,6 +225,19 @@ class Editor extends Component<EditorProps, State> {
       if(!this.workspace) return "";
       // @ts-ignore
       code = Blockly.Arduino.workspaceToCode(this.workspace);
+
+      let spriteCode = "";
+      if(Blockly.Sprites !== undefined && Array.isArray(Blockly.Sprites)){
+        Blockly.Sprites.forEach(sprite => {
+          spriteCode += sprite.toCode() + "\n\n";
+        });
+      }
+
+      Blockly.DefaultSprites.forEach(sprite => {
+        spriteCode += sprite.toCode() + "\n\n";
+      });
+
+      code = code.replace("void setup()", spriteCode + "\nvoid setup()");
     }
 
     //this.setState({ code });
@@ -241,6 +262,7 @@ class Editor extends Component<EditorProps, State> {
     };
 
     (window as any).Blockly = Blockly;
+    this.loadDefaultSprites();
     this.workspace = Blockly.inject(this.blocklyDiv, { toolbox: toolbox, trashcan: false, zoom: { wheel: true, controls: true } });
     this.workspace.addChangeListener((e: any) => {
       // @ts-ignore
@@ -326,6 +348,37 @@ class Editor extends Component<EditorProps, State> {
     }
   };
 
+  loadDefaultSprites = () => {
+    Blockly.DefaultSprites = [];
+
+    if(Array.isArray(Blockly.DefaultSprites) && Blockly.DefaultSprites.length == 0){
+      Editor.DefaultSpriteNames.forEach(s => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if(!ctx) return;
+          ctx.drawImage(img, 0, 0);
+          const iData = ctx.getImageData(0, 0, img.width, img.height);
+          const data = iData.data;
+
+          const sprite = new Sprite(s, img.width, img.height);
+          for(let x = 0; x < sprite.width; x++){
+            for(let y = 0; y < sprite.height; y++){
+              const i = y * sprite.width + x;
+              sprite.setPixel(x, y, { r: data[i*4], g: data[i*4 + 1], b: data[i*4 + 2], a: data[i*4 + 3] == 255 });
+            }
+          }
+
+          Blockly.DefaultSprites.push(sprite);
+          console.log("loaded", sprite.name, sprite.width, sprite.height);
+        }
+
+        img.src = require(`../../assets/sprites/${s}.png`);
+      });
+    }
+  }
+
   load = (sketch: SketchLoadInfo) => {
     const Name: { [name: string]: string } = {
       "cm:esp32:ringo": "MAKERphone",
@@ -338,6 +391,9 @@ class Editor extends Component<EditorProps, State> {
 
     Blockly.Device = Name[sketch.device];
 
+    const sprites: Sprite[] = [];
+    Blockly.Sprites = sprites;
+
     if(sketch.type == SketchType.CODE){
       let startCode: string;
 
@@ -347,7 +403,7 @@ class Editor extends Component<EditorProps, State> {
         startCode = sketch.data;
       }
 
-      this.setState({ code: startCode, type: sketch.type, startCode: startCode });
+      this.setState({ code: startCode, type: sketch.type, startCode: startCode, sprites });
     }else{
       if(sketch.data === "") sketch.data = StartSketches[sketch.device].block;
       const xml = Blockly.Xml.textToDom(sketch.data);
@@ -355,7 +411,33 @@ class Editor extends Component<EditorProps, State> {
       Blockly.Xml.domToWorkspace(xml, this.workspace);
       this.injectToolbox(sketch.device);
 
-      this.setState({ type: sketch.type });
+      if(sketch.data && sketch.data !== ""){
+        const domParser = new DOMParser();
+        const dom = domParser.parseFromString(sketch.data, "application/xml");
+        const spritesEl = dom.getElementsByTagName("sprites");
+        if(spritesEl.length != 0){
+          const spriteEls = spritesEl[0].getElementsByTagName("sprite");
+
+          for(let i = 0; i < spriteEls.length; i++){
+            const name = spriteEls[i].getAttribute("name");
+            const width = spriteEls[i].getAttribute("width");
+            const height = spriteEls[i].getAttribute("height");
+            if(!name || !width || !height) continue;
+
+            const sprite = new Sprite(name, parseInt(width), parseInt(height));
+            const data = spriteEls[i].innerHTML.split(",");
+            for(let j = 0; j < sprite.width * sprite.height; j++){
+              const y = Math.floor(j / sprite.width);
+              const x = j - y * sprite.width;
+              sprite.setPixel(x, y, { r: parseInt(data[j*4]), g: parseInt(data[j*4 + 1]), b: parseInt(data[j*4 + 2]), a: data[j*4 + 3] == "1" });
+            }
+
+            sprites.push(sprite);
+          }
+        }
+      }
+
+      this.setState({ type: sketch.type, sprites });
 
       setTimeout(() => this.setState({codeDidChange: false}), 1250)
     }
@@ -378,8 +460,28 @@ class Editor extends Component<EditorProps, State> {
     const device = document.createElement("device");
     device.innerText = this.props.device;
 
+    const sprites = document.createElement("sprites");
+    Blockly.Sprites.forEach(s => {
+      const sprite = document.createElement("sprite");
+      sprite.setAttribute("name", s.name);
+      sprite.setAttribute("width", s.width);
+      sprite.setAttribute("height", s.height);
+
+      const data: string[] = [];
+      s.data.forEach((pixel: Pixel) => {
+        data.push("" + (pixel.r));
+        data.push("" + (pixel.g));
+        data.push("" + (pixel.b));
+        data.push("" + (pixel.a ? 1 : 0));
+      })
+
+      sprite.innerHTML = data.join(',');
+      sprites.appendChild(sprite);
+    });
+
     xmlDom.prepend(snapshot);
     xmlDom.prepend(device);
+    xmlDom.prepend(sprites);
 
     return Blockly.Xml.domToText(xmlDom);
   }
@@ -579,6 +681,9 @@ class Editor extends Component<EditorProps, State> {
     Blockly.hideChaff();
   };
 
+  openSpriteEditor = () => {
+    this.setState({spriteEditorOpen: !this.state.spriteEditorOpen});
+  }
 
   render() {
     const {
@@ -601,7 +706,9 @@ class Editor extends Component<EditorProps, State> {
       isSerialOpen,
       type,
       minimalCompile,
-      startCode
+      startCode,
+      spriteEditorOpen,
+      sprites
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef, device } = this.props;
 
@@ -667,8 +774,12 @@ class Editor extends Component<EditorProps, State> {
                 closePrompt={this.closePrompt}
               />
             )}
+              { spriteEditorOpen && type == SketchType.BLOCK && <SpriteEditor sprites={sprites} close={() => this.setState({spriteEditorOpen: false})} /> }
               <CloseConfirm open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
             <EditorHeader
+              spriteEditorButton={type == SketchType.BLOCK}
+              isSpriteOpen={spriteEditorOpen}
+              openSpriteEditor={() => this.openSpriteEditor()}
               home={this.saveAndExit}
               load={this.openLoadModal}
               run={this.run}
