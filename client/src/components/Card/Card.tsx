@@ -29,6 +29,10 @@ const Card = styled.div`
     background: #00BED6;
   }
   
+  &.byteboi {
+    background: #F1592A;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

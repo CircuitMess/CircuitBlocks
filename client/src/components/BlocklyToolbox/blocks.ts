@@ -250,6 +250,13 @@ export class Blocks {
         is_mute: '<block type="piezo_ismute"></block>'
     }
 
+    public static playback: any = {
+        tone: '<block type="playback_tone"><value name="FREQUENCY"><block type="math_number"><field name="NUM">1000</field></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
+        notone: '<block type="playback_notone"></block>',
+        setVolume: '<block type="playback_setVolume"><value name="VOLUME"><block type="math_number"><field name="NUM">130</field></block></value></block>',
+        getVolume: '<block type="playback_getVolume"></block>'
+    }
+
     public static ledmatrix: any = {
         push: '<block type="ledmatrix_push"></block>',
         clear: '<block type="ledmatrix_clear"></block>',

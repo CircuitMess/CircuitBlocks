@@ -58,6 +58,8 @@ goog.require("Blockly.Arduino.spencer_speech");
 goog.require("Blockly.Arduino.Wheelson");
 goog.require("Blockly.Arduino.WheelsonIO");
 goog.require("Blockly.Arduino.WheelsonCV");
+goog.require("Blockly.Arduino.ByteBoi");
+goog.require("Blockly.Arduino.audio_byteboi");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
@@ -87,6 +89,7 @@ goog.require('Blockly.Blocks.wifi');
 goog.require('Blockly.Blocks.spencer_speech');
 goog.require('Blockly.Blocks.WheelsonIO');
 goog.require('Blockly.Blocks.WheelsonCV');
+goog.require("Blockly.Blocks.audio_byteboi");
 
 Blockly.Device = "";
 
