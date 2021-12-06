@@ -217,7 +217,7 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 
 		return <div>
 			<Dimmer active={true}>
-				<ModalBase className={"small"}>
+				<ModalBase className={"small"} style={{ minWidth: 550 }}>
 					<Header>
 						{ sprite && <div>
 							<div className={"size"}>
