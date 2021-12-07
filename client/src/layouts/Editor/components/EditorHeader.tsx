@@ -92,8 +92,10 @@ interface Props {
   codeButton: boolean;
   minimalCompile: boolean;
   toggleMinimal: () => void;
+  openGameExport: () => void;
   device: string;
   spriteEditorButton: boolean;
+  gameExportButton: boolean;
 }
 
 const EditorHeader: React.FC<Props> = (props) => {
@@ -115,7 +117,9 @@ const EditorHeader: React.FC<Props> = (props) => {
     toggleMinimal,
     device,
     openSpriteEditor,
-    spriteEditorButton
+    spriteEditorButton,
+    gameExportButton,
+    openGameExport
   } = props;
 
   const [ runningPercentage, setRunningPercentage ] = useState(0);
@@ -181,6 +185,9 @@ const EditorHeader: React.FC<Props> = (props) => {
       <div className="right">
         { null && <Button className="icon" onClick={load}>
           <i className="material-icons"> folder_open </i>
+        </Button> }
+        { gameExportButton && <Button className={`icon red ${isSpriteOpen ? 'active' : ''}`} onClick={openGameExport} >
+          <i className="material-icons" data-tip="Export game" data-for="openFolder" data-iscapture="true"> videogame_asset </i>
         </Button> }
         { spriteEditorButton && <Button className={`icon red ${isSpriteOpen ? 'active' : ''}`} onClick={openSpriteEditor} >
           <i className="material-icons" data-tip="Sprite editor" data-for="openFolder" data-iscapture="true"> brush </i>

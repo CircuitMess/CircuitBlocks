@@ -21,6 +21,7 @@ import MonacoRO from "./components/MonacoRO";
 import {CloseConfirm} from "./components/CloseConfirm";
 import {Pixel, Sprite} from "./components/SpriteEditor/Sprite";
 import SpriteEditor from "./components/SpriteEditor/index";
+import GameExport from "./components/GameExport";
 
 const StartSketches: { [name: string]: { block: string, code: string } } = {};
 
@@ -109,6 +110,7 @@ interface State {
   isExitEditorOption: string;
   spriteEditorOpen: boolean;
   sprites: Sprite[];
+  gameExportOpen: boolean;
 }
 
 const NAV_BAR_HEIGHT = 64;
@@ -136,7 +138,8 @@ const INIT_STATE: State = {
   isExitEditor: false,
   isExitEditorOption: "",
   spriteEditorOpen: false,
-  sprites: []
+  sprites: [],
+  gameExportOpen: false
 };
 
 interface Notification {
@@ -577,6 +580,15 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
   };
 
+  exportGame = () => {
+    const path = dialog.showOpenDialogSync({ properties: [ "openDirectory", "createDirectory" ] });
+    if(path == undefined) return;
+
+    this.setState({ running: true});
+    console.log("Exporting for ", this.props.device);
+    ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
+  };
+
   saveExternal = () => {
     if (this.state.xml) {
       const blob = new Blob([this.state.xml], {
@@ -708,7 +720,8 @@ class Editor extends Component<EditorProps, State> {
       minimalCompile,
       startCode,
       spriteEditorOpen,
-      sprites
+      sprites,
+      gameExportOpen
     } = this.state;
     const { isEditorOpen, openHome, title, monacoRef, device } = this.props;
 
@@ -775,8 +788,11 @@ class Editor extends Component<EditorProps, State> {
               />
             )}
               { spriteEditorOpen && type == SketchType.BLOCK && <SpriteEditor sprites={sprites} close={() => this.setState({spriteEditorOpen: false})} /> }
+              { gameExportOpen && type == SketchType.BLOCK && <GameExport sprites={sprites} close={() => { this.setState({gameExportOpen: false}); }} save={() => { this.setState({gameExportOpen: false}); this.exportGame(); }} /> }
               <CloseConfirm open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
             <EditorHeader
+              gameExportButton={type == SketchType.BLOCK && device == "cm:esp32:byteboi"}
+              openGameExport={() => this.setState({ gameExportOpen: true })}
               spriteEditorButton={type == SketchType.BLOCK}
               isSpriteOpen={spriteEditorOpen}
               openSpriteEditor={() => this.openSpriteEditor()}
