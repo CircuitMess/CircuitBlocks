@@ -306,4 +306,9 @@ export class Blocks {
         process: '<block type="spencer_speech_processed"></block>',
         synthesize: '<block type="spencer_speech_synthesize"><value name="TEXT"><shadow type="text"><field name="TEXT">Hello! My name is Spencer!</field></shadow></value></block>',
     };
+
+    public static byteboi: any = {
+        rgb: '<block type="byteboi_rgb"></block>',
+        splash: '<block type="byteboi_splash"></block>',
+    };
 }

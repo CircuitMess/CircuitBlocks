@@ -346,6 +346,10 @@ categories.push({
 
     blocks: [
         {
+            name: "set_rgb_led_color",
+            xml: Blocks.byteboi.rgb
+        },
+        {
             name: "playback_tone",
             xml: Blocks.playback.tone,
             group: "Audio"
@@ -395,6 +399,10 @@ categories.push({
     color: Blockly.Msg.DISPLAY_HUE,
 
     blocks: [
+        {
+            name: "byteboi_splash_screen",
+            xml: Blocks.byteboi.splash
+        },
         {
             name: "display_commit",
             xml: Blocks.display_sprite.commit
