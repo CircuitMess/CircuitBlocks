@@ -794,7 +794,7 @@ class Editor extends Component<EditorProps, State> {
             <EditorHeader
               gameExportButton={type == SketchType.BLOCK && device == "cm:esp32:byteboi"}
               openGameExport={() => this.setState({ gameExportOpen: true })}
-              spriteEditorButton={type == SketchType.BLOCK && device != "cm:esp32:spencer"}
+              spriteEditorButton={type == SketchType.BLOCK && device != "cm:esp32:spencer" && device != "cm:esp32:ringo"}
               isSpriteOpen={spriteEditorOpen}
               openSpriteEditor={() => this.openSpriteEditor()}
               home={this.saveAndExit}
