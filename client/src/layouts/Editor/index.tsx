@@ -229,18 +229,20 @@ class Editor extends Component<EditorProps, State> {
       // @ts-ignore
       code = Blockly.Arduino.workspaceToCode(this.workspace);
 
-      let spriteCode = "";
-      if(Blockly.Sprites !== undefined && Array.isArray(Blockly.Sprites)){
-        Blockly.Sprites.forEach(sprite => {
+      if(Blockly.Device != "Spencer"){
+        let spriteCode = "";
+        if(Blockly.Sprites !== undefined && Array.isArray(Blockly.Sprites)){
+          Blockly.Sprites.forEach(sprite => {
+            spriteCode += sprite.toCode() + "\n\n";
+          });
+        }
+
+        Blockly.DefaultSprites.forEach(sprite => {
           spriteCode += sprite.toCode() + "\n\n";
         });
+
+        code = code.replace("void setup()", spriteCode + "\nvoid setup()");
       }
-
-      Blockly.DefaultSprites.forEach(sprite => {
-        spriteCode += sprite.toCode() + "\n\n";
-      });
-
-      code = code.replace("void setup()", spriteCode + "\nvoid setup()");
     }
 
     //this.setState({ code });
@@ -374,7 +376,6 @@ class Editor extends Component<EditorProps, State> {
           }
 
           Blockly.DefaultSprites.push(sprite);
-          console.log("loaded", sprite.name, sprite.width, sprite.height);
         }
 
         img.src = require(`../../assets/sprites/${s}.png`);
@@ -793,7 +794,7 @@ class Editor extends Component<EditorProps, State> {
             <EditorHeader
               gameExportButton={type == SketchType.BLOCK && device == "cm:esp32:byteboi"}
               openGameExport={() => this.setState({ gameExportOpen: true })}
-              spriteEditorButton={type == SketchType.BLOCK}
+              spriteEditorButton={type == SketchType.BLOCK && device != "cm:esp32:spencer"}
               isSpriteOpen={spriteEditorOpen}
               openSpriteEditor={() => this.openSpriteEditor()}
               home={this.saveAndExit}
