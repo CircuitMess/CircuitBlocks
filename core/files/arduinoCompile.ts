@@ -167,13 +167,20 @@ export default class ArduinoCompile {
                 Object.assign(sprite, args.icon);
             }
 
-            if(!fs.existsSync(dir)){
-                fs.mkdirSync(dir);
-            }
+            try {
+                if(!fs.existsSync(dir)){
+                    fs.mkdirSync(dir);
+                }
 
-            const dirStats = fs.statSync(dir);
-            if(!dirStats.isDirectory()){
-                messenger.report(MessageType.RUN, [ "Invalid export directory." ], [{ title: "Ok" }]);
+                const dirStats = fs.statSync(dir);
+                if(!dirStats.isDirectory()){
+                    messenger.report(MessageType.RUN, [ "Invalid export directory." ], [{ title: "Ok" }]);
+                    return;
+                }
+            }catch(e){
+                this.send('runprogress', { stage: 'DONE', progress: 0 });
+                messenger.report(MessageType.RUN, [ "Error creating destination directory. Please make sure you have write permissions." ], [{ title: "Ok" }]);
+                logger.log("Creating destination directory", e);
                 return;
             }
 
@@ -184,33 +191,40 @@ export default class ArduinoCompile {
             const iconPath = path.join(dir, iconName);
             const propPath = path.join(dir, "game.properties");
 
-            if(fs.existsSync(binaryPath)) fs.unlinkSync(binaryPath);
-            if(fs.existsSync(iconPath)) fs.unlinkSync(iconPath);
-            if(fs.existsSync(propPath)) fs.unlinkSync(propPath);
+            try {
+                if(fs.existsSync(binaryPath)) fs.unlinkSync(binaryPath);
+                if(fs.existsSync(iconPath)) fs.unlinkSync(iconPath);
+                if(fs.existsSync(propPath)) fs.unlinkSync(propPath);
 
-            const props = fs.openSync(propPath, "w");
-            fs.writeFileSync(props, `Name=${name}\n`);
-            fs.writeFileSync(props, `Binary=${binaryName}\n`);
-            if(sprite){
-                fs.writeFileSync(props, `Icon=${iconName}\n`);
-            }
-            fs.closeSync(props);
-
-            if(sprite){
-                const spriteFile = fs.openSync(iconPath, "w");
-
-                for(let i = 0; i < sprite.width * sprite.height; i++){
-                    const pixel = sprite.getPixel(i);
-                    const color = pixel.a ? (((pixel.r & 0xF8) << 8) | ((pixel.g & 0xFC) << 3) | (pixel.b >> 3)) : 0x0120;
-                    const upper = (color & 0xFF00) >> 8;
-                    const lower = (color & 0xFF);
-                    const buffer = new Buffer(2);
-                    buffer[0] = lower;
-                    buffer[1] = upper;
-                    fs.writeFileSync(spriteFile, buffer);
+                const props = fs.openSync(propPath, "w");
+                fs.writeFileSync(props, `Name=${name}\n`);
+                fs.writeFileSync(props, `Binary=${binaryName}\n`);
+                if(sprite){
+                    fs.writeFileSync(props, `Icon=${iconName}\n`);
                 }
+                fs.closeSync(props);
 
-                fs.closeSync(spriteFile);
+                if(sprite){
+                    const spriteFile = fs.openSync(iconPath, "w");
+
+                    for(let i = 0; i < sprite.width * sprite.height; i++){
+                        const pixel = sprite.getPixel(i);
+                        const color = pixel.a ? (((pixel.r & 0xF8) << 8) | ((pixel.g & 0xFC) << 3) | (pixel.b >> 3)) : 0x0120;
+                        const upper = (color & 0xFF00) >> 8;
+                        const lower = (color & 0xFF);
+                        const buffer = new Buffer(2);
+                        buffer[0] = lower;
+                        buffer[1] = upper;
+                        fs.writeFileSync(spriteFile, buffer);
+                    }
+
+                    fs.closeSync(spriteFile);
+                }
+            }catch(e){
+                this.send('runprogress', { stage: 'DONE', progress: 0 });
+                messenger.report(MessageType.RUN, [ "Error writing game files. Please make sure the destination directory exists and you have write permissions for it." ], [{ title: "Ok" }]);
+                logger.log("Writing game files", e);
+                return;
             }
 
             this.send("runprogress", { error: null, stage: "EXPORT", progress: 0 });
