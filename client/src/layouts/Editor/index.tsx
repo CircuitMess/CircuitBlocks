@@ -577,17 +577,21 @@ class Editor extends Component<EditorProps, State> {
     if(path == undefined) return;
 
     this.setState({ running: true});
-    console.log("Exporting for ", this.props.device);
     ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
   };
 
-  exportGame = () => {
+  exportGame = (name: string, icon: number) => {
     const path = dialog.showOpenDialogSync({ properties: [ "openDirectory", "createDirectory" ] });
-    if(path == undefined) return;
+    if(path == undefined || !Array.isArray(path) || path.length == 0) return;
+
+    const sprites = this.state.sprites;
+    let sprite: Sprite | undefined;
+    if(icon != -1 && sprites[icon] != undefined){
+      sprite = sprites[icon].getCropped(64, 64);
+    }
 
     this.setState({ running: true});
-    console.log("Exporting for ", this.props.device);
-    ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
+    ipcRenderer.send('exportgame', { code: this.getCode(), path: path[0], name, icon: sprite });
   };
 
   saveExternal = () => {
@@ -789,7 +793,7 @@ class Editor extends Component<EditorProps, State> {
               />
             )}
               { spriteEditorOpen && type == SketchType.BLOCK && <SpriteEditor sprites={sprites} close={() => this.setState({spriteEditorOpen: false})} /> }
-              { gameExportOpen && type == SketchType.BLOCK && <GameExport sprites={sprites} close={() => { this.setState({gameExportOpen: false}); }} save={() => { this.setState({gameExportOpen: false}); this.exportGame(); }} /> }
+              { gameExportOpen && type == SketchType.BLOCK && <GameExport sprites={sprites} close={() => { this.setState({gameExportOpen: false}); }} save={(name, sprite) => { this.setState({gameExportOpen: false}); this.exportGame(name, sprite); }} /> }
               <CloseConfirm open={this.state.isExitEditor} closeModalCallback={option => this.saveAndExit(option)}/>
             <EditorHeader
               gameExportButton={type == SketchType.BLOCK && device == "cm:esp32:byteboi"}

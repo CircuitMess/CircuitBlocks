@@ -7,6 +7,8 @@ import * as util from "../compiler/util";
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
 import {parseProps} from "../compiler/util";
+import {Sprite} from "./Sprite";
+import {Buffer} from "buffer";
 
 export default class ArduinoCompile {
 
@@ -134,6 +136,98 @@ export default class ArduinoCompile {
                     this.running = false;
                 });
             }, args.device, "EXPORT", minimal);
+        });
+
+        ipcMain.on("exportgame", (event, args) => {
+            if(this.cancel) return;
+
+            const stats = ArduinoCompiler.getDaemon();
+            if(!stats.connected){
+                if(stats.connecting){
+                    messenger.report(MessageType.DAEMON, [ "Arduino daemon still loading. Please wait a bit and then try again." ], [{ title: "Ok", action: "installstate" }]);
+                    //this.send("runprogress", { stage: "DONE", error: "Arduino daemon still loading. Please try a bit later."});
+                }else{
+                    messenger.reportFatal();
+                    //this.send("runprogress", { stage: "DONE", error: "Arduino daemon couldn't load. Please restart CircuitMess.", fatal: true});
+                }
+                return;
+            }
+
+            if(this.running){
+                this.send("runprogress", { stage: "DONE", running: true });
+                messenger.report(MessageType.RUN, [ "A compile operation is already running. Please wait or restart CircuitBlocks." ], [{ title: "Ok" }]);
+                return;
+            }
+            this.running = true;
+
+            const { code, name } = args;
+            const dir = args.path;
+            const sprite: Sprite | undefined = args.icon ? new Sprite("", 0, 0) : undefined;
+            if(sprite){
+                Object.assign(sprite, args.icon);
+            }
+
+            if(!fs.existsSync(dir)){
+                fs.mkdirSync(dir);
+            }
+
+            const dirStats = fs.statSync(dir);
+            if(!dirStats.isDirectory()){
+                messenger.report(MessageType.RUN, [ "Invalid export directory." ], [{ title: "Ok" }]);
+                return;
+            }
+
+            const prettyName = name.replace(" ", "");
+            const binaryName = prettyName + ".bin";
+            const iconName = prettyName + ".raw";
+            const binaryPath = path.join(dir, binaryName);
+            const iconPath = path.join(dir, iconName);
+            const propPath = path.join(dir, "game.properties");
+
+            if(fs.existsSync(binaryPath)) fs.unlinkSync(binaryPath);
+            if(fs.existsSync(iconPath)) fs.unlinkSync(iconPath);
+            if(fs.existsSync(propPath)) fs.unlinkSync(propPath);
+
+            const props = fs.openSync(propPath, "w");
+            fs.writeFileSync(props, `Name=${name}\n`);
+            fs.writeFileSync(props, `Binary=${binaryName}\n`);
+            if(sprite){
+                fs.writeFileSync(props, `Icon=${iconName}\n`);
+            }
+            fs.closeSync(props);
+
+            if(sprite){
+                const spriteFile = fs.openSync(iconPath, "w");
+
+                for(let i = 0; i < sprite.width * sprite.height; i++){
+                    const pixel = sprite.getPixel(i);
+                    const color = pixel.a ? (((pixel.r & 0xF8) << 8) | ((pixel.g & 0xFC) << 3) | (pixel.b >> 3)) : 0x0120;
+                    const upper = (color & 0xFF00) >> 8;
+                    const lower = (color & 0xFF);
+                    const buffer = new Buffer(2);
+                    buffer[0] = lower;
+                    buffer[1] = upper;
+                    fs.writeFileSync(spriteFile, buffer);
+                }
+
+                fs.closeSync(spriteFile);
+            }
+
+            this.send("runprogress", { error: null, stage: "EXPORT", progress: 0 });
+            this.compile(code, (binary) => {
+                fs.copyFile(binary, binaryPath, error => {
+                    if(error){
+                        logger.log("Export copy error", error);
+                        this.send('runprogress', { stage: 'DONE', progress: 0 });
+                        messenger.report(MessageType.EXPORT, [ "Error saving compiled binary. Make sure you have the permissions to write to the specified file." ], [{ title: "Ok" }])
+                    }else{
+                        this.send('runprogress', { stage: 'DONE', progress: 0 });
+                        messenger.report(MessageType.EXPORT, [ "Export successful" ], [{ title: "Ok" }]);
+                    }
+
+                    this.running = false;
+                });
+            }, args.device ?? "cm:esp32:byteboi", "EXPORT", false);
         });
 
         ipcMain.on("firmware", (event, args) => {
