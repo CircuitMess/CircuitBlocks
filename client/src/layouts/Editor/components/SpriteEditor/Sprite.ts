@@ -7,6 +7,7 @@ export interface Pixel {
 
 export function PixelsEqual(a: Pixel, b: Pixel){
 	if(!a.a && a.a == b.a) return true;
+	if(a.a != b.a) return false;
 	return a.r == b.r && a.g == b.g && a.b == b.b;
 }
 
