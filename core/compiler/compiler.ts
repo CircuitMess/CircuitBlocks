@@ -19,7 +19,7 @@ import {ArduinoCoreServiceClient} from "../grpc/cc/arduino/cli/commands/v1/comma
 import {Instance} from "../grpc/cc/arduino/cli/commands/v1/common_pb";
 import {InitRequest} from "../grpc/cc/arduino/cli/commands/v1/commands_pb";
 import {CompileRequest} from "../grpc/cc/arduino/cli/commands/v1/compile_pb";
-import {UploadRequest} from "../grpc/cc/arduino/cli/commands/v1/upload_pb";
+import {BurnBootloaderRequest, UploadRequest} from "../grpc/cc/arduino/cli/commands/v1/upload_pb";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -621,6 +621,126 @@ export default class ArduinoCompiler {
 
           if (matches) {
             if (matches[1] == '00010000') {
+              progressStarted = true;
+            } else if (matches[1] == '00008000') {
+              progressStarted = false;
+            }
+
+            if (progressStarted) {
+              const val = parseInt(matches[2]);
+              progressCallback(val);
+
+              if (val == 100) {
+                progressStarted = false;
+              }
+            }
+          }
+        }
+
+        if (data.getOutStream().length != 0) {
+          write(data.getOutStream(), stdout);
+        } else {
+          write(data.getErrStream(), stderr);
+        }
+      });
+
+      stream.on('end', () => {
+        if (fulfilled) return;
+        fulfilled = true;
+
+        error.stdout = stdout;
+        error.stderr = stderr;
+        reject(error);
+      });
+
+      stream.on('status', (data) => {
+        fulfilled = true;
+
+        if (data.code === 0) {
+          resolve();
+        } else {
+          error.stdout = stdout;
+          error.stderr = stderr;
+          reject(error);
+        }
+      });
+    });
+
+    promise.catch(err => {
+      logger.log("CLI upload error", err);
+      throw err;
+    });
+
+    promise.finally(() => { this.getSerial().setUploading(false); this.getSerial().start() });
+
+    return promise;
+  }
+
+  public static restoreFirmware(
+      device: string,
+      port: string,
+      progressCallback?: (number) => void
+  ): Promise<null> {
+    const promise = new Promise<null>((resolve, reject) => {
+      const programmers = {
+        "cm:esp32:ringo": "ringofirm",
+        "cm:esp32:spencer": "spencerfirm",
+        "cm:esp32:jayd": "jaydfirm",
+        "cm:esp32:wheelson": "wheelfirm",
+        "cm:esp32:byteboi": "bbfirm",
+      };
+
+      if(!programmers.hasOwnProperty(device)){
+        reject("invalid device");
+        return;
+      }
+
+      const serial = this.getSerial();
+      serial.stop();
+      serial.setUploading(true);
+
+      console.log("Restoring firmware for", device);
+      logger.log("Restoring firmware for " + device);
+      if(device == "cm:esp8266:nibble"){
+        device += ":baud=921600";
+      }
+
+      const req = new BurnBootloaderRequest();
+      req.setInstance(this.instance);
+      req.setFqbn(device);
+      req.setProgrammer(programmers[device]);
+      req.setPort(port);
+      req.setVerify(true);
+
+      const stream = this.client.burnBootloader(req);
+
+      const stdout: string[] = [];
+      const stderr: string[] = [];
+      let fulfilled = false;
+      let error: any;
+      const decoder = new TextDecoder('utf-8');
+
+      const progRegex = new RegExp('Writing at 0x([0-9a-f]{8})... \\((\\d+) %\\)');
+      let progressStarted = false;
+
+      stream.on('error', (data) => {
+        error = data;
+      });
+
+      stream.on('data', (data) => {
+        function write(what: Uint8Array | string, where: string[]) {
+          if (what instanceof Uint8Array) {
+            what = decoder.decode(what);
+          }
+
+          where.push(what);
+
+          if (!progressCallback) return;
+
+          const matches = progRegex.exec(what);
+
+          if (matches) {
+            if (matches[1] == '00010000' || matches[1] == '00110000') {
               progressStarted = true;
             } else if (matches[1] == '00008000') {
               progressStarted = false;

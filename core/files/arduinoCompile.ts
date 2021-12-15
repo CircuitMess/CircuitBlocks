@@ -258,47 +258,65 @@ export default class ArduinoCompile {
                 return;
             }
 
-            const deviceParts = args.device.split(":");
-            const platform = deviceParts[1];
-            const device = deviceParts[2];
+            if(args.device == "cm:esp8266:nibble"){
+                const deviceParts = args.device.split(":");
+                const platform = deviceParts[1];
+                const device = deviceParts[2];
 
-            let firmware = "";
+                let firmware = "";
 
-            const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", platform);
-            let newest = "";
-            fs.readdirSync(hardwareDir).forEach((version) => {
-                const versionDir = path.join(hardwareDir, version);
-                if(!fs.statSync(versionDir).isDirectory()) return;
+                const hardwareDir = path.join(ArduinoCompiler.getInstallInfo().local, "packages", "cm", "hardware", platform);
+                let newest = "";
+                fs.readdirSync(hardwareDir).forEach((version) => {
+                    const versionDir = path.join(hardwareDir, version);
+                    if(!fs.statSync(versionDir).isDirectory()) return;
 
-                if(newest == "" || util.isNewer(version, newest)){
-                    newest = version;
-                }
-            });
-            const platformDir = path.join(hardwareDir, newest);
+                    if(newest == "" || util.isNewer(version, newest)){
+                        newest = version;
+                    }
+                });
+                const platformDir = path.join(hardwareDir, newest);
 
-            /*if(device == "ringo"){
-                firmware = path.join(platformDir, "firmware", "firmware.bin");
-            }else{*/
+                /*if(device == "ringo"){
+					firmware = path.join(platformDir, "firmware", "firmware.bin");
+				}else{*/
                 const boards = parseProps(fs.readFileSync(path.join(platformDir, "boards.txt"), { encoding: "utf8" }));
                 const firmwarePath = boards[device + ".bootloader.tool.firmware"];
                 firmware = path.join(platformDir, "firmwares", firmwarePath);
-            //}
+                //}
 
-            console.log("Uploading", firmware);
+                console.log("Uploading", firmware);
 
-            this.running = true;
-            this.send("installstate", { state: { stage: "0%", restoring: true } });
+                this.running = true;
+                this.send("installstate", { state: { stage: "0%", restoring: true } });
 
-            this.upload(firmware, args.device, () => {
-                this.send("installstate", { state: { stage: "DONE" } });
-                this.running = false;
-            }, (progress => {
-                this.send("installstate", { state: { stage: "" + progress + "%", restoring: true } });
-            }), (error) => {
-                this.send("installstate", { state: { stage: "DONE", restoring: true } });
-                messenger.report(MessageType.RESTORE, [ error ], [{ title: "Ok" }]);
-                this.running = false;
-            });
+                this.upload(firmware, args.device, () => {
+                    this.send("installstate", { state: { stage: "DONE" } });
+                    this.running = false;
+                }, (progress => {
+                    this.send("installstate", { state: { stage: "" + progress + "%", restoring: true } });
+                }), (error) => {
+                    this.send("installstate", { state: { stage: "DONE", restoring: true } });
+                    messenger.report(MessageType.RESTORE, [ error ], [{ title: "Ok" }]);
+                    this.running = false;
+                });
+            }else{
+                console.log("restoring firmware", args.device);
+
+                this.running = true;
+                this.send("installstate", { state: { stage: "0%", restoring: true } });
+
+                this.firmware(args.device, () => {
+                    this.send("installstate", { state: { stage: "DONE" } });
+                    this.running = false;
+                }, (progress => {
+                    this.send("installstate", { state: { stage: "" + progress + "%", restoring: true } });
+                }), (error) => {
+                    this.send("installstate", { state: { stage: "DONE", restoring: true } });
+                    messenger.report(MessageType.RESTORE, [ error ], [{ title: "Ok" }]);
+                    this.running = false;
+                });
+            }
         });
     }
 
@@ -343,6 +361,39 @@ export default class ArduinoCompile {
         }
 
         ArduinoCompiler.uploadBinary(binary, this.arduinoSerial.getPort().comName, device,
+            pCallback ? pCallback : progress => this.send("runprogress", { stage: "UPLOAD", progress }))
+            .then(() => {
+                callback();
+            })
+            .catch(error => {
+                if(this.cancel){
+                    return;
+                }
+                console.log(error);
+                if(eCallback){
+                    eCallback("Upload error. Check your device then try again.")
+                }else{
+                    this.send('runprogress', { stage: 'DONE' });
+                    messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
+                }
+                this.running = false;
+            });
+    }
+
+    private firmware(device: string, callback: () => void, pCallback?: (progress) => void, eCallback?: (error) => void){
+        if(this.arduinoSerial.getPort() == undefined){
+            logger.log("Upload error: Device disconnected");
+            console.log(new Error("Device disconnected"));
+            if(eCallback){
+                eCallback("Upload error. Check your device then try again.");
+            }else{
+                this.send('runprogress', { stage: 'DONE' });
+                messenger.report(MessageType.RUN, [ "Upload error. Check your device then try again." ], [{ title: "Ok" }]);
+            }
+            return;
+        }
+
+        ArduinoCompiler.restoreFirmware(device, this.arduinoSerial.getPort().comName,
             pCallback ? pCallback : progress => this.send("runprogress", { stage: "UPLOAD", progress }))
             .then(() => {
                 callback();
