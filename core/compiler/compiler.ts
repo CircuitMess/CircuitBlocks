@@ -7,14 +7,19 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 
 import Serial from './serial';
-import { ArduinoCoreClient } from '../grpc/commands_grpc_pb';
+/*import { ArduinoCoreClient } from '../grpc/commands_grpc_pb';
 import { CompileReq, CompileResp } from '../grpc/compile_pb';
 import { Configuration, InitReq, VersionReq } from '../grpc/commands_pb';
 import { Instance } from '../grpc/common_pb';
-import { UploadReq, UploadResp } from '../grpc/upload_pb';
+import { UploadReq, UploadResp } from '../grpc/upload_pb';*/
 import { rejects } from 'assert';
 import * as util from "./util";
 import logger from "../files/logger";
+import {ArduinoCoreServiceClient} from "../grpc/cc/arduino/cli/commands/v1/commands_grpc_pb";
+import {Instance} from "../grpc/cc/arduino/cli/commands/v1/common_pb";
+import {InitRequest} from "../grpc/cc/arduino/cli/commands/v1/commands_pb";
+import {CompileRequest} from "../grpc/cc/arduino/cli/commands/v1/compile_pb";
+import {UploadRequest} from "../grpc/cc/arduino/cli/commands/v1/upload_pb";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -36,7 +41,8 @@ export interface InstallInfo {
 }
 
 export default class ArduinoCompiler {
-  private static client = new ArduinoCoreClient(
+
+  private static client = new ArduinoCoreServiceClient(
     'localhost:50051',
     grpc.credentials.createInsecure()
   );
@@ -270,15 +276,8 @@ export default class ArduinoCompiler {
           : "./arduino-cli";
       this.process = childProcess.execFile(cliCommand, ['daemon'], { cwd: this.installInfo.cli });
 
-      const req = new InitReq();
+      const req = new InitRequest();
       req.setLibraryManagerOnly(false);
-      const conf = new Configuration();
-      conf.setBoardmanageradditionalurlsList([
-        'https://raw.githubusercontent.com/CircuitMess/MAKERphone/boardArduino/package_CircuitMess_Ringo_index.json'
-      ]);
-      conf.setDatadir(this.installInfo.local);
-      conf.setSketchbookdir(this.installInfo.sketchbook);
-      req.setConfiguration(conf);
 
       const context = this;
       let tries = 0;
@@ -319,7 +318,7 @@ export default class ArduinoCompiler {
               })
               .on('error', error => {
                 logger.log("Daemon race condition", error);
-                console.log("race condition");
+                console.log("race condition", error);
                 onErr();
               })
               .on('end', (data) => resolve());
@@ -473,17 +472,17 @@ export default class ArduinoCompiler {
 
       console.log("Compiling for", device);
       logger.log("Compiling for " + device);
-      const req = new CompileReq();
+      const req = new CompileRequest();
       req.setInstance(this.instance);
-      req.setSketchpath(sketchDir);
-      req.setBuildcachepath(cachePath);
-      req.setBuildpath(buildPath);
+      req.setSketchPath(sketchDir);
+      req.setBuildCachePath(cachePath);
+      req.setBuildPath(buildPath);
       req.setFqbn(device);
-      req.setExportfile(path.join(buildPath, 'export'));
+      req.setExportDir(path.join(buildPath, 'export'));
       req.setVerbose(true);
       if(minimal && device == "cm:esp32:ringo"){
         logger.log("compiling minimal");
-        req.setBuildpropertiesList([ "compiler.c.extra_flags=-DMPMINIMAL", "compiler.cpp.extra_flags=-DMPMINIMAL", "compiler.c.elf.extra_flags=-DMPMINIMAL" ]);
+        req.setBuildPropertiesList([ "compiler.c.extra_flags=-DMPMINIMAL", "compiler.cpp.extra_flags=-DMPMINIMAL", "compiler.c.elf.extra_flags=-DMPMINIMAL" ]);
       }
 
       const stream = this.client.compile(req);
@@ -498,7 +497,7 @@ export default class ArduinoCompiler {
         error = data;
       });
 
-      stream.on('data', (data: CompileResp) => {
+      stream.on('data', (data) => {
         function write(what: Uint8Array | string, where: string[]) {
           if (what instanceof Uint8Array) {
             what = decoder.decode(what);
@@ -585,7 +584,7 @@ export default class ArduinoCompiler {
         device += ":baud=921600";
       }
 
-      const req = new UploadReq();
+      const req = new UploadRequest();
       req.setInstance(this.instance);
       req.setFqbn(device);
       req.setImportFile(binary);
@@ -608,7 +607,7 @@ export default class ArduinoCompiler {
         error = data;
       });
 
-      stream.on('data', (data: UploadResp) => {
+      stream.on('data', (data) => {
         function write(what: Uint8Array | string, where: string[]) {
           if (what instanceof Uint8Array) {
             what = decoder.decode(what);

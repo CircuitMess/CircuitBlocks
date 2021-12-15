@@ -1,0 +1,308 @@
+// This file is part of arduino-cli.
+//
+// Copyright 2020 ARDUINO SA (http://www.arduino.cc/)
+//
+// This software is released under the GNU General Public License version 3,
+// which covers the main part of arduino-cli.
+// The terms of this license can be found at:
+// https://www.gnu.org/licenses/gpl-3.0.en.html
+//
+// You can be released from the requirements of the above licenses by purchasing
+// a commercial license. Buying such a license is mandatory if you want to
+// modify or otherwise use the software for commercial activities involving the
+// Arduino software without disclosing the source code of your own applications.
+// To purchase a commercial license, send an email to license@arduino.cc.
+
+syntax = "proto3";
+
+package cc.arduino.cli.commands.v1;
+
+option go_package = "github.com/arduino/arduino-cli/rpc/cc/arduino/cli/commands/v1;commands";
+
+import "cc/arduino/cli/commands/v1/common.proto";
+import "cc/arduino/cli/commands/v1/board.proto";
+import "cc/arduino/cli/commands/v1/compile.proto";
+import "cc/arduino/cli/commands/v1/core.proto";
+import "cc/arduino/cli/commands/v1/upload.proto";
+import "cc/arduino/cli/commands/v1/lib.proto";
+
+// The main Arduino Platform service API
+service ArduinoCoreService {
+  // BOOTSTRAP COMMANDS
+  //-------------------
+
+  // Start a new instance of the Arduino Core Service
+  rpc Init(InitRequest) returns (stream InitResponse) {}
+
+  // Destroy an instance of the Arduino Core Service
+  rpc Destroy(DestroyRequest) returns (DestroyResponse) {}
+
+  // Rescan instance of the Arduino Core Service
+  rpc Rescan(RescanRequest) returns (RescanResponse) {}
+
+  // Update package index of the Arduino Core Service
+  rpc UpdateIndex(UpdateIndexRequest) returns (stream UpdateIndexResponse) {}
+
+  // Update libraries index
+  rpc UpdateLibrariesIndex(UpdateLibrariesIndexRequest)
+      returns (stream UpdateLibrariesIndexResponse) {}
+
+  // Update packages indexes for both Cores and Libraries
+  rpc UpdateCoreLibrariesIndex(UpdateCoreLibrariesIndexRequest)
+      returns (stream UpdateCoreLibrariesIndexResponse) {}
+
+  // Outdated returns a message with a list of outdated Cores and Libraries
+  rpc Outdated(OutdatedRequest) returns (OutdatedResponse) {}
+
+  // Upgrade both Cores and Libraries
+  rpc Upgrade(UpgradeRequest) returns (stream UpgradeResponse) {}
+
+  // Get the version of Arduino CLI in use.
+  rpc Version(VersionRequest) returns (VersionResponse) {}
+
+  // Returns all files composing a Sketch
+  rpc LoadSketch(LoadSketchRequest) returns (LoadSketchResponse) {}
+
+  // Creates a zip file containing all files of specified Sketch
+  rpc ArchiveSketch(ArchiveSketchRequest) returns (ArchiveSketchResponse) {}
+
+  // BOARD COMMANDS
+  // --------------
+
+  // Requests details about a board
+  rpc BoardDetails(BoardDetailsRequest) returns (BoardDetailsResponse);
+
+  // Attach a board to a sketch. When the `fqbn` field of a request is not
+  // provided, the FQBN of the attached board will be used.
+  rpc BoardAttach(BoardAttachRequest) returns (stream BoardAttachResponse);
+
+  // List the boards currently connected to the computer.
+  rpc BoardList(BoardListRequest) returns (BoardListResponse);
+
+  // List all the boards provided by installed platforms.
+  rpc BoardListAll(BoardListAllRequest) returns (BoardListAllResponse);
+
+  // Search boards in installed and not installed Platforms.
+  rpc BoardSearch(BoardSearchRequest) returns (BoardSearchResponse);
+
+  // List boards connection and disconnected events.
+  rpc BoardListWatch(stream BoardListWatchRequest)
+      returns (stream BoardListWatchResponse);
+
+  // Compile an Arduino sketch.
+  rpc Compile(CompileRequest) returns (stream CompileResponse);
+
+  // Download and install a platform and its tool dependencies.
+  rpc PlatformInstall(PlatformInstallRequest)
+      returns (stream PlatformInstallResponse);
+
+  // Download a platform and its tool dependencies to the `staging/packages`
+  // subdirectory of the data directory.
+  rpc PlatformDownload(PlatformDownloadRequest)
+      returns (stream PlatformDownloadResponse);
+
+  // Uninstall a platform as well as its tool dependencies that are not used by
+  // other installed platforms.
+  rpc PlatformUninstall(PlatformUninstallRequest)
+      returns (stream PlatformUninstallResponse);
+
+  // Upgrade an installed platform to the latest version.
+  rpc PlatformUpgrade(PlatformUpgradeRequest)
+      returns (stream PlatformUpgradeResponse);
+
+  // Upload a compiled sketch to a board.
+  rpc Upload(UploadRequest) returns (stream UploadResponse);
+
+  // Upload a compiled sketch to a board using a programmer.
+  rpc UploadUsingProgrammer(UploadUsingProgrammerRequest)
+      returns (stream UploadUsingProgrammerResponse);
+
+  // List programmers available for a board.
+  rpc ListProgrammersAvailableForUpload(
+      ListProgrammersAvailableForUploadRequest)
+      returns (ListProgrammersAvailableForUploadResponse);
+
+  // Burn bootloader to a board.
+  rpc BurnBootloader(BurnBootloaderRequest)
+      returns (stream BurnBootloaderResponse);
+
+  // Search for a platform in the platforms indexes.
+  rpc PlatformSearch(PlatformSearchRequest) returns (PlatformSearchResponse);
+
+  // List all installed platforms.
+  rpc PlatformList(PlatformListRequest) returns (PlatformListResponse);
+
+  // Download the archive file of an Arduino library in the libraries index to
+  // the staging directory.
+  rpc LibraryDownload(LibraryDownloadRequest)
+      returns (stream LibraryDownloadResponse);
+
+  // Download and install an Arduino library from the libraries index.
+  rpc LibraryInstall(LibraryInstallRequest)
+      returns (stream LibraryInstallResponse);
+
+  // Install a library from a Zip File
+  rpc ZipLibraryInstall(ZipLibraryInstallRequest)
+      returns (stream ZipLibraryInstallResponse);
+
+  // Download and install a library from a git url
+  rpc GitLibraryInstall(GitLibraryInstallRequest)
+      returns (stream GitLibraryInstallResponse);
+
+  // Uninstall an Arduino library.
+  rpc LibraryUninstall(LibraryUninstallRequest)
+      returns (stream LibraryUninstallResponse);
+
+  // Upgrade all installed Arduino libraries to the newest version available.
+  rpc LibraryUpgradeAll(LibraryUpgradeAllRequest)
+      returns (stream LibraryUpgradeAllResponse);
+
+  // List the recursive dependencies of a library, as defined by the `depends`
+  // field of the library.properties files.
+  rpc LibraryResolveDependencies(LibraryResolveDependenciesRequest)
+      returns (LibraryResolveDependenciesResponse);
+
+  // Search the Arduino libraries index for libraries.
+  rpc LibrarySearch(LibrarySearchRequest) returns (LibrarySearchResponse);
+
+  // List the installed libraries.
+  rpc LibraryList(LibraryListRequest) returns (LibraryListResponse);
+}
+
+message InitRequest {
+  // Start a Arduino Core Service instance that will provide only Library
+  // Manager functionality.
+  bool library_manager_only = 2;
+}
+
+message InitResponse {
+  // An Arduino Core Service instance.
+  Instance instance = 1;
+  // Error messages related to any problems encountered while parsing the
+  // platforms index files.
+  repeated string platforms_index_errors = 2;
+  // Error message if a problem was encountered while parsing the libraries
+  // index file.
+  string libraries_index_error = 3;
+  // Progress of the downloads of platforms and libraries index files.
+  DownloadProgress download_progress = 4;
+  // Describes the current stage of the initialization.
+  TaskProgress task_progress = 5;
+}
+
+message DestroyRequest {
+  // The Arduino Core Service instance to destroy.
+  Instance instance = 1;
+}
+
+message DestroyResponse {}
+
+message RescanRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+}
+
+message RescanResponse {
+  // Error messages related to any problems encountered while parsing the
+  // platforms index file.
+  repeated string platforms_index_errors = 1;
+  // Error message if a problem was encountered while parsing the libraries
+  // index file.
+  string libraries_index_error = 2;
+}
+
+message UpdateIndexRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+}
+
+message UpdateIndexResponse {
+  // Progress of the platforms index download.
+  DownloadProgress download_progress = 1;
+}
+
+message UpdateLibrariesIndexRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+}
+
+message UpdateLibrariesIndexResponse {
+  // Progress of the libraries index download.
+  DownloadProgress download_progress = 1;
+}
+
+message UpdateCoreLibrariesIndexRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+}
+
+message UpdateCoreLibrariesIndexResponse {
+  // Progress of the index download.
+  DownloadProgress download_progress = 1;
+}
+
+message OutdatedRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+}
+
+message OutdatedResponse {
+  // List of installed libraries that can be updated.
+  repeated InstalledLibrary outdated_libraries = 1;
+  // List of installed cores that can be updated.
+  repeated Platform outdated_platforms = 2;
+}
+
+message UpgradeRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+  // Set to true to not run (eventual) post install scripts
+  bool skip_post_install = 2;
+}
+
+message UpgradeResponse {
+  // Progress of the downloads of the platforms and libraries files.
+  DownloadProgress progress = 1;
+  // Description of the current stage of the upgrade.
+  TaskProgress task_progress = 2;
+}
+
+message VersionRequest {}
+
+message VersionResponse {
+  // The version of Arduino CLI in use.
+  string version = 1;
+}
+
+message LoadSketchRequest {
+  // Arduino Core Service instance from the Init response.
+  Instance instance = 1;
+  // Absolute path to single sketch file or a sketch folder
+  string sketch_path = 2;
+}
+
+message LoadSketchResponse {
+  // Absolute path to a main sketch files
+  string main_file = 1;
+  // Absolute path to folder that contains main_file
+  string location_path = 2;
+  // List of absolute paths to other sketch files
+  repeated string other_sketch_files = 3;
+  // List of absolute paths to additional sketch files
+  repeated string additional_files = 4;
+  // List of absolute paths to supported files in the sketch root folder, main
+  // file excluded
+  repeated string root_folder_files = 5;
+}
+
+message ArchiveSketchRequest {
+  // Absolute path to Sketch file or folder containing Sketch file
+  string sketch_path = 1;
+  // Absolute path to archive that will be created or folder that will contain
+  // it
+  string archive_path = 2;
+  // Specifies if build directory should be included in the archive
+  bool include_build_dir = 3;
+}
+
+message ArchiveSketchResponse {}

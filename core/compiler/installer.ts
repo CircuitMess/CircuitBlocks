@@ -27,14 +27,14 @@ export default class Installer {
 
     arduino_cli: {
       Windows_NT_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Windows_32bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.18.1/arduino-cli_0.18.1_Windows_32bit.zip',
       Windows_NT_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Windows_64bit.zip',
+        'https://github.com/arduino/arduino-cli/releases/download/0.18.1/arduino-cli_0.18.1_Windows_64bit.zip',
       Linux_x32:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Linux_32bit.tar.gz',
+        'https://github.com/arduino/arduino-cli/releases/download/0.18.1/arduino-cli_0.18.1_Linux_32bit.tar.gz',
       Linux_x64:
-        'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_Linux_64bit.tar.gz',
-      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.8.0/arduino-cli_0.8.0_macOS_64bit.tar.gz'
+        'https://github.com/arduino/arduino-cli/releases/download/0.18.1/arduino-cli_0.18.1_Linux_64bit.tar.gz',
+      Darwin: 'https://github.com/arduino/arduino-cli/releases/download/0.18.1/arduino-cli_0.18.1_macOS_64bit.tar.gz'
     },
 
     ringo: {
@@ -52,7 +52,7 @@ export default class Installer {
 
   private readonly versions = {
       library: 'https://raw.githubusercontent.com/CircuitMess/CircuitMess-Ringo/master/library.properties',
-      cli: '0.8.0',
+      cli: '0.18.1',
       arduino: '1.8.12'
   };
 
@@ -140,7 +140,7 @@ export default class Installer {
 
   private cliInit(path, callback: (error) => void) {
       (async () => {
-          await CLI.run(['config', 'init'], path);
+          await CLI.run(['config', 'init', '--overwrite'], path);
           await CLI.run(['core', 'update-index'], path);
           await CLI.run(['lib', 'update-index'], path);
           callback(null);

@@ -80,8 +80,8 @@
     "electron-start": "yarn build && env ELECTRON_ENV=development electron build/app.js",
     "electron-watch": "nodemon -w app.js -w core/ --exec electron app.js",
     "dev": "concurrently --kill-others-on-fail \"cd client ; yarn dev\" \"wait-on http://localhost:3000 && yarn electron-start\"",
-    "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./core/grpc --grpc_out=./core/grpc --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/grpc/proto core/grpc/proto/*.proto",
-    "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/grpc -I core/grpc/proto core/grpc/proto/*.proto",
+    "proto-js": "grpc_tools_node_protoc --js_out=import_style=commonjs,binary:./build/core/grpc --grpc_out=./build/core/grpc --plugin=protoc-gen-grpc=`which grpc_tools_node_protoc_plugin` -I core/grpc/proto core/grpc/proto/cc/arduino/cli/commands/v1/*.proto",
+    "proto-ts": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts --ts_out core/grpc -I core/grpc/proto core/grpc/proto/cc/arduino/cli/commands/v1/*.proto",
     "proto": "yarn proto-js && yarn proto-ts",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -121,10 +121,11 @@
     "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.6.1",
-    "grpc-tools": "^1.8.0",
+    "grpc-tools": "^1.11.2",
     "grpc_tools_node_protoc_ts": "^2.5.4",
     "node-gyp": "^7.1.2",
     "prettier": "^1.18.2",
+    "ts-proto": "^1.93.3",
     "typescript": "^3.6.2",
     "wait-on": "^3.3.0"
   }
