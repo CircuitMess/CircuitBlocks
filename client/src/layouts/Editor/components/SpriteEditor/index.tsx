@@ -11,6 +11,7 @@ import {IconName} from "@fortawesome/fontawesome-common-types";
 import {fas} from '@fortawesome/free-solid-svg-icons';
 import Editor from '../..';
 import Blockly from "../../../../blockly/blockly";
+import ReactTooltip from "react-tooltip";
 
 interface SpriteEditorProps {
 	close: () => void;
@@ -31,7 +32,7 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 	private readonly tools: { name: string, icon: IconName }[] = [
 		{ name: "Paint brush", icon: "paint-brush" },
 		{ name: "Eraser", icon: "eraser" },
-		{ name: "Color picker", icon: "eye-dropper" },
+		{ name: "Color dropper", icon: "eye-dropper" },
 		{ name: "Paint bucket", icon: "fill-drip" }
 	]
 
@@ -218,6 +219,7 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 		return <div>
 			<Dimmer active={true}>
 				<ModalBase className={"small"} style={{ minWidth: 550 }}>
+					<ReactTooltip id="spriteEditor" place="bottom" type="dark" />
 					<Header>
 						{ sprite && <div>
 							<div className={"size"}>
@@ -233,9 +235,9 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 
 					<EditorElement>
 						<div className={"toolbox"}>
-							{ this.tools.map((tool, i) => <div data-tip={tool.name} className={`tool ${selectedTool == i ? "selected" : ""}`} onClick={() => this.selectTool(i)}><FontAwesomeIcon icon={tool.icon}/></div>) }
+							{ this.tools.map((tool, i) => <div data-tip={tool.name} data-for="spriteEditor" data-iscapture="true" className={`tool ${selectedTool == i ? "selected" : ""}`} onClick={() => this.selectTool(i)}><FontAwesomeIcon icon={tool.icon}/></div>) }
 							<div className={"tool color"} style={{background: color}} ref={this.color} onClick={() => this.setState({colorPicker: !colorPicker})}></div>
-							{ colorPicker && <div className={"colorPicker"}>
+							{ colorPicker && <div className={"colorPicker"} data-tip="Color picker" data-for="spriteEditor" data-iscapture="true">
 								<ChromePicker disableAlpha={true} color={color} onChangeComplete={(color) => { this.setState({colorRGB: { r: color.rgb.r, g: color.rgb.g, b: color.rgb.b, a: true }}) }} />
 							</div> }
 						</div>
