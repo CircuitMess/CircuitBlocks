@@ -24,16 +24,16 @@ export default class ErrorReport {
             }
 
             this.report = logger.generateReport();
-            event.reply("report", { collecting: false, sending: false, content: logger.stringifyReport(this.report) });
+            event.reply("report", { collecting: false, sending: false, content: logger.stringifyReport(this.report), jsonContent: this.report });
         });
 
         ipcMain.on("reportsend", (event, args) => {
-            event.reply("report", { collecting: false, sending: true, content: logger.stringifyReport(this.report) });
+            event.reply("report", { collecting: false, sending: true, content: logger.stringifyReport(this.report), jsonContent: this.report });
 
             logger.sendReport(this.report, this.fatal).then((id) => {
                 event.reply("report",  { sending: false, id });
             }).catch(() => {
-                event.reply("report",  { sending: false, id: -1, path: logger.saveReport(this.report) });
+                event.reply("report",  { sending: false, id: -1, path: logger.saveReport(this.report), jsonContent: this.report });
             });
         });
 

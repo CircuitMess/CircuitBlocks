@@ -17,6 +17,7 @@ interface ErrorReportState {
     content: string | undefined;
     shown: boolean;
     path: string | undefined;
+    jsonContent: string | undefined;
 }
 
 export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportState> {
@@ -30,16 +31,14 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
             id: undefined,
             content: undefined,
             shown: false,
-            path: undefined
+            path: undefined,
+            jsonContent: undefined
         };
 
         ipcRenderer.on("report", (event, args) => {
-            console.log("report gotem");
-            console.log(args);
+            const { collecting, sending, content, id, path, jsonContent } = args;
 
-            const { collecting, sending, content, id, path } = args;
-
-            this.setState({ collecting, sending, content, id, path, shown: true });
+            this.setState({ collecting, sending, content, id, path, jsonContent, shown: true });
 
             this.props.setIsOpen(true);
         });
@@ -60,7 +59,7 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
     }
 
     public render(){
-        const { sending, collecting, id, path, content, shown } = this.state;
+        const { sending, collecting, id, path, content, shown, jsonContent } = this.state;
 
         if(!shown) return null;
 
@@ -94,6 +93,10 @@ export class InstallInfo extends React.Component<ErrorReportProps, ErrorReportSt
                                     { id == -1
                                     ? <div>
                                             <p>There has been an error sending the report, but it has been saved at <b>{ path }</b>. You can contact us with your problem at <b>contact@circuitmess.com</b>. Don't forget to attach the generated report!</p>
+                                            { jsonContent &&  <div>
+                                                <p>If you're having trouble finding the file, you can also copy the report into a text file manually:</p>
+                                                <div style={{ maxHeight: 200, overflowY: "auto", whiteSpace: "pre", padding: "5px 10px", boxShadow: "0 0 3px rgba(0, 0, 0, 0.5) inset" }}>{ JSON.stringify(jsonContent) }</div>
+                                            </div> }
                                         </div>
                                     : <div>
                                             <p>The report has been sent. Your report ID is</p>
