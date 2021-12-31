@@ -210,6 +210,7 @@ class Logger {
 
     private directoryTree(info: InstallInfo){
         const data: any = { };
+        return data;
 
         if(info.sketchbook){
             data.sketchbook = this.walkDirectory(info.sketchbook);
