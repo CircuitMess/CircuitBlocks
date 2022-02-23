@@ -33,6 +33,10 @@ const Card = styled.div`
     background: #F1592A;
   }
   
+  &.chatter {
+    background: #55bb7d;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

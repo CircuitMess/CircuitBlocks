@@ -688,6 +688,7 @@ export default class ArduinoCompiler {
         "cm:esp32:jayd": "jaydfirm",
         "cm:esp32:wheelson": "wheelfirm",
         "cm:esp32:byteboi": "bbfirm",
+        "cm:esp32:chatter": "chatfirm",
       };
 
       if(!programmers.hasOwnProperty(device)){

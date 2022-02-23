@@ -186,6 +186,9 @@ export class Blocks {
 
         input_button_spencer: '<block type="input_button_spencer"></block>',
         input_button_held_spencer: '<block type="input_button_held_spencer"><value name="DURATION"><block type="math_number"><field name="NUM">500</field></block></value></block>',
+
+        input_button_chatter: '<block type="input_button"><value name="BUTTON"><block type="chatter_buttons"></block></value></block>',
+        input_button_held_chatter: '<block type="input_button_held"><value name="BUTTON"><block type="chatter_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
     };
 
     public static input_jayd: any = {
