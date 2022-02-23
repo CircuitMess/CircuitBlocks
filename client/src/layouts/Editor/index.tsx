@@ -229,7 +229,7 @@ class Editor extends Component<EditorProps, State> {
       // @ts-ignore
       code = Blockly.Arduino.workspaceToCode(this.workspace);
 
-      if(Blockly.Device != "Spencer"){
+      if(Blockly.Device != "Spencer" && Blockly.Device != "MAKERphone"){
         let spriteCode = "";
         if(Blockly.Sprites !== undefined && Array.isArray(Blockly.Sprites)){
           Blockly.Sprites.forEach(sprite => {
