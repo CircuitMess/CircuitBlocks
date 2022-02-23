@@ -35,9 +35,11 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
         };
 
         ipcRenderer.on("installstate", (event, args) => {
-            if(args.state.restoring) return;
             if(!this.state.restoring) this.props.setIsInstalling([ "", "DONE" ].indexOf(args.state.stage || "") == -1); // go figure
             this.setState(args.state);
+            if(args.state.stage == "DONE"){
+                this.props.setIsInstalling(false);
+            }
         });
 
         if(!process.env.NODE_ENV || process.env.NODE_ENV != "development"){
