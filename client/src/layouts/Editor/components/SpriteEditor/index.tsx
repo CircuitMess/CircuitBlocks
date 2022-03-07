@@ -1,4 +1,4 @@
-import React from "react";
+import React, {FunctionComponent, SVGProps} from "react";
 import {Button, Dimmer, Input, Modal} from "semantic-ui-react";
 import {ModalBase} from "../../../../components/Modal/Common";
 import styled from "styled-components";
@@ -12,6 +12,11 @@ import {fas} from '@fortawesome/free-solid-svg-icons';
 import Editor from '../..';
 import Blockly from "../../../../blockly/blockly";
 import ReactTooltip from "react-tooltip";
+
+import { ReactComponent as BrushSVG } from "../../../../assets/SpriteToolbox/brush.svg";
+import { ReactComponent as EraserSVG } from "../../../../assets/SpriteToolbox/eraser.svg";
+import { ReactComponent as DropperSVG } from "../../../../assets/SpriteToolbox/dropper.svg";
+import { ReactComponent as BucketSVG } from "../../../../assets/SpriteToolbox/bucket.svg";
 
 interface SpriteEditorProps {
 	close: () => void;
@@ -29,11 +34,11 @@ interface SpriteEditorState {
 export default class SpriteEditor extends React.Component<SpriteEditorProps, SpriteEditorState> {
 	private color = React.createRef<HTMLDivElement>();
 
-	private readonly tools: { name: string, icon: IconName }[] = [
-		{ name: "Paint brush", icon: "paint-brush" },
-		{ name: "Eraser", icon: "eraser" },
-		{ name: "Paint bucket", icon: "fill-drip" },
-		{ name: "Color dropper", icon: "eye-dropper" }
+	private readonly tools: { name: string, icon: FunctionComponent<SVGProps<SVGSVGElement>> }[] = [
+		{ name: "Paint brush", icon: BrushSVG },
+		{ name: "Eraser", icon: EraserSVG },
+		{ name: "Paint bucket", icon: BucketSVG },
+		{ name: "Color dropper", icon: DropperSVG }
 	]
 
 	constructor(props: SpriteEditorProps){
@@ -236,7 +241,9 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 
 					<Main>
 						<Toolbox>
-							{ this.tools.map((tool, i) => <div data-tip={tool.name} data-for="spriteEditor" data-iscapture="true" className={`tool ${selectedTool == i ? "selected" : ""}`} onClick={() => this.selectTool(i)}><FontAwesomeIcon icon={tool.icon}/></div>) }
+							{ this.tools.map((tool, i) => <div data-tip={tool.name} data-for="spriteEditor" data-iscapture="true" className={`tool ${selectedTool == i ? "selected" : ""}`} onClick={() => this.selectTool(i)}>
+								{ React.createElement(tool.icon, { fill: selectedTool == i ? "#fff" : "000" }) }
+							</div>) }
 
 							<div className={"tool color"} ref={this.color} data-tip="Color picker" data-for="spriteEditor" data-iscapture="true" onClick={() => this.setState({colorPicker: !colorPicker})}><div style={{background: color}}></div></div>
 							{ colorPicker && <div className={"colorPicker"}>
