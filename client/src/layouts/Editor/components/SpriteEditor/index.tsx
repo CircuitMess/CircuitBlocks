@@ -89,31 +89,17 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 			num++;
 		}
 
+		var sprite: Sprite;
+
 		if(defaultSprite){
-			const img = new Image();
-			img.onload = () => {
-				const canvas = document.createElement("canvas");
-				const ctx = canvas.getContext("2d");
-				if(!ctx) return;
-				ctx.drawImage(img, 0, 0);
-				const iData = ctx.getImageData(0, 0, img.width, img.height);
-				const data = iData.data;
-
-				const sprite = new Sprite("sprite" + num, img.width, img.height);
-				for(let x = 0; x < sprite.width; x++){
-					for(let y = 0; y < sprite.height; y++){
-						const i = y * sprite.width + x;
-						sprite.setPixel(x, y, { r: data[i*4], g: data[i*4 + 1], b: data[i*4 + 2], a: data[i*4 + 3] == 255 });
-					}
-				}
-
+			sprite = new Sprite("sprite" + num);
+			sprite.fromFile(require(`../../../../assets/sprites/${defaultSprite}.png`)).then(() => {
 				sprites.push(sprite);
 				this.openSprite(sprites.length-1);
-			}
-
-			img.src = require(`../../../../assets/sprites/${defaultSprite}.png`);
+			});
 		}else{
-			sprites.push(new Sprite("sprite" + num, 20, 20));
+			sprite = new Sprite("sprite" + num, 20, 20);
+			sprites.push(sprite);
 			this.openSprite(sprites.length-1);
 		}
 	}

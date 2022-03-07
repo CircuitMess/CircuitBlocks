@@ -11,7 +11,7 @@ import SpriteDrawer from "./SpriteEditor/SpriteDrawer";
 
 interface GameExportProps {
 	close: () => void;
-	save: (name: string, sprite: number) => void;
+	save: (name: string, sprite?: Sprite) => void;
 	sprites: Sprite[]
 }
 
@@ -22,6 +22,9 @@ interface GameExportState {
 }
 
 export default class GameExport extends React.Component<GameExportProps, GameExportState> {
+
+	public static readonly DefaultIconNames = ["adventure", "alien", "castle", "dino", "football", "motors", "robot", "space"];
+
 	constructor(props: GameExportProps){
 		super(props);
 		this.state = {
@@ -40,10 +43,18 @@ export default class GameExport extends React.Component<GameExportProps, GameExp
 	private setSprite(icon: number){
 		if(isNaN(icon)) return;
 		let sprite: Sprite | undefined;
-		if(icon != -1 && this.props.sprites[icon] != undefined){
+
+		if(icon >= 0 && icon < this.props.sprites.length && this.props.sprites[icon] != undefined){
 			sprite = this.props.sprites[icon].getCropped(64, 64);
+			this.setState({ icon, sprite })
+		}else if(icon >= 0 && icon >= this.props.sprites.length){
+			icon -= this.props.sprites.length;
+			sprite = new Sprite(GameExport.DefaultIconNames[icon]);
+
+			sprite.fromFile(require(`../../../assets/gameIcons/${GameExport.DefaultIconNames[icon]}.png`)).then(() => this.setState({ icon, sprite }));
+		}else{
+			this.setState({ icon, sprite })
 		}
-		this.setState({ icon, sprite });
 	}
 
 	public render(){
@@ -53,6 +64,7 @@ export default class GameExport extends React.Component<GameExportProps, GameExp
 		const icons: DropdownItemProps[] = [];
 		icons.push({ text: "No icon", value: -1 });
 		sprites.forEach((sprite, i) => icons.push({ text: sprite.name, value: i }));
+		GameExport.DefaultIconNames.forEach((icon, i) => icons.push({ text: icon, value: sprites.length + i }));
 
 		return <div>
 			<Dimmer active={true}>
@@ -64,7 +76,7 @@ export default class GameExport extends React.Component<GameExportProps, GameExp
 					</Elements>
 					<div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 						<Button onClick={() => close()}>Cancel</Button>
-						<Button primary={true} onClick={() => save(name, icon)}>Export</Button>
+						<Button primary={true} onClick={() => save(name, sprite)}>Export</Button>
 					</div>
 				</ModalBase>
 			</Dimmer>

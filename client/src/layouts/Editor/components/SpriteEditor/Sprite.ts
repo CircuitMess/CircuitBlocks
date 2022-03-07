@@ -19,12 +19,38 @@ export class Sprite {
 	public data: Pixel[];
 
 
-	constructor(name: string, width: number, height: number){
+	constructor(name: string, width: number = 0, height: number = 0){
 		this.name = name;
 		this.width = width;
 		this.height = height;
 
 		this.data = Array(width * height).fill({ r: 0, g: 0, b: 0, a: false });
+	}
+
+	public fromFile(file: any){
+		return new Promise(resolve => {
+			const img = new Image();
+			img.onload = () => {
+				const canvas = document.createElement("canvas");
+				const ctx = canvas.getContext("2d");
+				if(!ctx) return;
+				ctx.drawImage(img, 0, 0);
+				const iData = ctx.getImageData(0, 0, img.width, img.height);
+				const data = iData.data;
+
+				this.updateSize(img.width, img.height);
+				for(let x = 0; x < this.width; x++){
+					for(let y = 0; y < this.height; y++){
+						const i = y * this.width + x;
+						this.setPixel(x, y, { r: data[i*4], g: data[i*4 + 1], b: data[i*4 + 2], a: data[i*4 + 3] == 255 });
+					}
+				}
+
+				resolve();
+			}
+
+			img.src = file;
+		});
 	}
 
 	public updateSize(w: number, h: number){

@@ -581,15 +581,9 @@ class Editor extends Component<EditorProps, State> {
     ipcRenderer.send('export', { code: this.getCode(), path, device: this.props.device ? this.props.device : "cm:esp32:ringo", minimal: this.state.minimalCompile });
   };
 
-  exportGame = (name: string, icon: number) => {
+  exportGame = (name: string, sprite?: Sprite) => {
     const path = dialog.showOpenDialogSync({ properties: [ "openDirectory", "createDirectory" ] });
     if(path == undefined || !Array.isArray(path) || path.length == 0) return;
-
-    const sprites = this.state.sprites;
-    let sprite: Sprite | undefined;
-    if(icon != -1 && sprites[icon] != undefined){
-      sprite = sprites[icon].getCropped(64, 64);
-    }
 
     this.setState({ running: true});
     ipcRenderer.send('exportgame', { code: this.getCode(), path: path[0], name, icon: sprite });
