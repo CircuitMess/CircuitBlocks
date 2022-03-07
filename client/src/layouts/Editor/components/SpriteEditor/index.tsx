@@ -32,8 +32,8 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 	private readonly tools: { name: string, icon: IconName }[] = [
 		{ name: "Paint brush", icon: "paint-brush" },
 		{ name: "Eraser", icon: "eraser" },
-		{ name: "Color dropper", icon: "eye-dropper" },
-		{ name: "Paint bucket", icon: "fill-drip" }
+		{ name: "Paint bucket", icon: "fill-drip" },
+		{ name: "Color dropper", icon: "eye-dropper" }
 	]
 
 	constructor(props: SpriteEditorProps){
@@ -144,10 +144,10 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 		}else if(tool == 1){
 			this.erasePixel(x, y);
 		}else if(tool == 2){
+			this.paintBucket(x, y);
+		}else if(tool == 3){
 			const sprite = this.props.sprites[this.state.selected];
 			this.setState({ colorRGB: sprite.getPixel(x, y) });
-		}else if(tool == 3){
-			this.paintBucket(x, y);
 		}
 
 		this.clearPopups();
@@ -218,215 +218,74 @@ export default class SpriteEditor extends React.Component<SpriteEditorProps, Spr
 
 		return <div>
 			<Dimmer active={true}>
-				<ModalBase className={"small"} style={{ minWidth: 550 }}>
+				<ModalBase className={"small"} style={{ width: "auto", minWidth: 510, padding: 0 }}>
 					<ReactTooltip id="spriteEditor" place="bottom" type="dark" />
 					<Header>
 						{ sprite && <div>
 							<div className={"size"}>
-								<Input type={"number"} value={sprite.width}
-									   onChange={e => this.setWidth(parseInt(e.target.value))}></Input> X <Input type={"number"} value={sprite.height}
-									   onChange={e => this.setHeight(parseInt(e.target.value))}></Input> px
+								<Input type={"number"} value={sprite.width} onChange={e => this.setWidth(parseInt(e.target.value))}></Input>
+								<strong>&nbsp; X &nbsp;</strong>
+								<Input type={"number"} value={sprite.height} onChange={e => this.setHeight(parseInt(e.target.value))}></Input>
+								<span>&nbsp; px</span>
 							</div>
-							<div>
+							<div className={"name"}>
 								<Input value={sprite.name} onChange={e => this.setName(e.target.value)}></Input>
 							</div>
 						</div> }
 					</Header>
 
-					<EditorElement>
-						<div className={"toolbox"}>
+					<Main>
+						<Toolbox>
 							{ this.tools.map((tool, i) => <div data-tip={tool.name} data-for="spriteEditor" data-iscapture="true" className={`tool ${selectedTool == i ? "selected" : ""}`} onClick={() => this.selectTool(i)}><FontAwesomeIcon icon={tool.icon}/></div>) }
-							<div className={"tool color"} style={{background: color}} ref={this.color} onClick={() => this.setState({colorPicker: !colorPicker})}></div>
-							{ colorPicker && <div className={"colorPicker"} data-tip="Color picker" data-for="spriteEditor" data-iscapture="true">
+
+							<div className={"tool color"} ref={this.color} data-tip="Color picker" data-for="spriteEditor" data-iscapture="true" onClick={() => this.setState({colorPicker: !colorPicker})}><div style={{background: color}}></div></div>
+							{ colorPicker && <div className={"colorPicker"}>
 								<ChromePicker disableAlpha={true} color={color} onChangeComplete={(color) => { this.setState({colorRGB: { r: color.rgb.r, g: color.rgb.g, b: color.rgb.b, a: true }}) }} />
 							</div> }
-						</div>
-						{ sprite && <SpriteDrawer width={360} sprite={sprite} onAction={(x, y) => this.canvasAction(x, y)} /> }
-					</EditorElement>
 
-					<Footer>
-						<div className={"sprites"}>
-							{sprites.map((sprite, i) => <div onClick={() => this.openSprite(i)} className={selected == i ? "selected" : undefined}>
-								<SpriteDrawer sprite={sprite} width={40} />
-							</div>)}
-							<div className={"newSprite"} onClick={() => {
-								this.newSprite();
-							}}>
+							<div className={"tool newSprite"} onClick={() => { this.setState({ pickerOpen: !pickerOpen }); }}>
 								<FontAwesomeIcon icon={"plus"} size={"2x"} />
-
-								<div onClick={e => { e.stopPropagation(); this.setState({ pickerOpen: !pickerOpen }) }}>
-									<FontAwesomeIcon icon={"angle-down"} size={"xs"} />
-								</div>
 							</div>
-						</div>
-						<div className={"actions"}>
-							<Button onClick={close} color={"blue"}>Close</Button>
-							{ selected != -1 && <Button onClick={() => this.deleteSprite(selected)} color={"red"}>Delete</Button> }
-						</div>
+						</Toolbox>
 
-						{ pickerOpen && <SpritePicker>
-							{ Editor.DefaultSpriteNames.map(sprite => <img src={require(`../../../../assets/sprites/${sprite}.png`)} onClick={() => this.newSprite(sprite)}></img>) }
-						</SpritePicker> }
-					</Footer>
+						<Content>
+							<div className={"canvasContainer"}>
+								{ sprite && <SpriteDrawer width={360} sprite={sprite} onAction={(x, y) => this.canvasAction(x, y)} /> }
+							</div>
+
+							<Footer>
+								<div className={"sprites"}>
+									<div className={"container"}>
+										{sprites.map((sprite, i) => <div onClick={() => this.openSprite(i)} className={selected == i ? "selected" : undefined}>
+											<SpriteDrawer sprite={sprite} width={40} />
+										</div>)}
+									</div>
+								</div>
+								<div className={"actions"}>
+									<Button onClick={close} color={"blue"}>Close</Button>
+									{ selected != -1 && <Button onClick={() => this.deleteSprite(selected)} color={"red"}>Delete</Button> }
+								</div>
+
+								{ pickerOpen && <SpritePicker>
+									<div>
+										<div className={"newSprite"} onClick={() => { this.newSprite(); }}>
+											<FontAwesomeIcon icon={"plus"} size={"2x"} />
+										</div>
+										{ Editor.DefaultSpriteNames.map(sprite => <img src={require(`../../../../assets/sprites/${sprite}.png`)} onClick={() => this.newSprite(sprite)}></img>) }
+									</div>
+								</SpritePicker> }
+							</Footer>
+						</Content>
+					</Main>
 				</ModalBase>
 			</Dimmer>
 		</div>;
 	}
 }
 
-const EditorElement = styled.div`
-	display: flex;
-	flex-direction: row;
-	
-	.toolbox {
-		width: 110px;
-		padding: 10px;
-		background: #eee;
-		margin-right: 20px;
-		position: relative;
-		
-		.tool {
-			width: 40px;
-			height: 40px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			border: 1px solid #111;
-			background: #ddd;
-			cursor: pointer;
-			margin-right: 10px;
-			margin-bottom: 10px;
-			float: left;
-			
-			&.selected {
-				box-shadow: 0 0 8px rgba(0, 0, 0, 0.8) inset;
-			}
-			
-			&:nth-child(2n){
-				margin-right: 0;
-			}
-		}
-		
-		.colorPicker {
-			position: absolute;
-			top: 120px;
-		}
-	}
-	
-	canvas {
-		border: 1px solid #000;
-		width: 360px;
-	 	background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
-  		background-size: 20px 20px;
-  		background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-	}
-`;
-
-const SpritePicker = styled.div`
-	position: absolute;
-	bottom: 50px;
-	left: 20px;
-	border-radius: 5px;
-	background: #ddd;
-	padding: 10px;
-	display: flex;
-	flex-direction: row;
-	max-width: 90%;
-	overflow-y: auto;
-	
-	img {
-		height: 55px;
-		width: auto;
-		margin-right: 10px;
-		image-rendering: pixelated;
-		padding: 5px;
-		object-fit: contain;
-		
-		&:last-child { margin-right: 0; }
-		&:hover { background: #eee; }
-		
-		cursor: pointer;
-	}
-`;
-
-const Footer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  margin-top: 5px;
-  width: 100%;
-  position: relative;
-  
-  .sprites {
-    flex-grow: 1;
-    flex-direction: row;
-    display: flex;
-    margin-right: 20px;
-    padding: 5px 0;
-    overflow-x: auto;
-    
-    > div {
-        border: 1px solid #000;
-        overflow: hidden;
-        width: 85px;
-        height: 70px;
-        margin-right: 10px;
-        cursor: pointer;
-        
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-shrink: 0;
-        
-        &:last-child { margin-right: 0; }
-        
-        canvas { width: 40px; }
-        
-        &:hover {
-        	background: #eee;
-        }
-        
-        &.selected {
-        	box-shadow: 0 0 8px rgba(0, 0, 0, 0.8) inset;
-        }
-        
-        &.newSprite {
-        	position: relative;
-        
-        	> div {
-        		position: absolute;
-        		top: 0;
-        		right: 0;
-        		bottom: 0;
-        		width: 15px;
-        		display: flex;
-        		justify-content: center;
-        		align-items: center;
-        		background: #ccc;
-        		
-        		&:hover {
-        			background: #efefef;
-        		}
-        	}
-        	
-        	> svg {
-        		position: relative;
-        		right: 7px;
-        	}
-        }
-    }
-  }
-  
-  .actions {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      
-      button { margin-right: 0; }
-  }
-`;
 
 const Header = styled.div`
+	margin: 30px;
 	margin-bottom: 20px;
 	height: 35px;
 		
@@ -437,13 +296,223 @@ const Header = styled.div`
     
     .size {
     	margin-right: 30px;
+    	color: #8F8F8F;
+    	font-size: 16px;
     
         input {
             width: 80px;
         }
     }
     
-    input { 
-    	width: 270px; 	
+    .name {
+    	flex-grow: 1;
+    	
+    	.input { width: 100%; }
     }
+`;
+
+const Main = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+`;
+
+const Content = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	
+	.canvasContainer {
+		margin: 0 30px;
+		min-width: 360px;
+		min-height: 362px;
+		canvas {
+			border: 1px solid #000;
+			width: 360px;
+			background-image: linear-gradient(45deg, #808080 25%, transparent 25%), linear-gradient(-45deg, #808080 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #808080 75%), linear-gradient(-45deg, transparent 75%, #808080 75%);
+			background-size: 20px 20px;
+			background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+		}
+	}
+`;
+
+const Toolbox = styled.div`
+	width: 90px;
+	padding: 6px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-begin;
+	background: #E2E2E2;
+	
+	.tool {
+		width: 78px;
+		height: 78px;
+		background: #E2E2E2;
+		transition: all 0.3s ease;
+		cursor: pointer;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 20px;
+		margin-bottom: 6px;
+		border-radius: 3px;
+		
+		&:last-child {
+			margin-bottom: 0;
+		}
+		
+		&:hover {
+			background: #BBBBBB;
+		}
+		
+		&.selected {
+			background: #000;
+		}
+		
+		> div {
+			width: 100%;
+			height: 100%;
+		}
+	}
+	
+	.colorPicker {
+		position: absolute;
+		top: 120px;
+	}
+`;
+
+const SpritePicker = styled.div`
+	position: absolute;
+	bottom: 18px;
+	left: 100px;
+	border-radius: 4px;
+	background: #ddd;
+	padding: 10px;
+	max-width: 75%;
+	overflow-y: auto;
+	border: 2px solid #C5C5C5;
+	display: flex;
+	flex-direction: row;
+	
+	> div {
+		display: flex;
+		flex-direction: row;
+	
+		img, div {
+			height: 55px;
+			width: auto;
+			margin-right: 10px;
+			image-rendering: pixelated;
+			padding: 5px;
+			object-fit: contain;
+			transition: all 0.3s ease;
+			background: #fff;
+			border-radius: 3px;
+			border: 1px solid #000;
+			
+			&:hover { background: #eee; }
+			
+			cursor: pointer;
+		}
+		
+		div.newSprite {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			padding: 5px 15px;
+		}
+	}
+`;
+
+const Footer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-right: 30px;
+  width: 0;
+  min-width: 100%;
+  
+  .sprites {
+    flex-grow: 1;
+    padding: 10px 12px;
+    overflow-x: auto;
+    background: #E2E2E2;
+    
+    .container {
+    	display: flex;
+    	flex-direction: row;
+    
+		> div {
+			border: 1px solid #A2A2A2;
+			overflow: hidden;
+			box-sizing: border-box;
+			width: 52px;
+			height: 52px;
+			margin-right: 5px;
+			cursor: pointer;
+			background: #fff;
+			border-radius: 3px;
+			transition: all 0.3s ease;
+			
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-shrink: 0;
+			
+			&:last-child { margin-right: 0; }
+			
+			canvas { width: 40px; display: block; }
+			
+			&:hover {
+				background: #eee;
+			}
+			
+			&.selected {
+				border-width: 2px;
+				border-color: #000;
+			}
+			
+			&.newSprite {
+				position: relative;
+			
+				> div {
+					position: absolute;
+					top: 0;
+					right: 0;
+					bottom: 0;
+					width: 15px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					background: #ccc;
+					
+					&:hover {
+						background: #efefef;
+					}
+				}
+				
+				> svg {
+					position: relative;
+					right: 7px;
+				}
+			}
+		}
+    }
+  }
+  
+	.actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		height: 74px;
+		align-items: center;
+		
+		button {
+			margin-right: 0;
+			margin-left: 12px;
+			height: max-content;
+		}
+	}
 `;
