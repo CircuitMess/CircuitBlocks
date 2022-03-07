@@ -58,11 +58,11 @@ export default class GameExport extends React.Component<GameExportProps, GameExp
 			<Dimmer active={true}>
 				<ModalBase className={"small"} style={{ maxWidth: 300, overflowY: "visible" }}>
 					<Elements>
-						<div>Name: <Input value={name} onChange={e => this.setName(e.target.value)}></Input></div>
-						<div>Icon: <Select defaultValue={-1} options={icons} onChange={(e, obj) => this.setSprite(Number(obj.value))}/></div>
+						<div>Name <Input value={name} onChange={e => this.setName(e.target.value)}></Input></div>
+						<div>Icon <Select defaultValue={-1} options={icons} onChange={(e, obj) => this.setSprite(Number(obj.value))}/></div>
 						{ sprite && <div><SpriteDrawer sprite={sprite} width={252} /></div> }
 					</Elements>
-					<div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
+					<div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
 						<Button onClick={() => close()}>Cancel</Button>
 						<Button primary={true} onClick={() => save(name, icon)}>Export</Button>
 					</div>
@@ -75,4 +75,5 @@ export default class GameExport extends React.Component<GameExportProps, GameExp
 const Elements = styled.div`
 	> div { margin-bottom: 10px; }
 	canvas { border: 1px solid #000; }
+	div.input, div.dropdown { margin-left: 16px; }
 `;
