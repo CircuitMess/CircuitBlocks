@@ -158,7 +158,7 @@ class Editor extends Component<EditorProps, State> {
   workspace: any = undefined;
   callback: (value: string) => void = () => {};
 
-  public static readonly DefaultSpriteNames = ["tree1", "tree2", "tree3", "rock1", "rock2", "rock3", "character1", "character2", "character3", "bush1", "bush2"];
+  public static readonly DefaultSpriteNames = ["sword", "knife", "morning_star", "trident", "shield", "potion", "tree1", "tree2", "tree3", "rock1", "rock2", "rock3", "character1", "character2", "character3", "character4", "bush1", "bush2", "house"];
 
   constructor(props: EditorProps) {
     super(props);
