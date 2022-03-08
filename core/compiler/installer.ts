@@ -428,7 +428,10 @@ export default class Installer {
           'install',
           this.downloads.nibble.fqbn
       ]);
-    })().then(() => this.installRingoLib(callback, info, stage)).catch(e => callback("Library update error. Please check your internet connection."));
+    })().then(() => this.installRingoLib(callback, info, stage)).catch(e => {
+        logger.log("Library update", e);
+        callback("Library update error. Please check your internet connection.")
+    });
   }
 
   private arduino(callback: (err) => void) {
