@@ -274,7 +274,7 @@ export default class ArduinoCompiler {
       const cliCommand = os.type() == "Windows_NT"
           ? "arduino-cli.exe"
           : "./arduino-cli";
-      this.process = childProcess.execFile(cliCommand, ['daemon'], { cwd: this.installInfo.cli }, (e, stdout, stderr) => {
+      this.process = childProcess.execFile(cliCommand, ['daemon'], { cwd: this.installInfo.cli, env: { ARDUINO_METRICS_ENABLED: "0" } }, (e, stdout, stderr) => {
         logger.log("Daemon run error", e);
         logger.log("Daemon run stdout", stdout);
         logger.log("Daemon run stderr", stderr);
@@ -306,7 +306,7 @@ export default class ArduinoCompiler {
             logger.log("Reached 6 tries, restarting daemon");
 
             context.stopDaemon();
-            context.process = childProcess.execFile(cliPath, ['daemon']);
+            context.process = childProcess.execFile(cliPath, ['daemon'], { cwd: this.installInfo.cli, env: { ARDUINO_METRICS_ENABLED: "0" } });
           }
 
           setTimeout(connect, 2000);
