@@ -226,7 +226,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
                       /> )}
                 </Main>
                 <Footer>
-                  <p>v1.7.1 <span style={{ padding: "0 10px" }}>|</span> <a style={{ cursor: "pointer" }} onClick={ () => this.openErrorReport() }>Send error report</a></p>
+                  <p>v1.7.2 <span style={{ padding: "0 10px" }}>|</span> <a style={{ cursor: "pointer" }} onClick={ () => this.openErrorReport() }>Send error report</a></p>
                 </Footer>
               </>
           ) : (
