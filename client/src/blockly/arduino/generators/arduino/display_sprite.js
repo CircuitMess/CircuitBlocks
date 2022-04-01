@@ -113,14 +113,16 @@ Blockly.Arduino['sprite_draw_sprite'] = function(block) {
     Blockly.Arduino.addInclude("Display_include", "#include <Display/Display.h>");
 
     var sprite = block.getFieldValue('SPRITEVAL');
-    if(sprite === undefined) return "";
+    if(sprite === undefined || typeof sprite !== "string") return "";
 
-    if(typeof sprite === "string" && sprite.startsWith("def:")){
-        for(var i in Blockly.DefaultSprites){
-            if(Blockly.DefaultSprites[i].name === sprite.substr(4)){
-                sprite = Blockly.DefaultSprites[i];
-                break;
-            }
+    const name = sprite.startsWith("def:") ? sprite.substr(4) : sprite;
+    const sprites = sprite.startsWith("def:") ? Blockly.DefaultSprites : Blockly.Sprites;
+    if(!Array.isArray(sprites)) return "";
+
+    for(var i = 0; i < sprites.length; i++){
+        if(sprites[i].name === name){
+            sprite = sprites[i];
+            break;
         }
     }
 

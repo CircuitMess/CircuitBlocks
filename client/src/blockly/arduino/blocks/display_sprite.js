@@ -368,7 +368,7 @@ Blockly.Extensions.register('extension_spriteDraw', function(){
         const sprites = [];
 
         Blockly.Sprites.forEach(function(sprite){
-            sprites.push([ sprite.name, sprite ]); // lijepo, strojno
+            sprites.push([ sprite.name, sprite.name ]); // lijepo, strojno
         });
 
         Blockly.DefaultSprites.forEach(function(sprite){
