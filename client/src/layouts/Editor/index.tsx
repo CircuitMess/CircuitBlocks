@@ -442,6 +442,7 @@ class Editor extends Component<EditorProps, State> {
         }
       }
 
+      this.workspace.clearUndo();
       this.setState({ type: sketch.type, sprites });
 
       setTimeout(() => this.setState({codeDidChange: false}), 1250)
