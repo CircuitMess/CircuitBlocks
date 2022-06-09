@@ -65,3 +65,30 @@ Blockly.defineBlocksWithJsonArray([
         helpUrl: ""
     }
 ]);
+
+Blockly.defineBlocksWithJsonArray([
+    {
+        type: "synthia_buttons",
+        message0: "button %1",
+        args0: [
+            {
+                type: "field_dropdown",
+                name: "BUTTON",
+                options: [
+                    [ "A", "BTN_1" ],
+                    [ "B", "BTN_2" ],
+                    [ "C", "BTN_3" ],
+                    [ "D", "BTN_4" ],
+                    [ "E", "BTN_5" ],
+                    [ "E1", "BTN_ENC_L" ],
+                    [ "E2", "BTN_ENC_R" ]
+                ]
+            }
+        ],
+        output: "PIN",
+        outputShape: Blockly.OUTPUT_SHAPE_SQUARE,
+        colour: Blockly.Msg.IO_HUE,
+        tooltip: "Button",
+        helpUrl: ""
+    }
+]);

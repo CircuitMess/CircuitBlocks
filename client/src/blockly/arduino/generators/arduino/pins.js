@@ -9,4 +9,4 @@ Blockly.Arduino['nibble_buttons'] = function(block) {
     return [ BUTTON, Blockly.Arduino.ORDER_ATOMIC ];
 };
 
-Blockly.Arduino['chatter_buttons'] = Blockly.Arduino['nibble_buttons'];
+Blockly.Arduino['synthia_buttons'] = Blockly.Arduino['chatter_buttons'] = Blockly.Arduino['nibble_buttons'];

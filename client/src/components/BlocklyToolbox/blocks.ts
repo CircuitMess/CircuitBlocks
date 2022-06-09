@@ -189,6 +189,9 @@ export class Blocks {
 
         input_button_chatter: '<block type="input_button"><value name="BUTTON"><block type="chatter_buttons"></block></value></block>',
         input_button_held_chatter: '<block type="input_button_held"><value name="BUTTON"><block type="chatter_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
+
+        input_button_synthia: '<block type="input_button"><value name="BUTTON"><block type="synthia_buttons"></block></value></block>',
+        input_button_held_synthia: '<block type="input_button_held"><value name="BUTTON"><block type="synthia_buttons"></block></value><value name="DURATION"><block type="math_number"><field name="NUM">500</field></value></block>',
     };
 
     public static input_jayd: any = {
@@ -216,6 +219,11 @@ export class Blocks {
 
         speed: '<block type="mix_speed"><value name="SPEED"><block type="math_number"><field name="NUM">200</field></block></value></block>',
         volume: '<block type="mix_volume"><value name="VOLUME"><block type="math_number"><field name="NUM">150</field></block></value></block>',
+    };
+
+    public static synthia_input: any = {
+        encoder: '<block type="input_synthia_encoder"></block>',
+        pot: '<block type="input_synthia_pot"></block>',
     };
 
     public static io_wheelson: any = {
