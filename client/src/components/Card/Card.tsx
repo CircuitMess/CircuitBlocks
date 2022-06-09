@@ -37,6 +37,10 @@ const Card = styled.div`
     background: #55bb7d;
   }
   
+  &.synthia {
+    background: #642d91;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;

@@ -5,6 +5,7 @@ import {getToolbox as gcJayD} from "./JayD"
 import {getToolbox as gcWheelson} from "./Wheelson"
 import {getToolbox as gcByteBoi} from "./ByteBoi"
 import {getToolbox as gcChatter} from "./Chatter"
+import {getToolbox as gcSynthia} from "./Synthia"
 import {ToolboxCategory} from "../../Toolbox";
 
 const Toolboxes: { [name: string]: () => ToolboxCategory[] } = {
@@ -15,6 +16,7 @@ const Toolboxes: { [name: string]: () => ToolboxCategory[] } = {
     "cm:esp32:wheelson": gcWheelson,
     "cm:esp32:byteboi": gcByteBoi,
     "cm:esp32:chatter": gcChatter,
+    "cm:esp32:synthia": gcSynthia,
 }
 
 export default Toolboxes;

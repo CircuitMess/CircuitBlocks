@@ -55,7 +55,7 @@ void loop() {
 }`
 };
 
-StartSketches["cm:esp32:chatter"] = StartSketches["cm:esp32:byteboi"] = StartSketches["cm:esp32:wheelson"] = StartSketches["cm:esp32:jayd"] = StartSketches["cm:esp32:spencer"] = StartSketches["cm:esp8266:nibble"];
+StartSketches["cm:esp32:synthia"] = StartSketches["cm:esp32:chatter"] = StartSketches["cm:esp32:byteboi"] = StartSketches["cm:esp32:wheelson"] = StartSketches["cm:esp32:jayd"] = StartSketches["cm:esp32:spencer"] = StartSketches["cm:esp8266:nibble"];
 
 const sanitizeName = (name: string) => name.replace(/ /g, '_').replace(/\./g, '');
 
@@ -229,7 +229,7 @@ class Editor extends Component<EditorProps, State> {
       // @ts-ignore
       code = Blockly.Arduino.workspaceToCode(this.workspace);
 
-      if(Blockly.Device != "Spencer" && Blockly.Device != "MAKERphone"){
+      if(Blockly.Device != "Spencer" && Blockly.Device != "MAKERphone" && Blockly.Device != "Synthia"){
         let spriteCode = "";
         if(Blockly.Sprites !== undefined && Array.isArray(Blockly.Sprites)){
           Blockly.Sprites.forEach(sprite => {
@@ -392,6 +392,7 @@ class Editor extends Component<EditorProps, State> {
       "cm:esp32:wheelson": "Wheelson",
       "cm:esp32:byteboi": "ByteBoi",
       "cm:esp32:chatter": "Chatter",
+      "cm:esp32:synthia": "Synthia"
     }
 
     Blockly.Device = Name[sketch.device];
@@ -794,7 +795,7 @@ class Editor extends Component<EditorProps, State> {
             <EditorHeader
               gameExportButton={type == SketchType.BLOCK && device == "cm:esp32:byteboi"}
               openGameExport={() => this.setState({ gameExportOpen: true })}
-              spriteEditorButton={type == SketchType.BLOCK && device != "cm:esp32:spencer" && device != "cm:esp32:ringo"}
+              spriteEditorButton={type == SketchType.BLOCK && device != "cm:esp32:spencer" && device != "cm:esp32:ringo" && device != "cm:esp32:synthia"}
               isSpriteOpen={spriteEditorOpen}
               openSpriteEditor={() => this.openSpriteEditor()}
               home={this.saveAndExit}

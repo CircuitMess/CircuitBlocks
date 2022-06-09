@@ -67,6 +67,7 @@ export const Devices: { [name: string]: Device } = {
   "cm:esp32:wheelson": { fqbn: "cm:esp32:wheelson", name: "Wheelson" },
   "cm:esp32:byteboi": { fqbn: "cm:esp32:byteboi", name: "ByteBoi" },
   "cm:esp32:chatter": { fqbn: "cm:esp32:chatter", name: "Chatter" },
+  "cm:esp32:synthia": { fqbn: "cm:esp32:chatter", name: "Synthia" }
 };
 
 export interface Sketch {

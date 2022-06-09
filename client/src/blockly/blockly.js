@@ -62,6 +62,7 @@ goog.require("Blockly.Arduino.ByteBoi");
 goog.require("Blockly.Arduino.audio_byteboi");
 goog.require("Blockly.Arduino.ByteBoiIO");
 goog.require("Blockly.Arduino.Chatter");
+goog.require("Blockly.Arduino.Synthia");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
