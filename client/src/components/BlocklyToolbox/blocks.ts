@@ -287,6 +287,15 @@ export class Blocks {
         stop_animation: '<block type="jayd_ledmatrix_stop_animation"></block>',
     }
 
+    public static ledmatrix_synthia: any = {
+        push: '<block type="synthia_ledmatrix_push"></block>',
+        clear: '<block type="synthia_ledmatrix_clear"></block>',
+        pixel_mono: '<block type="synthia_ledmatrix_pixel_mono"><value name="X"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="Y"><shadow type="math_number"><field name="NUM">0</field></shadow></value><value name="BRIGHTNESS"><shadow type="math_number"><field name="NUM">255</field></shadow></value></block>',
+        pixel_rgb: '<block type="synthia_ledmatrix_pixel_rgb"><value name="INDEX"><shadow type="math_number"><field name="NUM">0</field></shadow></value></block>',
+        start_animation: '<block type="synthia_ledmatrix_start_animation"></block>',
+        stop_animation: '<block type="synthia_ledmatrix_stop_animation"></block>',
+    }
+
     public static audio_spencer: any = {
         play: '<block type="audio_spencer_playsample"></block>',
         stop: '<block type="audio_spencer_stopsample"></block>',

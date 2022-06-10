@@ -64,6 +64,7 @@ goog.require("Blockly.Arduino.ByteBoiIO");
 goog.require("Blockly.Arduino.Chatter");
 goog.require("Blockly.Arduino.Synthia");
 goog.require("Blockly.Arduino.inputSynthia");
+goog.require("Blockly.Arduino.ledmatrixSynthia");
 
 goog.require("Blockly.Blocks.stepper");
 goog.require("Blockly.Blocks.time");
@@ -96,6 +97,8 @@ goog.require('Blockly.Blocks.WheelsonCV');
 goog.require("Blockly.Blocks.audio_byteboi");
 goog.require("Blockly.Blocks.ByteBoiIO");
 goog.require("Blockly.Blocks.inputSynthia");
+goog.require('Blockly.Blocks.ledmatrixSynthia');
+
 
 Blockly.Device = "";
 Blockly.DefaultSprites = [];

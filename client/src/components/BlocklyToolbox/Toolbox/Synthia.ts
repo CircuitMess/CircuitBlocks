@@ -374,74 +374,40 @@ categories.push({
 });
 
 categories.push({
-    name: "Display",
-    icon: "\uf108",
+    name: "LED matrix",
+    icon: "\uf0eb",
     color: Blockly.Msg.DISPLAY_HUE,
 
     blocks: [
         {
-            name: "display_commit",
-            xml: Blocks.display_sprite.commit
+            name: "ledmatrix_push",
+            xml: Blocks.ledmatrix_synthia.push
         },
         {
-            name: "screen_colour",
-            xml: Blocks.display.colour
+            name: "ledmatrix_clear",
+            xml: Blocks.ledmatrix_synthia.clear
         },
         {
-            name: "sprite_clear",
-            xml: Blocks.display_sprite.clear
+            name: "ledmatrix_pixel_monochrome",
+            xml: Blocks.ledmatrix_synthia.pixel_mono,
+            group: "Drawing"
         },
         {
-            name: "sprite_draw_sprite",
-            xml: Blocks.display_sprite.drawSprite
-        },
-
-        {
-            name: "sprite_fontsize",
-            group: "Text",
-            xml: Blocks.display_sprite.fontsize
+            name: "ledmatrix_pixel_rgb",
+            xml: Blocks.ledmatrix_synthia.pixel_rgb,
+            group: "Drawing"
         },
         {
-            name: "sprite_fonttype",
-            group: "Text",
-            xml: Blocks.display_sprite.fonttype
+            name: "ledmatrix_start_animation",
+            xml: Blocks.ledmatrix_synthia.start_animation,
+            group: "Animation"
         },
         {
-            name: "sprite_fontcolour",
-            group: "Text",
-            xml: Blocks.display_sprite.fontcolour
-        },
-        {
-            name: "sprite_fontcolour",
-            group: "Text",
-            xml: Blocks.display_sprite.println
-        },
-        {
-            name: "sprite_draw_text",
-            group: "Text",
-            xml: Blocks.display_sprite.drawtext
+            name: "ledmatrix_stop_animation",
+            xml: Blocks.ledmatrix_synthia.stop_animation,
+            group: "Animation"
         },
 
-        {
-            name: "sprite_draw_rect",
-            group: "Shapes",
-            xml: Blocks.display_sprite.drawrect
-        },
-        {
-            name: "sprite_draw_circle",
-            group: "Shapes",
-            xml: Blocks.display_sprite.drawcircle
-        },
-        {
-            name: "sprite_draw_ellipse",
-            group: "Shapes",
-            xml: Blocks.display_sprite.drawellipse
-        },
-        {
-            name: "sprite_draw_triangle",
-            group: "Shapes",
-            xml: Blocks.display_sprite.drawtriangle
-        }
     ],
     subcategories: []
 });
