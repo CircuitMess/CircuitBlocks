@@ -27,7 +27,7 @@ Blockly.Arduino['jayd_ledmatrix_pixel'] = function(block) {
 	var x = Blockly.Arduino.valueToCode(block, 'X', Blockly.Arduino.ORDER_ATOMIC);
 	var y = Blockly.Arduino.valueToCode(block, 'Y', Blockly.Arduino.ORDER_ATOMIC);
 
-	var code = `matrixManager.${matrix}.drawPixel(${x}, ${y}, ${brightness});\n`;
+	var code = `matrixManager.${matrix}.drawPixel(${x}, ${y}, { 255, 255, 255, ${brightness} });\n`;
 	return code;
 };
 
@@ -44,7 +44,7 @@ Blockly.Arduino['jayd_ledmatrix_start_animation'] = function(block) {
 		matrixBig: "big"
 	};
 
-	var code = `matrixManager.${matrix}.startAnimation(new Animation(new File(SPIFFS.open("/matrixGIF/${animName[matrix]}${anim}.gif"))), true);\n`;
+	var code = `matrixManager.${matrix}.startAnimation(new MatrixAnimGIF(SPIFFS.open("/matrixGIF/${animName[matrix]}${anim}.gif")));\n`;
 	return code;
 };
 
@@ -53,6 +53,6 @@ Blockly.Arduino['jayd_ledmatrix_stop_animation'] = function(block) {
 
 	var matrix = block.getFieldValue('MATRIX');
 
-	var code = `matrixManager.${matrix}.stopAnimation();\n`;
+	var code = `matrixManager.${matrix}.stopAnimations();\n`;
 	return code;
 };
