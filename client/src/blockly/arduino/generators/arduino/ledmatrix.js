@@ -41,14 +41,18 @@ Blockly.Arduino['ledmatrix_brightness'] = function(block) {
 };
 
 Blockly.Arduino['ledmatrix_start_animation'] = function(block) {
+	Blockly.Arduino.addDeclaration("Spencer_Matrix_Anim", "MatrixAnim* anim = nullptr;")
+
 	var anim = Blockly.Arduino.valueToCode(block, 'ANIMATION', Blockly.Arduino.ORDER_ATOMIC);
 
-	var code = `LEDmatrix.startAnimation(new Animation(new SerialFlashFileAdapter(${anim})), true);\n`;
+	var code = `delete anim;\nanim = new MatrixAnimGIF(new SerialFlashFileAdapter(${anim}), &LEDmatrix);\nanim->start();\n`;
 	return code;
 };
 
 Blockly.Arduino['ledmatrix_stop_animation'] = function(block) {
-	var code = `LEDmatrix.stopAnimation();\n`;
+	Blockly.Arduino.addDeclaration("Spencer_Matrix_Anim", "MatrixAnim* anim = nullptr;")
+
+	var code = `delete anim;\nanim = nullptr;\n`;
 	return code;
 };
 
