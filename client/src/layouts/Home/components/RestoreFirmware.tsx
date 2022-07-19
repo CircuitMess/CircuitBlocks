@@ -37,15 +37,15 @@ export class RestoreFirmware extends React.Component<RestoreFirmwareProps, Resto
 
                 <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <p style={{ marginBottom: 15, fontSize: 18, fontWeight: "bold" }}>Device:</p>
-                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20 }}>
-                        <Button primary onClick={() => callback("cm:esp32:ringo")} style={{margin: "0 15px"}}>Ringo</Button>
-                        <Button primary onClick={() => callback("cm:esp8266:nibble")} style={{margin: "0 15px"}}>Nibble</Button>
-                        <Button primary onClick={() => callback("cm:esp32:spencer")} style={{margin: "0 15px"}}>Spencer</Button>
-                        <Button primary onClick={() => callback("cm:esp32:jayd")} style={{margin: "0 15px"}}>Jay-D</Button>
-                        <Button primary onClick={() => callback("cm:esp32:wheelson")} style={{margin: "0 15px"}}>Wheelson</Button>
-                        <Button primary onClick={() => callback("cm:esp32:byteboi")} style={{margin: "0 15px"}}>ByteBoi</Button>
-                        <Button primary onClick={() => callback("cm:esp32:chatter")} style={{margin: "0 15px"}}>Chatter</Button>
-                        <Button primary onClick={() => callback("cm:esp32:synthia")} style={{margin: "0 15px"}}>Synthia</Button>
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: 20, flexWrap: "wrap" }}>
+                        <Button primary onClick={() => callback("cm:esp32:ringo")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Ringo</Button>
+                        <Button primary onClick={() => callback("cm:esp8266:nibble")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Nibble</Button>
+                        <Button primary onClick={() => callback("cm:esp32:spencer")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Spencer</Button>
+                        <Button primary onClick={() => callback("cm:esp32:jayd")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Jay-D</Button>
+                        <Button primary onClick={() => callback("cm:esp32:wheelson")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Wheelson</Button>
+                        <Button primary onClick={() => callback("cm:esp32:byteboi")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>ByteBoi</Button>
+                        <Button primary onClick={() => callback("cm:esp32:chatter")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Chatter</Button>
+                        <Button primary onClick={() => callback("cm:esp32:synthia")} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Synthia</Button>
                     </div>
                 </div>
             </ModalBase>
