@@ -41,6 +41,10 @@ const Card = styled.div`
     background: #642d91;
   }
   
+  &.circuitpet {
+    background: #FFC629;
+  }
+  
   &.new {
     background: #fff;
     color: #595959;
