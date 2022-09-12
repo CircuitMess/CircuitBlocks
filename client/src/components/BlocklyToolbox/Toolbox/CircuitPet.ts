@@ -346,13 +346,24 @@ categories.push({
 
     blocks: [
         {
+            name: "piezo_tone",
+            xml: Blocks.piezo.tone,
+            group: "Piezo"
+        },
+        {
+            name: "piezo_notone",
+            xml: Blocks.piezo.notone,
+            group: "Piezo"
+        },
+
+        {
             name: "button_press_release",
-            xml: Blocks.input.input_button_synthia,
+            xml: Blocks.input.input_button_chatter,
             group: "Buttons"
         },
         {
             name: "button_held",
-            xml: Blocks.input.input_button_held_synthia,
+            xml: Blocks.input.input_button_held_chatter,
             group: "Buttons"
         },
         {
@@ -360,54 +371,84 @@ categories.push({
             xml: Blocks.input.input_button_any,
             group: "Buttons"
         },
+
         {
-            name: "input_synthia_slider_pot",
-            xml: Blocks.synthia_input.pot,
-            group: "Sliders"
-        },
-        {
-            name: "input_synthia_encoder",
-            xml: Blocks.synthia_input.encoder,
-            group: "Encoders"
-        },
+            name: "rgb_led",
+            xml: Blocks.io_circuitpet.rgb,
+            group: "LED"
+        }
     ]
 });
 
 categories.push({
-    name: "LED matrix",
-    icon: "\uf0eb",
+    name: "Display",
+    icon: "\uf108",
     color: Blockly.Msg.DISPLAY_HUE,
 
     blocks: [
         {
-            name: "ledmatrix_push",
-            xml: Blocks.ledmatrix_synthia.push
+            name: "display_commit",
+            xml: Blocks.display_sprite.commit
         },
         {
-            name: "ledmatrix_clear",
-            xml: Blocks.ledmatrix_synthia.clear
+            name: "screen_colour",
+            xml: Blocks.display.colour
         },
         {
-            name: "ledmatrix_pixel_monochrome",
-            xml: Blocks.ledmatrix_synthia.pixel_mono,
-            group: "Drawing"
+            name: "sprite_clear",
+            xml: Blocks.display_sprite.clear
         },
         {
-            name: "ledmatrix_pixel_rgb",
-            xml: Blocks.ledmatrix_synthia.pixel_rgb,
-            group: "Drawing"
-        },
-        {
-            name: "ledmatrix_start_animation",
-            xml: Blocks.ledmatrix_synthia.start_animation,
-            group: "Animation"
-        },
-        {
-            name: "ledmatrix_stop_animation",
-            xml: Blocks.ledmatrix_synthia.stop_animation,
-            group: "Animation"
+            name: "sprite_draw_sprite",
+            xml: Blocks.display_sprite.drawSprite
         },
 
+        {
+            name: "sprite_fontsize",
+            group: "Text",
+            xml: Blocks.display_sprite.fontsize
+        },
+        {
+            name: "sprite_fonttype",
+            group: "Text",
+            xml: Blocks.display_sprite.fonttype
+        },
+        {
+            name: "sprite_fontcolour",
+            group: "Text",
+            xml: Blocks.display_sprite.fontcolour
+        },
+        {
+            name: "sprite_fontcolour",
+            group: "Text",
+            xml: Blocks.display_sprite.println
+        },
+        {
+            name: "sprite_draw_text",
+            group: "Text",
+            xml: Blocks.display_sprite.drawtext
+        },
+
+        {
+            name: "sprite_draw_rect",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawrect
+        },
+        {
+            name: "sprite_draw_circle",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawcircle
+        },
+        {
+            name: "sprite_draw_ellipse",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawellipse
+        },
+        {
+            name: "sprite_draw_triangle",
+            group: "Shapes",
+            xml: Blocks.display_sprite.drawtriangle
+        }
     ],
     subcategories: []
 });

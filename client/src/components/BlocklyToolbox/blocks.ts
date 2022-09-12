@@ -331,4 +331,8 @@ export class Blocks {
         rgb: '<block type="byteboi_rgb"></block>',
         splash: '<block type="byteboi_splash"></block>',
     };
+
+    public static io_circuitpet: any = {
+        rgb: '<block type="circuitpet_rgb"></block>',
+    };
 }

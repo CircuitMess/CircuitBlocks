@@ -6,7 +6,7 @@ import {getToolbox as gcWheelson} from "./Wheelson"
 import {getToolbox as gcByteBoi} from "./ByteBoi"
 import {getToolbox as gcChatter} from "./Chatter"
 import {getToolbox as gcSynthia} from "./Synthia"
-import {getToolbox as gcCircuitPet} from "./Synthia"
+import {getToolbox as gcCircuitPet} from "./CircuitPet"
 import {ToolboxCategory} from "../../Toolbox";
 
 const Toolboxes: { [name: string]: () => ToolboxCategory[] } = {
