@@ -15,5 +15,10 @@ Blockly.Arduino.additionals["CircuitPet"] = function(){
   Blockly.Arduino.addSetup('serial_' + serialId, setupCode, false);
   Blockly.Arduino.addSetup('serial_clr_' + serialId, clearCode, false);
 
+  Blockly.Arduino.addDeclaration("Disp_declare", "Display* display;");
+  Blockly.Arduino.addDeclaration("Canv_declare", "Sprite* sprite;");
+
   Blockly.Arduino.addSetup("CP_begin", "CircuitPet.begin();");
+  Blockly.Arduino.addSetup("Disp_get", "display = CircuitPet.getDisplay();");
+  Blockly.Arduino.addSetup("Canv_get", "sprite = display->getBaseSprite();");
 };
