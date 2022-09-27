@@ -241,7 +241,7 @@ class Editor extends Component<EditorProps, State> {
           spriteCode += sprite.toCode() + "\n\n";
         });
 
-        code = code.replace("void setup()", spriteCode + "\nvoid setup()");
+        code = code.replace("Display* display;", spriteCode + "\nDisplay* display;");
       }
     }
 
