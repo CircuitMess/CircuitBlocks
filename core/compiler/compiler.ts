@@ -21,6 +21,7 @@ import {InitRequest} from "../grpc/cc/arduino/cli/commands/v1/commands_pb";
 import {CompileRequest} from "../grpc/cc/arduino/cli/commands/v1/compile_pb";
 import {BurnBootloaderRequest, UploadRequest} from "../grpc/cc/arduino/cli/commands/v1/upload_pb";
 import InstallerDarwin from "./InstallerDarwin";
+import InstallerLinux from "./InstallerLinux";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -103,6 +104,10 @@ export default class ArduinoCompiler {
   public static checkInstall(): InstallInfo | null {
     if(os.platform() == "darwin"){
       const installer = new InstallerDarwin();
+      const info = installer.checkInstall();
+      return info;
+    }else if(os.platform() == "linux"){
+      const installer = new InstallerLinux();
       const info = installer.checkInstall();
       return info;
     }
