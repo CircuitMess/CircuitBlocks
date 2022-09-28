@@ -62,13 +62,13 @@ export default class Installer {
   }
 
   private downloadArduino(callback: (string, error) => void) {
+      if(os.platform() == "darwin" || os.platform() == "linux"){
+          callback("", null);
+          return;
+      }
+
     const dlDir = util.tmpdir('cb-ard-dl');
     const url: string = this.downloads.arduino[this.PLATFORM];
-
-    if(os.platform() == "darwin"){
-        callback("", null);
-        return;
-    }
 
     util
       .download(url, dlDir)
@@ -188,6 +188,78 @@ export default class Installer {
   }
 
   private installArduinoLinux(file, callback: (err) => void) {
+    const sketchbook = path.join(os.homedir(), "Arduino");
+    if(!fs.existsSync(sketchbook)){
+        try {
+            fs.mkdirSync(sketchbook);
+
+            const libs = path.join(sketchbook, "libraries");
+            if(!fs.existsSync()){
+                fs.mkdirSync(libs);
+            }
+        }catch(e){
+            logger.log("installArduino", e);
+        }
+    }
+
+      const user = os.userInfo().username;
+      const rules = util.tmpdir('cm-ard-rules');
+      const setup: string[] = [
+          `groupadd -f plugdev`,
+          `groupadd -f dialout`,
+          `usermod -a -G tty ${user}`,
+          `usermod -a -G dialout ${user}`,
+          `usermod -a -G uucp ${user}`,
+          `usermod -a -G plugdev ${user}`,
+          `usermod -a -G plugdev ${user}`,
+
+          `mkdir -p ${rules}`,
+
+          `echo 'KERNEL=="ttyUSB[0-9]*", TAG+="udev-acl", TAG+="uaccess", OWNER="${user}"' >> ${rules}/90-extraacl.rules`,
+          `echo 'KERNEL=="ttyACM[0-9]*", TAG+="udev-acl", TAG+="uaccess", OWNER="${user}"' >> ${rules}/90-extraacl.rules`,
+
+          `echo 'SUBSYSTEM=="tty", ENV{ID_REVISION}=="8087", ENV{ID_MODEL_ID}=="0ab6", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{ID_MM_CANDIDATE}="0"' >> ${rules}/99-arduino-101.rules`,
+          `echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="8087", ATTR{idProduct}=="0aba", MODE="0666", ENV{ID_MM_DEVICE_IGNORE}="1"' >> ${rules}/99-arduino-101.rules`,
+
+          `mv ${rules}/*.rules /etc/udev/rules.d/`,
+
+          `udevadm control --reload-rules`,
+          `udevadm trigger`,
+
+          `if [ -d /lib/systemd/ ]; then systemctl restart systemd-udevd; else service udev restart; fi`
+      ];
+
+      sudoPrompt.exec(
+          setup.join(' && '),
+          { name: 'Arduino installer', icns: "./resources/icon.icns" },
+          (error, stderr, stdout) => {
+              console.log(stderr);
+              console.log(stdout);
+              if (error) {
+                  var err;
+                  if(error instanceof Error){
+                      err = error as any;
+                      err.stdout = stdout;
+                      err.stderr = stderr;
+                      callback(error);
+                  }else{
+                      err = error;
+                  }
+
+                  if(installPath){
+                      rimraf(installPath, {  }, () => {
+                          callback(err);
+                      });
+                  }
+                  return;
+              }
+
+              callback(null);
+          }
+      );
+    return;
+
+
     const tmp = util.tmpdir('cb-ard-inst');
     const dest = path.join(os.homedir(), '.arduino');
     if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
@@ -301,8 +373,13 @@ export default class Installer {
         if(!fs.existsSync(sketchbook)){
             try {
                 fs.mkdirSync(sketchbook);
-            }catch(e){
 
+                const libs = path.join(sketchbook, "libraries");
+                if(!fs.existsSync()){
+                    fs.mkdirSync(libs);
+                }
+            }catch(e){
+                logger.log("installArduino", e);
             }
         }
 

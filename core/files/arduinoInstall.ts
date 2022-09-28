@@ -78,7 +78,7 @@ export default class arduinoInstall {
         }
 
         let doInstall = (installInfo === null || Object.values(installInfo).indexOf(null) !== -1);
-        if(os.platform() == "darwin"){
+        if(os.platform() == "darwin" || os.platform() == "linux"){
             doInstall = (installInfo.cli == null || installInfo.sketchbook == null);
         }
 
