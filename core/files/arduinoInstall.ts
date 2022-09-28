@@ -3,6 +3,7 @@ import Installer from "../compiler/installer";
 import {BrowserWindow, ipcMain} from "electron";
 import logger from "./logger";
 import messenger, {MessageType} from "./messenger";
+import * as os from "os";
 
 interface SetupState {
     stage: string;
@@ -76,7 +77,12 @@ export default class arduinoInstall {
             this.installer = new Installer();
         }
 
-        if (installInfo === null || Object.values(installInfo).indexOf(null) !== -1) {
+        let doInstall = (installInfo === null || Object.values(installInfo).indexOf(null) !== -1);
+        if(os.platform() == "darwin"){
+            doInstall = (installInfo.cli == null || installInfo.sketchbook == null);
+        }
+
+        if (doInstall) {
             logger.log("Installing");
             console.log('Installing');
 

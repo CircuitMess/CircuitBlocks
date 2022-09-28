@@ -65,6 +65,11 @@ export default class Installer {
     const dlDir = util.tmpdir('cb-ard-dl');
     const url: string = this.downloads.arduino[this.PLATFORM];
 
+    if(os.platform() == "darwin"){
+        callback("", null);
+        return;
+    }
+
     util
       .download(url, dlDir)
       .then((file) => {
@@ -292,6 +297,18 @@ export default class Installer {
   }
 
     private installArduinoDarwin(file, callback: (err) => void) {
+        const sketchbook = path.join(os.homedir(), "Documents", "Arduino");
+        if(!fs.existsSync(sketchbook)){
+            try {
+                fs.mkdirSync(sketchbook);
+            }catch(e){
+
+            }
+        }
+
+        this.installDriverDarwin(callback);
+        return;
+
         const tmp = util.tmpdir('cb-ard-inst');
         const dest = '/Applications';
 
@@ -533,6 +550,11 @@ export default class Installer {
         stage('DONE');
       }
     };
+
+    if(info != null && os.platform() == "darwin"){
+        info.arduino = info.sketchbook;
+        info.local = info.cli;
+    }
 
     if (info == null || info.arduino == null) {
       stage('ARDUINO');
