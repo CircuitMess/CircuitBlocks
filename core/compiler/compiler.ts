@@ -20,6 +20,7 @@ import {Instance} from "../grpc/cc/arduino/cli/commands/v1/common_pb";
 import {InitRequest} from "../grpc/cc/arduino/cli/commands/v1/commands_pb";
 import {CompileRequest} from "../grpc/cc/arduino/cli/commands/v1/compile_pb";
 import {BurnBootloaderRequest, UploadRequest} from "../grpc/cc/arduino/cli/commands/v1/upload_pb";
+import InstallerDarwin from "./InstallerDarwin";
 
 export interface PortDescriptor {
   manufacturer: string;
@@ -100,6 +101,12 @@ export default class ArduinoCompiler {
   }
 
   public static checkInstall(): InstallInfo | null {
+    if(os.platform() == "darwin"){
+      const installer = new InstallerDarwin();
+      const info = installer.checkInstall();
+      return info;
+    }
+
     let home: string;
     if (os.type() === 'Windows_NT') {
       home = path.join(os.homedir(), 'AppData', 'Local');
@@ -215,7 +222,7 @@ export default class ArduinoCompiler {
     return info;
   }
 
-  private static parsePreferences(prefPath): { arduino: string; sketchbook: string; version: string } | null {
+  public static parsePreferences(prefPath): { arduino: string; sketchbook: string; version: string } | null {
     const preferences = fs
       .readFileSync(prefPath)
       .toString()
