@@ -261,6 +261,8 @@ export default class ArduinoCompiler {
    * Starts the builder daemon. Rejects if the builder couldn't be found or paths haven't been set up.
    */
   public static startDaemon(): Promise<null> {
+    this.installInfo = this.checkInstall();
+
     return new Promise<null>((resolve, reject) => {
       if (this.installInfo == null || this.installInfo.cli == null) {
         reject(new Error('Paths not set up'));
