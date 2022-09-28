@@ -594,7 +594,9 @@ export default class ArduinoCompiler {
 
       console.log("Uploading to", device);
       if(device == "cm:esp8266:nibble"){
-        device += ":baud=921600";
+        device += ":baud=115200";
+      }else{
+        device += ":UploadSpeed=115200";
       }
 
       const req = new UploadRequest();
