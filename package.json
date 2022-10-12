@@ -6,7 +6,7 @@
     "email": "filip@circuitmess.com",
     "name": "CircuitMess"
   },
-  "version": "1.9.0",
+  "version": "1.9.1",
   "main": "build/app.js",
   "private": true,
   "dependencies": {
