@@ -262,6 +262,14 @@ export default class Sketches {
                 sketches: { block: getSketches(categoryPath), code: [] }
             };
 
+            const fixTitle = (sketch: Sketch) => {
+                sketch.title = sketch.title.replace(/_/g, " ");
+                return sketch;
+            };
+
+            category.sketches.block.map(fixTitle);
+            category.sketches.code.map(fixTitle);
+
             categories.push(category);
         });
 
