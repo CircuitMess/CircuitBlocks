@@ -252,7 +252,7 @@ export default class ArduinoCompiler {
       }
     });
 
-    if (installs === {}) return null;
+    if (installs == {}) return null;
     const versions = Object.keys(installs);
     let newest = versions[0];
     for (let i = 1; i < versions.length; i++) {
@@ -265,10 +265,10 @@ export default class ArduinoCompiler {
   /**
    * Starts the builder daemon. Rejects if the builder couldn't be found or paths haven't been set up.
    */
-  public static startDaemon(): Promise<null> {
+  public static startDaemon(): Promise<void> {
     this.installInfo = this.checkInstall();
 
-    return new Promise<null>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       if (this.installInfo == null || this.installInfo.cli == null) {
         reject(new Error('Paths not set up'));
         return;
@@ -586,8 +586,8 @@ export default class ArduinoCompiler {
     port: string,
     device: string,
     progressCallback?: (number) => void
-  ): Promise<null> {
-    const promise = new Promise<null>((resolve, reject) => {
+  ): Promise<void> {
+    const promise = new Promise<void>((resolve, reject) => {
       if (!fs.existsSync(binary)) {
         reject(new Error("Binary doesn't exist"));
         return;
@@ -700,8 +700,8 @@ export default class ArduinoCompiler {
       device: string,
       port: string,
       progressCallback?: (number) => void
-  ): Promise<null> {
-    const promise = new Promise<null>((resolve, reject) => {
+  ): Promise<void> {
+    const promise = new Promise<void>((resolve, reject) => {
       const programmers = {
         "cm:esp32:ringo": "ringofirm",
         "cm:esp32:spencer": "spencerfirm",

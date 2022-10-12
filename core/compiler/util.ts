@@ -69,8 +69,8 @@ export function download(download: string, directory: string, callback?: ({ perc
   });
 }
 
-export function extract(file: string, directory: string): Promise<null> {
-  return new Promise<null>((resolve, reject) => {
+export function extract(file: string, directory: string): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
     const extension = path.extname(file);
     let handler;
 
