@@ -77,7 +77,7 @@ export default class Serial {
       logger.log("conncting " + comName);
       console.log("conncting " + comName);
 
-      const options: any = { baudRate: 115200 };
+      const options: any = { baudRate: 115200, rtscts: false, hupcl: false };
 
       // fix for old version of serialport on Windows. left for archive purposes
       /*if(os.type() == "Windows_NT"){
