@@ -677,7 +677,7 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve();
+          setTimeout(() => resolve(), 1000);
         } else {
           error.stdout = stdout;
           error.stderr = stderr;
@@ -800,7 +800,7 @@ export default class ArduinoCompiler {
         fulfilled = true;
 
         if (data.code === 0) {
-          resolve();
+          setTimeout(() => resolve(), 1000);
         } else {
           error.stdout = stdout;
           error.stderr = stderr;
