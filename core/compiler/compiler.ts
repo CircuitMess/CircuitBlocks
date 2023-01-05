@@ -288,7 +288,19 @@ export default class ArduinoCompiler {
       const cliCommand = os.type() == "Windows_NT"
           ? "arduino-cli.exe"
           : "./arduino-cli";
-      this.process = childProcess.execFile(cliCommand, ['daemon'], { cwd: this.installInfo.cli, env: { ...process.env, ARDUINO_METRICS_ENABLED: "0", PATH: "/usr/local/bin:/usr/bin:/bin" } }, (e, stdout, stderr) => {
+
+      let PATH = "/usr/local/bin:/usr/bin:/bin";
+      if(process.env.PATH && process.env.PATH !== ""){
+        PATH += ":" + process.env.PATH;
+      }
+
+      const env = {
+        ...process.env,
+        PATH,
+        ARDUINO_METRICS_ENABLED: "0"
+      };
+
+      this.process = childProcess.execFile(cliCommand, ['daemon'], { cwd: this.installInfo.cli, env }, (e, stdout, stderr) => {
         logger.log("Daemon run error", e);
         logger.log("Daemon run stdout", stdout);
         logger.log("Daemon run stderr", stderr);
