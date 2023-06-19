@@ -50,7 +50,7 @@ export class Deprecated extends React.Component<DeprecatedProps, DeprecatedState
                 </div>
 
                 <div className="content" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                    <p style={{ marginBottom: 42, fontSize: 18, lineHeight: 1.4 }}>This version of CircuitBlocks is no longer supported. Please continue to CircuitBlocks Web.</p>
+                    <p style={{ marginBottom: 42, fontSize: 18, lineHeight: 1.4 }}>This version of CircuitBlocks is no longer supported, check out the brand new web-based app.</p>
                     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", flexWrap: "wrap" }}>
                         <Button primary onClick={() => this.yes()} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Open web version</Button>
                         <Button secondary onClick={() => this.no()} style={{margin: "0 15px", whiteSpace: "nowrap", marginBottom: 10 }}>Continue offline</Button>
