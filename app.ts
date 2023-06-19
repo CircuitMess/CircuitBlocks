@@ -12,7 +12,6 @@ import messenger, {MessageType} from "./core/files/messenger";
 import Update from "./core/files/update";
 import * as util from "./core/compiler/util";
 import SpencerSettings from './core/files/spencerSettings';
-import analytics from "./core/files/analytics";
 
 const DEV = process.env.ELECTRON_ENV === 'development';
 
