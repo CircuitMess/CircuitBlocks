@@ -11,6 +11,7 @@ import {SketchLoadInfo, SketchType} from "../Editor";
 import {NewSketch} from "./components/NewSketch";
 import {RestoreFirmware} from "./components/RestoreFirmware";
 import {SpencerSettings} from "./components/SpencerSettings";
+import {Deprecated} from "./components/Deprecated";
 
 // const projects = [
 //   {
@@ -49,6 +50,7 @@ interface HomeState {
   newSketchOpen: boolean;
   restoreFirmwareModalOpen: boolean;
   spencerSettingsModalOpen: boolean;
+  deprecatedOpen: boolean;
 }
 
 const electron: AllElectron = (window as any).require('electron');
@@ -103,7 +105,8 @@ export default class Home extends React.Component<HomeProps, HomeState> {
       projectsLoading: true,
       examplesLoading: true,
       newSketchOpen: false,
-      restoreFirmwareModalOpen: false
+      restoreFirmwareModalOpen: false,
+      deprecatedOpen: true
     };
 
     ipcRenderer.on('sketches', (event: IpcRendererEvent, args) => {
@@ -185,9 +188,17 @@ export default class Home extends React.Component<HomeProps, HomeState> {
     ipcRenderer.send('load', { path: sketch.path });
   }
 
+  public showDeprecated(){
+    this.setState({ deprecatedOpen: true });
+  }
+
+  public dismissDeprecated(){
+    this.setState({deprecatedOpen: false})
+  }
+
   public render(){
     const { isEditorOpen, scrollStop } = this.props;
-    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen, spencerSettingsModalOpen } = this.state;
+    const { newSketchOpen, animation, loggedIn, sketches, examples, projectsLoading, examplesLoading, restoreFirmwareModalOpen, spencerSettingsModalOpen, deprecatedOpen } = this.state;
 
     return <div
             className={isEditorOpen ? 'd-none' : 'h-open'}
@@ -196,7 +207,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
               backgroundSize: 'cover',
               backgroundImage: `url(${require('../../assets/images/bg/bg-02.png')})`,
               zIndex: 10,
-              overflow: (scrollStop || newSketchOpen) ? "hidden" : undefined
+              overflow: (scrollStop || newSketchOpen || deprecatedOpen) ? "hidden" : undefined
             }}
         >
 
@@ -204,6 +215,7 @@ export default class Home extends React.Component<HomeProps, HomeState> {
           <HeaderImage className={loggedIn ? 'shrink' : ''} loggedIn={loggedIn} />
           <HeaderSection loggedIn={loggedIn} restoreCallback={() => this.setState({ restoreFirmwareModalOpen: true })} openSpencerModal={()=> this.setState({ spencerSettingsModalOpen: true})} />
           <RestoreFirmware open={restoreFirmwareModalOpen} callback={device => this.restoreFirmware(device)} closeFirmwareModal={() => this.setState({restoreFirmwareModalOpen: false})} />
+          <Deprecated open={deprecatedOpen} closeModal={() => this.dismissDeprecated()} />
           <SpencerSettings
             open={spencerSettingsModalOpen}
             closeCallback={() => { this.setState({ spencerSettingsModalOpen: false }); }}

@@ -42,10 +42,6 @@ export class InstallInfo extends React.Component<InstallInfoProps, InstallInfoSt
             }
         });
 
-        if(!process.env.NODE_ENV || process.env.NODE_ENV != "development"){
-            ipcRenderer.send("install", null);
-        }
-
         setInterval(() => {
             if(this.state.stage == "DONE") return;
             this.setState({ jokeIndex: (this.state.jokeIndex+1) % this.Jokes.length });
