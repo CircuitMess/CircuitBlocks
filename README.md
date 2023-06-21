@@ -1,4 +1,4 @@
-**The desktop version of CircuitBlocks has been deprecated. Please check out the [web version of CircuitBlocks](https://code.circuitmess.com/) which runs directly in your browser and features Python code generation.**
+**The desktop version of CircuitBlocks has been deprecated. Please check out the new [web version of CircuitBlocks](https://code.circuitmess.com/) which runs directly in your browser and features Python code generation.**
 
 # CircuitBlocks
 
