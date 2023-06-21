@@ -1,3 +1,5 @@
+**The desktop version of CircuitBlocks has been deprecated. Please check out the [web version of CircuitBlocks](https://code.circuitmess.com/) which runs directly in your browser and features Python code generation.**
+
 # CircuitBlocks
 
 <img src="https://old.circuitmess.com/wp-content/uploads/CB-Cover-e1572298172355.png">
